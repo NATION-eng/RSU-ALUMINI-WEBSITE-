@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Sparkles, Send, ShieldCheck, AlertCircle } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Sparkles, Send, ShieldCheck, AlertCircle, Building2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 
@@ -467,7 +467,8 @@ export default function CensusRsvpSection() {
               {/* BOLD NOTICE */}
               <div className="p-4 sm:p-5 rounded-2xl bg-black/50 border border-jubilee-gold/60 mb-5">
                 <div className="text-jubilee-gold font-retro font-extrabold text-sm sm:text-base mb-1.5 flex items-center space-x-2">
-                  <span>📢 OFFICIAL DEDICATED BANK ACCOUNT DETAILS WILL BE PROVIDED SOON</span>
+                  <Building2 className="w-4 h-4 text-jubilee-gold shrink-0" />
+                  <span>OFFICIAL DEDICATED BANK ACCOUNT DETAILS WILL BE PROVIDED SOON</span>
                 </div>
                 <p className="text-xs sm:text-sm text-emerald-100/90 font-light leading-relaxed">
                   The Central Planning Committee (CPC) Financial Directorate is setting up dedicated audited accounts for the 45th Anniversary. If you desire to sponsor, pledge, or financially support the Homecoming, indicate below so the official bank details are forwarded directly to you once released.

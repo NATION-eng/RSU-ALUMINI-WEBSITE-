@@ -566,8 +566,9 @@ export default function AdminDashboard({ onBackToSite }) {
                           <Mail className="w-3 h-3 text-stone-500 shrink-0" />
                           <span className="truncate max-w-[150px]">{attendee.email}</span>
                         </div>
-                        <div className="text-[11px] text-stone-400 mt-0.5">
-                          📍 {attendee.city}, {attendee.country}
+                        <div className="flex items-center space-x-1.5 text-[11px] text-stone-400 mt-0.5">
+                          <MapPin className="w-3 h-3 text-stone-500 shrink-0" />
+                          <span>{attendee.city}, {attendee.country}</span>
                         </div>
                       </td>
 
@@ -586,8 +587,9 @@ export default function AdminDashboard({ onBackToSite }) {
                       <td className="px-4 py-3.5">
                         {attendee.willing_to_support ? (
                           <div>
-                            <span className="inline-block px-2 py-0.5 rounded bg-jubilee-gold/20 text-jubilee-gold text-[10px] font-bold border border-jubilee-gold/30">
-                              ★ Sponsor
+                            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-jubilee-gold/20 text-jubilee-gold text-[10px] font-bold border border-jubilee-gold/30">
+                              <Sparkles className="w-2.5 h-2.5" />
+                              <span>Sponsor</span>
                             </span>
                             {attendee.support_pledge && (
                               <div className="text-[11px] text-emerald-200 mt-1 font-mono">
@@ -726,8 +728,9 @@ export default function AdminDashboard({ onBackToSite }) {
 
               {selectedAttendee.willing_to_support && (
                 <div className="bg-jubilee-gold/10 p-3.5 rounded-2xl border border-jubilee-gold/40">
-                  <span className="text-jubilee-gold font-bold text-xs uppercase block mb-1">
-                    ★ Jubilee Partnership & Sponsorship
+                  <span className="inline-flex items-center space-x-1.5 text-jubilee-gold font-bold text-xs uppercase mb-1">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Jubilee Partnership & Sponsorship</span>
                   </span>
                   <div className="text-xs text-white">
                     <strong>Category:</strong> {selectedAttendee.support_category || 'General'}

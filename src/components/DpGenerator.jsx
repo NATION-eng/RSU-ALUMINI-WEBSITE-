@@ -102,7 +102,7 @@ export default function DpGenerator() {
     ctx.fillStyle = '#FAF7EE';
     ctx.font = 'bold 22px "Plus Jakarta Sans", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('📷 Click "Upload Photo" Below', size / 2, size / 2 - 5);
+    ctx.fillText('CLICK "UPLOAD PHOTO" BELOW', size / 2, size / 2 - 5);
 
     ctx.restore();
   }, []);
@@ -252,7 +252,7 @@ export default function DpGenerator() {
         ctx.fillStyle = '#D4AF37';
         ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
         ctx.letterSpacing = '1.5px';
-        ctx.fillText("★ 45TH ANNIVERSARY & ALUMNI HOMECOMING (1981–2026) ★", size / 2 + 50, 134);
+        ctx.fillText("45TH ANNIVERSARY & ALUMNI HOMECOMING (1981–2026)", size / 2 + 50, 134);
       } else {
         ctx.fillStyle = '#FAF7EE';
         ctx.font = 'bold 26px "Plus Jakarta Sans", sans-serif';
@@ -263,7 +263,7 @@ export default function DpGenerator() {
         ctx.fillStyle = '#D4AF37';
         ctx.font = 'bold 21px "Plus Jakarta Sans", sans-serif';
         ctx.letterSpacing = '2px';
-        ctx.fillText("★ 45TH ANNIVERSARY & ALUMNI HOMECOMING (1981–2026) ★", size / 2, 134);
+        ctx.fillText("45TH ANNIVERSARY & ALUMNI HOMECOMING (1981–2026)", size / 2, 134);
       }
       ctx.restore();
 
@@ -290,7 +290,7 @@ export default function DpGenerator() {
       ctx.font = '900 26px "Plus Jakarta Sans", sans-serif';
       ctx.textAlign = 'center';
       ctx.letterSpacing = '2px';
-      ctx.fillText("✦ I WILL BE THERE! ✦", size / 2, badgeY + 38);
+      ctx.fillText("I WILL BE THERE!", size / 2, badgeY + 38);
       ctx.restore();
 
       // 6. STRUCTURED BOTTOM IDENTITY CARD (Name, Class, Cohort, Theme)
@@ -414,8 +414,9 @@ export default function DpGenerator() {
   };
 
   const shareToWhatsApp = () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const text = encodeURIComponent(
-      `🎉 I will be at the Adventist Students' Fellowship (RSU) 45th Anniversary & Alumni Homecoming (1981–2026)!\n\nTheme: "Rooted to Rise: Honouring our Heritage, Igniting our Future"\n\nCreate your DP here: http://localhost:3000/#dp-generator`
+      `I will be at the Adventist Students' Fellowship (RSU) 45th Anniversary & Alumni Homecoming (1981–2026)!\n\nTheme: "Rooted to Rise: Honouring our Heritage, Igniting our Future"\n\nCreate your DP here: ${origin}/#dp-generator`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -462,7 +463,7 @@ export default function DpGenerator() {
 
               {/* Status Hint */}
               <p className="text-[11px] text-emerald-300/80 mt-2 font-medium text-center">
-                {hasCustomPhoto ? '✓ Custom photo loaded. Use sliders below to align.' : '⚡ Click "Upload Your Photo" or type your name below.'}
+                {hasCustomPhoto ? 'Custom photo loaded. Use sliders below to align.' : 'Upload your photo or type your name below.'}
               </p>
 
               {/* Pan & Zoom Controls */}
