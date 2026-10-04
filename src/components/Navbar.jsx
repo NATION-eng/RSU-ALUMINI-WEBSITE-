@@ -52,17 +52,15 @@ export default function Navbar() {
               alt="ASF RSU 45th Anniversary Logo"
               className="h-8 xs:h-9 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="text-left">
-              <div className="flex items-center space-x-1.5">
-                <span className="font-retro font-bold text-white text-sm sm:text-base tracking-wide group-hover:text-jubilee-lightgold transition-colors">
-                  ASF RSU
-                </span>
-                <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 font-semibold tracking-wider uppercase font-sans">
-                  45th
-                </span>
-              </div>
-              <p className="text-[10px] sm:text-[11px] text-emerald-200/80 tracking-tight font-light font-sans leading-tight hidden xs:block">
-                1981–2026 Jubilee
+            <div className="text-left leading-tight">
+              <span className="font-retro font-bold text-white text-sm sm:text-base tracking-wide group-hover:text-jubilee-lightgold transition-colors block leading-tight">
+                ASF
+              </span>
+              <p className="text-[9px] sm:text-[10px] text-jubilee-lightgold font-sans font-medium tracking-tight leading-tight">
+                Anniversary Celebration &
+              </p>
+              <p className="text-[9px] sm:text-[10px] text-emerald-200/90 font-sans font-semibold tracking-tight leading-tight">
+                Alumni Homecoming
               </p>
             </div>
           </a>

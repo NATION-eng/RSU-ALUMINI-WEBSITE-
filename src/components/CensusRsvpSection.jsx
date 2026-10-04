@@ -44,7 +44,6 @@ export default function CensusRsvpSection() {
     country: 'Nigeria',
     attendanceMode: 'PHYSICAL', // 'PHYSICAL' | 'VIRTUAL'
     arrivalDate: '2026-11-13',
-    accommodationNeeded: 'NO',
     tributeQuote: '',
     willingToSupport: false,
     supportCategory: 'General Homecoming Support',
@@ -96,7 +95,6 @@ export default function CensusRsvpSection() {
       fellowship_roles: formData.fellowshipRoles.trim() || null,
       attendance_mode: formData.attendanceMode,
       arrival_date: formData.attendanceMode === 'PHYSICAL' && formData.arrivalDate ? formData.arrivalDate : null,
-      accommodation_needed: formData.attendanceMode === 'PHYSICAL' ? formData.accommodationNeeded : 'NO',
       tribute_quote: formData.tributeQuote.trim() || null,
       willing_to_support: Boolean(formData.willingToSupport),
       support_category: formData.willingToSupport ? formData.supportCategory : null,
@@ -422,34 +420,17 @@ export default function CensusRsvpSection() {
               </div>
 
               {formData.attendanceMode === 'PHYSICAL' && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm p-4 bg-stone-50 rounded-2xl border border-stone-200/80 mb-5 font-sans">
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Accommodation Assistance Needed?
-                    </label>
-                    <select
-                      name="accommodationNeeded"
-                      value={formData.accommodationNeeded}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-xs font-medium"
-                    >
-                      <option value="NO">No, personal arrangements</option>
-                      <option value="YES">Yes, recommend partner hotel</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Expected Arrival Date
-                    </label>
-                    <input
-                      type="date"
-                      name="arrivalDate"
-                      value={formData.arrivalDate}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-xs font-medium"
-                    />
-                  </div>
+                <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200/80 mb-5 font-sans">
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Expected Arrival Date in Port Harcourt
+                  </label>
+                  <input
+                    type="date"
+                    name="arrivalDate"
+                    value={formData.arrivalDate}
+                    onChange={handleChange}
+                    className="w-full sm:w-1/2 px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white text-xs font-medium focus:border-emerald-800 outline-none"
+                  />
                 </div>
               )}
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
 import { 
   Shield, Lock, Search, Filter, Download, CheckCircle, XCircle, 
-  Users, UserCheck, HeartHandshake, Hotel, RefreshCw, Eye, ArrowLeft,
+  Users, UserCheck, HeartHandshake, RefreshCw, Eye, ArrowLeft,
   Calendar, Phone, Mail, MapPin, Award, Check, Sparkles, Trash2
 } from 'lucide-react';
 
@@ -141,7 +141,6 @@ export default function AdminDashboard({ onBackToSite }) {
       'Fellowship Roles',
       'Attendance Mode',
       'Arrival Date',
-      'Accommodation Needed',
       'Willing to Support',
       'Support Category',
       'Support Pledge',
@@ -166,7 +165,6 @@ export default function AdminDashboard({ onBackToSite }) {
       `"${r.fellowship_roles || ''}"`,
       r.attendance_mode || '',
       r.arrival_date || '',
-      r.accommodation_needed || 'NO',
       r.willing_to_support ? 'YES' : 'NO',
       `"${r.support_category || ''}"`,
       `"${r.support_pledge || ''}"`,
@@ -220,11 +218,10 @@ export default function AdminDashboard({ onBackToSite }) {
     const total = registrations.length;
     const physical = registrations.filter(r => r.attendance_mode === 'PHYSICAL').length;
     const virtual = registrations.filter(r => r.attendance_mode === 'VIRTUAL').length;
-    const accommodations = registrations.filter(r => r.accommodation_needed === 'YES').length;
     const sponsors = registrations.filter(r => r.willing_to_support).length;
     const checkedIn = registrations.filter(r => r.checked_in).length;
 
-    return { total, physical, virtual, accommodations, sponsors, checkedIn };
+    return { total, physical, virtual, sponsors, checkedIn };
   }, [registrations]);
 
   // LOGIN SCREEN
@@ -360,7 +357,7 @@ export default function AdminDashboard({ onBackToSite }) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
         
         {/* Metric Cards Banner */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           
           <div className="luxury-glass rounded-2xl p-4 border border-white/10">
             <div className="flex items-center justify-between text-xs text-stone-400 mb-1">
@@ -393,17 +390,6 @@ export default function AdminDashboard({ onBackToSite }) {
               {stats.virtual}
             </div>
             <div className="text-[10px] text-stone-400 mt-0.5">Online HD Stream</div>
-          </div>
-
-          <div className="luxury-glass rounded-2xl p-4 border border-white/10">
-            <div className="flex items-center justify-between text-xs text-stone-400 mb-1">
-              <span>Accommodations</span>
-              <Hotel className="w-4 h-4 text-amber-400" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-retro font-black text-amber-300">
-              {stats.accommodations}
-            </div>
-            <div className="text-[10px] text-stone-400 mt-0.5">Hotel Assistance</div>
           </div>
 
           <div className="luxury-glass rounded-2xl p-4 border border-jubilee-gold/40 bg-jubilee-gold/5">
@@ -594,12 +580,6 @@ export default function AdminDashboard({ onBackToSite }) {
                         }`}>
                           {attendee.attendance_mode}
                         </span>
-                        {attendee.accommodation_needed === 'YES' && (
-                          <div className="text-[10px] text-amber-300 mt-1 flex items-center space-x-1">
-                            <Hotel className="w-3 h-3" />
-                            <span>Hotel Needed</span>
-                          </div>
-                        )}
                       </td>
 
                       {/* Sponsorship */}
