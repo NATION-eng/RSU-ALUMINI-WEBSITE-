@@ -16,20 +16,31 @@ export default function QrSection() {
   }, []);
 
   useEffect(() => {
-    QRCode.toDataURL(siteUrl, {
-      width: 500,
-      margin: 2,
-      color: {
-        dark: '#051A0F',
-        light: '#FFFFFF'
-      }
-    })
-      .then(url => {
-        setQrDataUrl(url);
+    let active = true;
+
+    const generateQr = () => {
+      if (!active) return;
+      QRCode.toDataURL(siteUrl, {
+        width: 450,
+        margin: 2,
+        color: {
+          dark: '#051A0F',
+          light: '#FFFFFF'
+        }
       })
-      .catch(err => {
-        console.error('QR generation error:', err);
-      });
+        .then(url => {
+          if (active) setQrDataUrl(url);
+        })
+        .catch(err => {
+          console.error('QR generation error:', err);
+        });
+    };
+
+    const timer = setTimeout(generateQr, 60);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
   }, [siteUrl]);
 
   const handleCopyLink = () => {

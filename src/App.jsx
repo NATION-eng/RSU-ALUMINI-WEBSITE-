@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, startTransition, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ImpactStats from './components/ImpactStats';
@@ -10,7 +10,9 @@ import MediaSection from './components/MediaSection';
 import DiasporaHub from './components/DiasporaHub';
 import QrSection from './components/QrSection';
 import Footer from './components/Footer';
-import AdminDashboard from './components/AdminDashboard';
+
+// Code-split AdminDashboard for fast initial load and non-blocking view transitions
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 
 export default function App() {
   const [isAdminView, setIsAdminView] = useState(() => {
@@ -22,7 +24,9 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      setIsAdminView(window.location.hash === '#admin' || window.location.pathname === '/admin');
+      startTransition(() => {
+        setIsAdminView(window.location.hash === '#admin' || window.location.pathname === '/admin');
+      });
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
@@ -34,16 +38,33 @@ export default function App() {
 
   const handleOpenAdmin = () => {
     window.location.hash = 'admin';
-    setIsAdminView(true);
+    startTransition(() => {
+      setIsAdminView(true);
+    });
   };
 
   const handleBackToSite = () => {
-    window.location.hash = '';
-    setIsAdminView(false);
+    if (window.location.hash) {
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+    }
+    startTransition(() => {
+      setIsAdminView(false);
+    });
   };
 
   if (isAdminView) {
-    return <AdminDashboard onBackToSite={handleBackToSite} />;
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-[#051A0F] text-white flex items-center justify-center p-4">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-2 border-jubilee-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-xs text-stone-300 font-mono tracking-wider">Loading Secretariat Console...</p>
+          </div>
+        </div>
+      }>
+        <AdminDashboard onBackToSite={handleBackToSite} />
+      </Suspense>
+    );
   }
 
   return (
