@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ImpactStats from './components/ImpactStats';
@@ -10,12 +10,46 @@ import MediaSection from './components/MediaSection';
 import DiasporaHub from './components/DiasporaHub';
 import QrSection from './components/QrSection';
 import Footer from './components/Footer';
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
+  const [isAdminView, setIsAdminView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.hash === '#admin' || window.location.pathname === '/admin';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setIsAdminView(window.location.hash === '#admin' || window.location.pathname === '/admin');
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, []);
+
+  const handleOpenAdmin = () => {
+    window.location.hash = 'admin';
+    setIsAdminView(true);
+  };
+
+  const handleBackToSite = () => {
+    window.location.hash = '';
+    setIsAdminView(false);
+  };
+
+  if (isAdminView) {
+    return <AdminDashboard onBackToSite={handleBackToSite} />;
+  }
+
   return (
     <div className="min-h-screen bg-jubilee-cream text-stone-900 selection:bg-emerald-900 selection:text-jubilee-lightgold font-sans antialiased">
       {/* 1. Global Navigation */}
-      <Navbar />
+      <Navbar onOpenAdmin={handleOpenAdmin} />
 
       {/* 2. Hero Section with Live Countdown and Jubilee Theme */}
       <Hero />
@@ -45,7 +79,7 @@ export default function App() {
       <QrSection />
 
       {/* 11. Grand Footer & Governance Credits */}
-      <Footer />
+      <Footer onOpenAdmin={handleOpenAdmin} />
     </div>
   );
 }

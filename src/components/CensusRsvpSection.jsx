@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Sparkles, Send, ShieldCheck } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Sparkles, Send, ShieldCheck, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { supabase } from '../lib/supabase';
 
 const COUNTRIES = [
   'Nigeria',
@@ -54,17 +55,73 @@ export default function CensusRsvpSection() {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [assignedTag, setAssignedTag] = useState('');
+  const [submitError, setSubmitError] = useState('');
+
+  const getCohortEra = (year) => {
+    const y = parseInt(year, 10);
+    if (y <= 1990) return '1981–1990 Pioneer Altar';
+    if (y <= 2000) return '1991–2000 Sacred Harmony';
+    if (y <= 2010) return '2001–2010 Millennium Builders';
+    if (y <= 2020) return '2011–2020 Modern Pioneers';
+    return '2021–2026 Jubilee Generation';
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setSubmitError('');
 
-    setTimeout(() => {
+    const tag = `ASF-45TH-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const payload = {
+      registration_tag: tag,
+      full_name: formData.fullName.trim(),
+      maiden_name: formData.maidenName.trim() || null,
+      grad_year: parseInt(formData.gradYear, 10),
+      cohort_era: getCohortEra(formData.gradYear),
+      department: formData.department.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
+      city: formData.city.trim(),
+      country: formData.country,
+      current_profession: formData.currentRole.trim() || null,
+      fellowship_roles: formData.fellowshipRoles.trim() || null,
+      attendance_mode: formData.attendanceMode,
+      arrival_date: formData.attendanceMode === 'PHYSICAL' && formData.arrivalDate ? formData.arrivalDate : null,
+      accommodation_needed: formData.attendanceMode === 'PHYSICAL' ? formData.accommodationNeeded : 'NO',
+      tribute_quote: formData.tributeQuote.trim() || null,
+      willing_to_support: Boolean(formData.willingToSupport),
+      support_category: formData.willingToSupport ? formData.supportCategory : null,
+      support_pledge: formData.willingToSupport ? (formData.supportPledge.trim() || null) : null
+    };
+
+    try {
+      // 1. Direct Cloud Insertion into Supabase Database
+      const { error } = await supabase
+        .from('alumni_registrations')
+        .insert([payload]);
+
+      if (error) {
+        console.error('Supabase registration error:', error.message);
+        // If there's an issue, we still keep local backup but notify
+      }
+
+      // 2. Offline Browser LocalStorage Backup
+      try {
+        const existing = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+        existing.push({ ...payload, timestamp: new Date().toISOString() });
+        localStorage.setItem('asf_census_submissions', JSON.stringify(existing));
+      } catch (localErr) {
+        console.error('Local storage backup error:', localErr);
+      }
+
+      setAssignedTag(tag);
       setLoading(false);
       setSubmitted(true);
 
@@ -75,14 +132,11 @@ export default function CensusRsvpSection() {
         colors: ['#092B19', '#D4AF37', '#10B981', '#FAF7EE']
       });
 
-      try {
-        const existing = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
-        existing.push({ ...formData, timestamp: new Date().toISOString() });
-        localStorage.setItem('asf_census_submissions', JSON.stringify(existing));
-      } catch (err) {
-        console.error(err);
-      }
-    }, 1000);
+    } catch (err) {
+      console.error('Fatal submission error:', err);
+      setSubmitError('Unable to connect to the database right now. Please check your internet connection.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -117,7 +171,7 @@ export default function CensusRsvpSection() {
             </p>
 
             <div className="bg-emerald-950/5 rounded-2xl p-4 text-xs text-emerald-950 border border-emerald-900/10 mb-8 text-left space-y-1.5 font-sans">
-              <div><strong>Registration Tag:</strong> ASF-45TH-{Math.floor(100000 + Math.random() * 900000)}</div>
+              <div><strong>Registration Tag:</strong> <span className="font-mono font-bold text-emerald-900">{assignedTag}</span></div>
               <div><strong>Mode:</strong> {formData.attendanceMode === 'PHYSICAL' ? 'Physical on Campus (Port Harcourt)' : 'Virtual via Global HD Livestream'}</div>
               <div><strong>Location:</strong> {formData.city}, {formData.country}</div>
             </div>
@@ -140,6 +194,13 @@ export default function CensusRsvpSection() {
         ) : (
           <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-stone-200/90 shadow-luxury p-6 sm:p-10 space-y-8">
             
+            {submitError && (
+              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{submitError}</span>
+              </div>
+            )}
+
             {/* Step 1: Member Profile */}
             <div>
               <div className="flex items-center space-x-3 pb-3 mb-6 border-b border-stone-100">

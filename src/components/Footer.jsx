@@ -91,9 +91,14 @@ export default function Footer() {
             © 1981–2026 Adventist Students' Fellowship (RSU Chapter). All rights reserved.
           </div>
           <div className="flex items-center space-x-4">
-            <a href="#census-rsvp" className="hover:text-stone-300 transition-colors">Privacy & Data Directory</a>
+            <a href="#census-rsvp" className="hover:text-stone-300 transition-colors">Data Directory</a>
             <span>•</span>
             <a href="#dp-generator" className="hover:text-stone-300 transition-colors">Brand Assets & DP Kit</a>
+            <span>•</span>
+            <a href="#admin" className="hover:text-jubilee-lightgold transition-colors inline-flex items-center space-x-1 text-stone-400">
+              <Shield className="w-3 h-3 text-jubilee-gold" />
+              <span>CPC Secretariat Admin</span>
+            </a>
           </div>
         </div>
 
