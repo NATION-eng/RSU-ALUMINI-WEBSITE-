@@ -437,31 +437,31 @@ export default function DpGenerator() {
           </div>
         )}
 
-        {/* Generator Workspace */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-10 backdrop-blur-xl shadow-2xl max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* Generator Workspace (Mobile optimized) */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-8 backdrop-blur-xl shadow-luxury max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
             {/* Left Column: Canvas Preview */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[380px] sm:max-w-[420px] aspect-square rounded-2xl overflow-hidden shadow-2xl border-4 border-jubilee-gold/60 bg-emerald-950">
+              <div className="relative w-full max-w-[290px] xs:max-w-[340px] sm:max-w-[420px] aspect-square rounded-2xl overflow-hidden shadow-luxury border-4 border-jubilee-gold/60 bg-emerald-950">
                 <canvas
                   ref={canvasRef}
                   className="w-full h-full object-contain cursor-grab active:cursor-grabbing"
-                  title="Your 45th Jubilee DP Preview (Right-click to save if needed)"
+                  title="Your 45th Jubilee DP Preview (Right-click or hold to save)"
                 />
               </div>
 
               {/* Status Hint */}
-              <p className="text-[11px] text-emerald-300/80 mt-2 font-medium">
-                {hasCustomPhoto ? '✓ Custom photo loaded. Use sliders below to align.' : '⚡ Click "Upload Your Photo" or enter your name below.'}
+              <p className="text-[11px] text-emerald-300/80 mt-2 font-medium text-center">
+                {hasCustomPhoto ? '✓ Custom photo loaded. Use sliders below to align.' : '⚡ Click "Upload Your Photo" or type your name below.'}
               </p>
 
               {/* Pan & Zoom Controls */}
-              <div className="w-full max-w-[420px] mt-4 bg-white/10 rounded-xl p-3.5 border border-white/10 space-y-3">
+              <div className="w-full max-w-[290px] xs:max-w-[340px] sm:max-w-[420px] mt-3.5 bg-white/10 rounded-xl p-3 border border-white/10 space-y-2.5">
                 <div className="flex items-center justify-between text-xs text-emerald-200 font-semibold">
                   <div className="flex items-center space-x-1">
                     <ZoomIn className="w-3.5 h-3.5 text-jubilee-gold" />
-                    <span>Zoom Photo:</span>
+                    <span>Zoom:</span>
                   </div>
                   <span className="font-mono">{Math.round(zoom * 100)}%</span>
                 </div>
@@ -472,30 +472,30 @@ export default function DpGenerator() {
                   step="0.05"
                   value={zoom}
                   onChange={(e) => setZoom(parseFloat(e.target.value))}
-                  className="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-jubilee-gold"
+                  className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-jubilee-gold"
                 />
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-2 gap-2 text-[11px]">
                   <div>
-                    <label className="text-[10px] text-emerald-300 font-medium block mb-1">Pan Left / Right:</label>
+                    <label className="text-[10px] text-emerald-300 font-medium block mb-0.5">Pan Left/Right:</label>
                     <input
                       type="range"
                       min="-180"
                       max="180"
                       value={panX}
                       onChange={(e) => setPanX(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-jubilee-gold"
+                      className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-jubilee-gold"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-emerald-300 font-medium block mb-1">Pan Up / Down:</label>
+                    <label className="text-[10px] text-emerald-300 font-medium block mb-0.5">Pan Up/Down:</label>
                     <input
                       type="range"
                       min="-180"
                       max="180"
                       value={panY}
                       onChange={(e) => setPanY(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-jubilee-gold"
+                      className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-jubilee-gold"
                     />
                   </div>
                 </div>

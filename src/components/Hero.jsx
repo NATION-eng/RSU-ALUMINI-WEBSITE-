@@ -33,76 +33,80 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-[95vh] flex items-center justify-center pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white overflow-hidden vintage-texture">
+    <section className="relative min-h-[92vh] flex items-center justify-center pt-24 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white overflow-hidden vintage-texture">
       
       {/* Bespoke Luxury Ambient Glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-gradient-to-b from-emerald-800/25 to-transparent rounded-full blur-[140px]"></div>
-        <div className="absolute top-1/3 -left-36 w-[450px] h-[450px] bg-jubilee-gold/10 rounded-full blur-[130px] animate-float-slow"></div>
-        <div className="absolute bottom-10 -right-36 w-[500px] h-[500px] bg-emerald-700/15 rounded-full blur-[140px] animate-float-slow" style={{ animationDelay: '3.5s' }}></div>
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] sm:w-[850px] h-[400px] sm:h-[550px] bg-gradient-to-b from-emerald-800/25 to-transparent rounded-full blur-[120px]"></div>
+        <div className="absolute top-1/3 -left-36 w-[350px] sm:w-[450px] h-[350px] sm:h-[450px] bg-jubilee-gold/10 rounded-full blur-[110px] animate-float-slow"></div>
+        <div className="absolute bottom-10 -right-36 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-emerald-700/15 rounded-full blur-[120px] animate-float-slow" style={{ animationDelay: '3.5s' }}></div>
       </div>
 
-      <div className="relative max-w-5xl mx-auto text-center z-10">
-
-        {/* Heritage Pill Tag */}
-        <div className="inline-flex items-center space-x-2.5 px-5 py-2 rounded-full bg-white/[0.04] backdrop-blur-md border border-jubilee-gold/30 text-jubilee-lightgold text-xs sm:text-sm font-semibold tracking-wider mb-6 shadow-luxury">
-          <Sparkles className="w-4 h-4 text-jubilee-gold" />
-          <span className="font-sans uppercase tracking-[0.2em] text-[11px] sm:text-xs">
+      <div className="relative max-w-5xl mx-auto text-center z-10 w-full">
+        
+        {/* Heritage Pill Tag (Mobile-optimized text & wrap) */}
+        <div className="inline-flex items-center space-x-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/[0.04] backdrop-blur-md border border-jubilee-gold/30 text-jubilee-lightgold text-[10px] sm:text-xs font-semibold tracking-wider mb-5 sm:mb-7 shadow-luxury max-w-full">
+          <Sparkles className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+          <span className="font-sans uppercase tracking-[0.15em] truncate">
             1981 – 2026 • 45TH JUBILEE CELEBRATION
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-jubilee-gold"></span>
-          <span className="text-white/80 font-sans tracking-wider text-[11px] sm:text-xs">RSU PORT HARCOURT</span>
+          <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-jubilee-gold shrink-0"></span>
+          <span className="text-white/80 font-sans tracking-wider hidden xs:inline">RSU</span>
         </div>
 
-        {/* Master Throwback Typography Headline */}
-        <div className="mb-4">
-          <h1 className="font-retro text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[0.95] text-white">
-            Rooted <span className="font-editorial italic font-normal text-jubilee-gold font-light tracking-normal">to</span> Rise
-          </h1>
+        {/* OFFICIAL ROOTED TO RISE ARTWORK IMAGE (Replaces text headline) */}
+        <div className="my-4 sm:my-7 flex justify-center px-2">
+          <img
+            src="/rooted-to-rise.png"
+            alt="Rooted to Rise - Official 45th Anniversary Theme"
+            className="w-[230px] xs:w-[270px] sm:w-[340px] md:w-[420px] lg:w-[480px] h-auto object-contain drop-shadow-[0_12px_30px_rgba(212,175,55,0.35)] animate-float-slow transition-all duration-300"
+          />
         </div>
         
         {/* Scriptural Theme Banner */}
-        <p className="font-editorial italic text-2xl sm:text-3xl md:text-4xl text-emerald-100/95 font-medium max-w-3xl mx-auto mb-3">
+        <p className="font-editorial italic text-xl xs:text-2xl sm:text-3xl md:text-4xl text-emerald-100/95 font-medium max-w-3xl mx-auto mb-2 sm:mb-3 px-2">
           “Honouring our Heritage, Igniting our Future”
         </p>
         
-        <p className="font-sans text-xs sm:text-sm uppercase tracking-[0.3em] text-jubilee-gold font-bold mb-6">
+        <p className="font-sans text-[11px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.3em] text-jubilee-gold font-bold mb-5 sm:mb-6">
           — ISAIAH 61:3 —
         </p>
 
-        {/* Official Date Badge */}
-        <div className="inline-flex items-center space-x-2 px-5 py-2 rounded-xl bg-emerald-900/60 border border-jubilee-gold/40 text-jubilee-lightgold text-xs sm:text-sm font-bold shadow-lg mb-8 backdrop-blur-sm">
-          <Calendar className="w-4 h-4 text-jubilee-gold" />
-          <span className="tracking-wide">NOVEMBER 13–15, 2026 • GRAND JUBILEE SABBATH: SATURDAY, NOV 14</span>
+        {/* Official Date Badge (Clean wrap on all mobile viewports) */}
+        <div className="inline-flex items-center space-x-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl bg-emerald-900/60 border border-jubilee-gold/40 text-jubilee-lightgold text-[11px] sm:text-xs font-bold shadow-lg mb-6 sm:mb-8 backdrop-blur-sm max-w-full">
+          <Calendar className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+          <span className="tracking-wide leading-tight">
+            NOV 13–15, 2026 • GRAND JUBILEE: SATURDAY, NOV 14
+          </span>
         </div>
 
         {/* Crisp Editorial Intro Paragraph */}
-        <p className="max-w-2xl mx-auto text-sm sm:text-base text-emerald-100/75 mb-10 leading-relaxed font-light">
+        <p className="max-w-2xl mx-auto text-xs sm:text-sm md:text-base text-emerald-100/75 mb-7 sm:mb-10 leading-relaxed font-light px-3">
           Celebrating 45 years of divine faithfulness, spiritual leadership, and transformative brotherhood at Rivers State University. 
           Uniting our pioneers, contemporary alumni, and global diaspora in one sacred family.
         </p>
 
-        {/* Luxury Grand Countdown Container */}
-        <div className="luxury-glass rounded-3xl p-6 sm:p-8 max-w-xl mx-auto mb-10 shadow-luxury border border-jubilee-gold/30 relative overflow-hidden group hover:border-jubilee-gold/50 transition-all duration-500">
+        {/* Luxury Grand Countdown Container (Mobile 4-grid responsive) */}
+        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-4 sm:p-7 max-w-xl mx-auto mb-8 sm:mb-10 shadow-luxury border border-jubilee-gold/30 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-jubilee-gold to-transparent"></div>
           
-          <div className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-emerald-300 font-bold mb-4 flex items-center justify-center space-x-2">
+          <div className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-emerald-300 font-bold mb-3 sm:mb-4 flex items-center justify-center space-x-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-jubilee-gold animate-ping"></span>
             <span>Countdown to Grand Jubilee Sabbath</span>
           </div>
           
-          <div className="grid grid-cols-4 gap-2.5 sm:gap-4">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-3">
             {[
               { label: 'Days', value: timeLeft.days },
               { label: 'Hours', value: timeLeft.hours },
-              { label: 'Minutes', value: timeLeft.minutes },
-              { label: 'Seconds', value: timeLeft.seconds },
+              { label: 'Mins', value: timeLeft.minutes },
+              { label: 'Secs', value: timeLeft.seconds },
             ].map((item, idx) => (
-              <div key={idx} className="bg-black/30 border border-white/[0.08] rounded-2xl p-3 sm:p-4 text-center hover:border-jubilee-gold/40 transition-colors">
-                <span className="block text-3xl sm:text-5xl font-black text-jubilee-gold font-retro tracking-tight">
+              <div key={idx} className="bg-black/35 border border-white/[0.08] rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center">
+                <span className="block text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-jubilee-gold font-retro tracking-tight leading-tight">
                   {String(item.value).padStart(2, '0')}
                 </span>
-                <span className="text-[10px] sm:text-xs text-emerald-200/80 uppercase tracking-widest font-sans font-semibold mt-1">
+                <span className="text-[9px] sm:text-xs text-emerald-200/80 uppercase tracking-widest font-sans font-semibold mt-0.5 sm:mt-1 block">
                   {item.label}
                 </span>
               </div>
@@ -110,22 +114,22 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Bespoke Action Triggers */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+        {/* Mobile Action Triggers (Full width thumb-friendly on phones) */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 px-3">
           <a
             href="#census-rsvp"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-9 py-4 rounded-full text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 group"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-8 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow active:scale-[0.98] transition-all duration-200 font-sans"
           >
-            <UserCheck className="w-4 h-4 text-emerald-950" />
+            <UserCheck className="w-4 h-4 text-emerald-950 shrink-0" />
             <span className="tracking-wide">Alumni Census & RSVP</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4" />
           </a>
 
           <a
             href="#dp-generator"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-full text-sm font-bold bg-white/[0.05] hover:bg-white/[0.1] border border-jubilee-gold/40 hover:border-jubilee-gold text-white backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 shadow-md"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-bold bg-white/[0.05] hover:bg-white/[0.1] active:scale-[0.98] border border-jubilee-gold/40 text-white backdrop-blur-md transition-all duration-200 shadow-md font-sans"
           >
-            <ImageIcon className="w-4 h-4 text-jubilee-gold" />
+            <ImageIcon className="w-4 h-4 text-jubilee-gold shrink-0" />
             <span className="tracking-wide">Create "I Will Be There" DP</span>
           </a>
         </div>
