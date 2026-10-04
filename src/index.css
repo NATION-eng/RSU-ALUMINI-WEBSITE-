@@ -8,48 +8,61 @@
   }
   body {
     background-color: #FAF7EE;
-    color: #1A241F;
+    color: #141E18;
     overflow-x: hidden;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
-/* Custom subtle scrollbar */
+/* Custom subtle luxury scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 9px;
 }
 ::-webkit-scrollbar-track {
   background: #FAF7EE;
 }
 ::-webkit-scrollbar-thumb {
-  background: #114f31;
-  border-radius: 5px;
+  background: #134D2E;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #0b3520;
+  background: #092B19;
 }
 
-/* Soft gold glow and animations */
-.gold-glow {
-  box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+/* Luxury Metallic Gold Text */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FBF3D5 0%, #D4AF37 50%, #AA820A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.emerald-glass {
-  background: rgba(11, 53, 32, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.gold-gradient-subtle {
+  background: linear-gradient(135deg, #FFF6DC 0%, #E5C365 40%, #D4AF37 70%, #9D7507 100%);
 }
 
-.cream-glass {
-  background: rgba(250, 247, 238, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.gold-border-gradient {
+  border-image: linear-gradient(to bottom right, #F3E5AB, #D4AF37, #8B6508) 1;
 }
 
-@keyframes pulseSlow {
-  0%, 100% { opacity: 0.9; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.02); }
+/* Bespoke Glassmorphism with Warm Tint */
+.luxury-glass {
+  background: rgba(9, 43, 25, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.22);
 }
 
-.animate-pulse-slow {
-  animation: pulseSlow 4s infinite ease-in-out;
+.luxury-card {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.luxury-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 35px -10px rgba(9, 43, 25, 0.15), 0 0 20px rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+/* Elegant Grain Overlay */
+.vintage-texture {
+  background-image: radial-gradient(rgba(212, 175, 55, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
 }

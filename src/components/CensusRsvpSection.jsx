@@ -1,6 +1,33 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Sparkles, Building, Phone, Mail, MapPin, Send, Download } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Sparkles, Send, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
+
+const COUNTRIES = [
+  'Nigeria',
+  'United Kingdom',
+  'United States',
+  'Canada',
+  'Ghana',
+  'South Africa',
+  'Kenya',
+  'Germany',
+  'United Arab Emirates',
+  'Australia',
+  'France',
+  'Ireland',
+  'Netherlands',
+  'Italy',
+  'Spain',
+  'Sweden',
+  'Norway',
+  'Switzerland',
+  'Saudi Arabia',
+  'Qatar',
+  'Bahamas',
+  'Jamaica',
+  'Trinidad and Tobago',
+  'Other Country'
+];
 
 export default function CensusRsvpSection() {
   const [formData, setFormData] = useState({
@@ -8,10 +35,9 @@ export default function CensusRsvpSection() {
     maidenName: '',
     gradYear: '1995',
     activePeriod: '1990–1995',
-    department: 'Civil Engineering',
-    fellowshipRoles: 'Former Choir Leader & Sanctuary Assistant',
-    currentRole: 'Senior Project Director',
-    organization: 'Shell Petroleum / Independent Practice',
+    department: '',
+    fellowshipRoles: '',
+    currentRole: '',
     phone: '',
     email: '',
     city: 'Port Harcourt',
@@ -35,20 +61,17 @@ export default function CensusRsvpSection() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate database pipeline sync (Supabase / Google Sheets)
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
 
-      // Trigger celebratory confetti
       confetti({
-        particleCount: 100,
-        spread: 80,
+        particleCount: 90,
+        spread: 75,
         origin: { y: 0.6 },
-        colors: ['#0F4D2A', '#D4AF37', '#10B981', '#FAF7EE']
+        colors: ['#092B19', '#D4AF37', '#10B981', '#FAF7EE']
       });
 
-      // Save to localStorage for persistence
       try {
         const existing = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
         existing.push({ ...formData, timestamp: new Date().toISOString() });
@@ -56,53 +79,52 @@ export default function CensusRsvpSection() {
       } catch (err) {
         console.error(err);
       }
-    }, 1200);
+    }, 1000);
   };
 
   return (
-    <section id="census-rsvp" className="py-24 px-4 sm:px-6 lg:px-8 bg-jubilee-cream text-stone-900 relative">
-      <div className="max-w-5xl mx-auto">
+    <section id="census-rsvp" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#FAF7EE] text-[#141E18] relative">
+      <div className="max-w-4xl mx-auto">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-950 text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-200">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-widest mb-3 border border-emerald-900/15">
             <Database className="w-3.5 h-3.5 text-emerald-800" />
-            <span>Dual-Purpose Database & Logistics Engine</span>
+            <span>Alumni Directory & Homecoming RSVP</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-emerald-950 tracking-tight mb-4">
-            Alumni Census & Jubilee RSVP
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-emerald-950 tracking-tight mb-3">
+            The Reunion Roll Call
           </h2>
-          <p className="text-stone-600 text-sm sm:text-base leading-relaxed">
-            Help us permanently document 45 years of Adventist graduates at Rivers State University. 
-            Your registration simultaneously enters you into the <strong>Permanent Historical Directory</strong> and reserves your seat for the 45th Anniversary Celebration.
+          <p className="text-stone-600 text-sm sm:text-base font-light leading-relaxed">
+            Record your place in 45 years of fellowship history and confirm your participation for the Jubilee weekend.
           </p>
         </div>
 
         {submitted ? (
-          <div className="bg-white rounded-3xl p-8 sm:p-14 border border-emerald-200 shadow-2xl text-center max-w-2xl mx-auto">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-emerald-800" />
+          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-emerald-800/20 shadow-luxury text-center max-w-xl mx-auto">
+            <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-800 flex items-center justify-center mx-auto mb-5 border border-emerald-100">
+              <CheckCircle className="w-9 h-9 text-emerald-800" />
             </div>
-            <h3 className="text-2xl sm:text-3xl font-serif font-bold text-emerald-950 mb-3">
-              Registration Confirmed!
+            <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950 mb-2">
+              Record Confirmed
             </h3>
-            <p className="text-stone-600 text-sm leading-relaxed mb-6">
-              Thank you, <span className="font-bold text-stone-900">{formData.fullName}</span> ({formData.gradYear}). 
-              Your alumni record has been securely committed to the ASF RSU Cloud Directory and transmitted to the Central Planning Committee (CPC).
+            <p className="text-stone-600 text-sm leading-relaxed mb-6 font-light">
+              Welcome home, <strong className="font-semibold text-stone-900">{formData.fullName}</strong> ({formData.gradYear}). 
+              Your submission has been secured in the Permanent Fellowship Archive.
             </p>
 
-            <div className="bg-emerald-50 rounded-2xl p-4 text-xs text-emerald-900 border border-emerald-200 mb-8 text-left space-y-1">
-              <div><strong>Confirmation ID:</strong> ASF-45TH-{Math.floor(100000 + Math.random() * 900000)}</div>
-              <div><strong>Attendance Mode:</strong> {formData.attendanceMode === 'PHYSICAL' ? 'Physical on Campus (Port Harcourt)' : 'Virtual via HD Global Livestream'}</div>
-              <div><strong>Cohort Set:</strong> {formData.gradYear} ({formData.department})</div>
+            <div className="bg-emerald-950/5 rounded-2xl p-4 text-xs text-emerald-950 border border-emerald-900/10 mb-8 text-left space-y-1.5 font-sans">
+              <div><strong>Registration Tag:</strong> ASF-45TH-{Math.floor(100000 + Math.random() * 900000)}</div>
+              <div><strong>Mode:</strong> {formData.attendanceMode === 'PHYSICAL' ? 'Physical on Campus (Port Harcourt)' : 'Virtual via Global HD Livestream'}</div>
+              <div><strong>Location:</strong> {formData.city}, {formData.country}</div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
                 href="#dp-generator"
-                className="w-full sm:w-auto px-6 py-3 rounded-full text-xs font-bold bg-emerald-900 text-white hover:bg-emerald-800 transition-colors shadow-md"
+                className="w-full sm:w-auto px-6 py-3 rounded-full text-xs font-bold bg-emerald-950 text-white hover:bg-emerald-900 shadow-md transition-all"
               >
-                Create Your "I Will Be There" DP
+                Generate Your 45th DP
               </a>
               <button
                 onClick={() => setSubmitted(false)}
@@ -113,28 +135,23 @@ export default function CensusRsvpSection() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-stone-200 shadow-xl p-6 sm:p-12 space-y-10">
+          <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-stone-200/90 shadow-luxury p-6 sm:p-10 space-y-8">
             
-            {/* PART 1: Permanent Alumni Census */}
+            {/* Step 1: Member Profile */}
             <div>
-              <div className="flex items-center space-x-3 pb-4 mb-6 border-b border-stone-100">
-                <div className="w-8 h-8 rounded-full bg-emerald-900 text-jubilee-gold flex items-center justify-center font-bold text-sm">
+              <div className="flex items-center space-x-3 pb-3 mb-6 border-b border-stone-100">
+                <span className="w-7 h-7 rounded-full bg-emerald-950 text-jubilee-gold flex items-center justify-center font-bold text-xs font-retro">
                   1
-                </div>
-                <div>
-                  <h3 className="text-lg font-serif font-bold text-emerald-950">
-                    Permanent RSU Alumni Census Directory (1981–2026)
-                  </h3>
-                  <p className="text-xs text-stone-500">
-                    Capturing chapter member archives across four graduating decades
-                  </p>
-                </div>
+                </span>
+                <h3 className="text-base sm:text-lg font-retro font-bold text-emerald-950">
+                  Historical Member Profile (1981–2026)
+                </h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-sans">
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Full Name (First, Middle, Surname) *
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Full Name *
                   </label>
                   <input
                     type="text"
@@ -142,14 +159,14 @@ export default function CensusRsvpSection() {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
-                    placeholder="e.g. Arc. Ebiere Williams"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
+                    placeholder="First and last name"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Maiden Name (If Applicable)
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Maiden Name (if applicable)
                   </label>
                   <input
                     type="text"
@@ -157,19 +174,19 @@ export default function CensusRsvpSection() {
                     value={formData.maidenName}
                     onChange={handleChange}
                     placeholder="Optional"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Graduation Year / Set (1981–2026) *
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Graduation Year / Set *
                   </label>
                   <select
                     name="gradYear"
                     value={formData.gradYear}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none bg-white font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none bg-white text-sm font-medium"
                   >
                     {Array.from({ length: 46 }, (_, i) => 2026 - i).map(year => (
                       <option key={year} value={year}>{year} {year <= 1999 ? '(Pioneer Cohort)' : '(Contemporary)'}</option>
@@ -178,8 +195,8 @@ export default function CensusRsvpSection() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Department & Faculty at RSU *
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Department / Faculty at RSU *
                   </label>
                   <input
                     type="text"
@@ -187,41 +204,13 @@ export default function CensusRsvpSection() {
                     name="department"
                     value={formData.department}
                     onChange={handleChange}
-                    placeholder="e.g. Electrical Engineering / Faculty of Eng."
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
+                    placeholder="e.g. Civil Engineering"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Current Professional Role / Title
-                  </label>
-                  <input
-                    type="text"
-                    name="currentRole"
-                    value={formData.currentRole}
-                    onChange={handleChange}
-                    placeholder="e.g. Managing Director / Consultant Physician"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Fellowship Positions Held While on Campus
-                  </label>
-                  <input
-                    type="text"
-                    name="fellowshipRoles"
-                    value={formData.fellowshipRoles}
-                    onChange={handleChange}
-                    placeholder="e.g. Exco President, Choir Member, Sanctuary, Member"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
                     WhatsApp Phone Number *
                   </label>
                   <input
@@ -230,13 +219,13 @@ export default function CensusRsvpSection() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="+234 800 000 0000"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
+                    placeholder="+234..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
                     Email Address *
                   </label>
                   <input
@@ -245,14 +234,15 @@ export default function CensusRsvpSection() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="youremail@domain.com"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
+                    placeholder="youremail@example.com"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
 
+                {/* Updated: Current City only */}
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Current City & Country of Residence *
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Current City *
                   </label>
                   <input
                     type="text"
@@ -261,47 +251,76 @@ export default function CensusRsvpSection() {
                     value={formData.city}
                     onChange={handleChange}
                     placeholder="e.g. Port Harcourt, Lagos, London, Houston"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
+                  />
+                </div>
+
+                {/* Updated: Country Selector Dropdown */}
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Country *
+                  </label>
+                  <select
+                    required
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none bg-white text-sm font-medium"
+                  >
+                    {COUNTRIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Current Profession / Organization
+                  </label>
+                  <input
+                    type="text"
+                    name="currentRole"
+                    value={formData.currentRole}
+                    onChange={handleChange}
+                    placeholder="e.g. Lead Consultant, Federal Ministry"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                    Country / Diaspora Region
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Fellowship Positions Held on Campus
                   </label>
                   <input
                     type="text"
-                    name="country"
-                    value={formData.country}
+                    name="fellowshipRoles"
+                    value={formData.fellowshipRoles}
                     onChange={handleChange}
-                    placeholder="e.g. Nigeria, United Kingdom, USA, Canada"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none"
+                    placeholder="e.g. Choir Director, Exco President, Member"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
             </div>
 
-            {/* PART 2: 45th Jubilee Event RSVP */}
+            {/* Step 2: 45th Jubilee RSVP */}
             <div>
-              <div className="flex items-center space-x-3 pb-4 mb-6 border-b border-stone-100">
-                <div className="w-8 h-8 rounded-full bg-emerald-900 text-jubilee-gold flex items-center justify-center font-bold text-sm">
+              <div className="flex items-center space-x-3 pb-3 mb-6 border-b border-stone-100">
+                <span className="w-7 h-7 rounded-full bg-emerald-950 text-jubilee-gold flex items-center justify-center font-bold text-xs font-retro">
                   2
-                </div>
-                <div>
-                  <h3 className="text-lg font-serif font-bold text-emerald-950">
-                    45th Jubilee Homecoming RSVP & Headcount Tracker
-                  </h3>
-                  <p className="text-xs text-stone-500">
-                    Logistical data for the Central Planning Committee (CPC)
-                  </p>
-                </div>
+                </span>
+                <h3 className="text-base sm:text-lg font-retro font-bold text-emerald-950">
+                  Homecoming Attendance (Nov 13–15, 2026)
+                </h3>
               </div>
 
-              {/* Participation Mode Selection */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              {/* Attendance Selector */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5 font-sans">
                 <label className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                   formData.attendanceMode === 'PHYSICAL'
-                    ? 'border-emerald-800 bg-emerald-50/70 text-emerald-950'
+                    ? 'border-emerald-800 bg-emerald-50/70 text-emerald-950 shadow-sm'
                     : 'border-stone-200 hover:border-stone-300'
                 }`}>
                   <input
@@ -312,15 +331,13 @@ export default function CensusRsvpSection() {
                     onChange={handleChange}
                     className="sr-only"
                   />
-                  <div className="font-bold text-sm">Physical Attendance (On Campus)</div>
-                  <div className="text-xs text-stone-500 mt-1">
-                    Attending physically at Rivers State University, Port Harcourt.
-                  </div>
+                  <div className="font-bold text-sm">Physical Attendance</div>
+                  <div className="text-xs text-stone-500 mt-0.5">Attending on-ground at RSU Campus, Port Harcourt.</div>
                 </label>
 
                 <label className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                   formData.attendanceMode === 'VIRTUAL'
-                    ? 'border-emerald-800 bg-emerald-50/70 text-emerald-950'
+                    ? 'border-emerald-800 bg-emerald-50/70 text-emerald-950 shadow-sm'
                     : 'border-stone-200 hover:border-stone-300'
                 }`}>
                   <input
@@ -331,32 +348,30 @@ export default function CensusRsvpSection() {
                     onChange={handleChange}
                     className="sr-only"
                   />
-                  <div className="font-bold text-sm">Virtual Diaspora Participation</div>
-                  <div className="text-xs text-stone-500 mt-1">
-                    Joining the HD multi-camera global livestream & digital communion.
-                  </div>
+                  <div className="font-bold text-sm">Virtual Attendance</div>
+                  <div className="text-xs text-stone-500 mt-0.5">Participating via HD Diaspora Livestream.</div>
                 </label>
               </div>
 
               {formData.attendanceMode === 'PHYSICAL' && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm p-4 bg-stone-50 rounded-2xl border border-stone-200/70 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm p-4 bg-stone-50 rounded-2xl border border-stone-200/80 mb-5 font-sans">
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                      Accommodation Assistance Requested?
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Accommodation Assistance Needed?
                     </label>
                     <select
                       name="accommodationNeeded"
                       value={formData.accommodationNeeded}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-stone-300 bg-white font-medium"
+                      className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-xs font-medium"
                     >
-                      <option value="NO">No, I have private arrangements</option>
-                      <option value="YES">Yes, please recommend/reserve partner hotel</option>
+                      <option value="NO">No, personal arrangements</option>
+                      <option value="YES">Yes, recommend partner hotel</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
                       Expected Arrival Date
                     </label>
                     <input
@@ -364,47 +379,47 @@ export default function CensusRsvpSection() {
                       name="arrivalDate"
                       value={formData.arrivalDate}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-stone-300 bg-white font-medium"
-                    >
-                    </input>
+                      className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white text-xs font-medium"
+                    />
                   </div>
                 </div>
               )}
 
-              {/* Memory / Tribute for Compendium */}
+              {/* Memory Tribute */}
               <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                  Share a Brief Memory or Tribute for the 45th Jubilee Compendium (Optional)
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Memory or Tribute for the 45th Compendium (Optional)
                 </label>
                 <textarea
-                  rows="3"
+                  rows="2"
                   name="tributeQuote"
                   value={formData.tributeQuote}
                   onChange={handleChange}
-                  placeholder="Share a sentence or memory about your days in ASF RSU. Selected tributes will be featured in the official Alumni Magazine."
-                  className="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 outline-none text-sm"
+                  placeholder="Share a sentence or memory about your fellowship days at RSU."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none text-sm font-sans"
                 />
               </div>
 
             </div>
 
-            {/* Submit Button */}
-            <div className="pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-xs text-stone-500">
-                🔒 Protected by automated SSL encryption & synchronized with cloud database.
+            {/* Submit */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-stone-100">
+              <div className="text-[11px] text-stone-400 font-sans flex items-center space-x-1">
+                <ShieldCheck className="w-4 h-4 text-emerald-800" />
+                <span>Encrypted transmission to Central Planning Committee</span>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-xl text-base font-extrabold bg-gradient-to-r from-emerald-900 to-emerald-800 text-white shadow-xl hover:bg-emerald-750 transition-all hover:scale-105 disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-3.5 rounded-xl text-sm font-bold bg-emerald-950 text-white shadow-luxury hover:bg-emerald-900 transition-all hover:-translate-y-0.5 disabled:opacity-50"
               >
                 {loading ? (
-                  <span>Transmitting Record...</span>
+                  <span>Recording...</span>
                 ) : (
                   <>
                     <Send className="w-4 h-4 text-jubilee-gold" />
-                    <span>Submit Alumni Record & Confirm RSVP</span>
+                    <span>Submit & Reserve Seat</span>
                   </>
                 )}
               </button>

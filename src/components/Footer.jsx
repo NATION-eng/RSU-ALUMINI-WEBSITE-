@@ -19,20 +19,20 @@ export default function Footer() {
                 </div>
               </div>
               <div>
-                <span className="font-display font-bold text-white text-base tracking-wide">
+                <span className="font-retro font-bold text-white text-base tracking-wide">
                   ADVENTIST STUDENTS' FELLOWSHIP
                 </span>
-                <p className="text-xs text-stone-400">
+                <p className="text-xs text-stone-400 font-sans font-light">
                   Rivers State University (RSU), Port Harcourt, Nigeria
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-stone-400 leading-relaxed max-w-sm">
+            <p className="text-xs text-stone-400 font-sans font-light leading-relaxed max-w-sm">
               Commemorating 45 years of divine guidance, spiritual growth, and servant leadership (1981–2026). Uniting generations of graduates in faith and fellowship.
             </p>
 
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs text-jubilee-lightgold italic max-w-sm font-serif">
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs text-jubilee-lightgold italic max-w-sm font-editorial text-sm">
               “Rooted to Rise: Honouring our Heritage, Igniting our Future” — Isaiah 61:3
             </div>
           </div>

@@ -389,20 +389,20 @@ export default function DpGenerator() {
   };
 
   return (
-    <section id="dp-generator" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-stone-900 via-emerald-950 to-stone-900 text-white relative">
-      <div className="max-w-7xl mx-auto">
+    <section id="dp-generator" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture">
+      <div className="max-w-6xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-jubilee-gold/20 text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-wider mb-3">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/[0.04] text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-widest mb-3">
             <Sparkles className="w-3.5 h-3.5 text-jubilee-gold" />
-            <span>Official Jubilee Mobilization Engine</span>
+            <span>Official Jubilee Mobilization</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-white tracking-tight mb-3">
             "I Will Be There" DP Generator
           </h2>
-          <p className="text-emerald-100/80 text-sm sm:text-base leading-relaxed">
-            Personalize your 45th Anniversary commemorative badge and join alumni across four decades in broadcasting our Jubilee on WhatsApp Status, Facebook, and LinkedIn!
+          <p className="text-emerald-100/75 text-sm sm:text-base font-light leading-relaxed">
+            Personalize your commemorative badge and broadcast the Jubilee across WhatsApp and social media.
           </p>
         </div>
 

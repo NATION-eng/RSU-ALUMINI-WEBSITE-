@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Sparkles, Image as ImageIcon, UserCheck, ArrowRight, Heart } from 'lucide-react';
+import { Calendar, Sparkles, Image as ImageIcon, UserCheck, ArrowRight } from 'lucide-react';
 
 export default function Hero() {
   // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
@@ -33,66 +33,76 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center pt-28 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white overflow-hidden">
+    <section className="relative min-h-[95vh] flex items-center justify-center pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white overflow-hidden vintage-texture">
       
-      {/* Decorative background glows & patterns */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-emerald-500 rounded-full blur-[140px] opacity-40"></div>
-        <div className="absolute -top-24 right-10 w-96 h-96 bg-jubilee-gold rounded-full blur-[120px] opacity-25"></div>
-        <div className="absolute -bottom-20 left-10 w-96 h-96 bg-emerald-600 rounded-full blur-[120px] opacity-30"></div>
+      {/* Bespoke Luxury Ambient Glows */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-gradient-to-b from-emerald-800/25 to-transparent rounded-full blur-[140px]"></div>
+        <div className="absolute top-1/3 -left-36 w-[450px] h-[450px] bg-jubilee-gold/10 rounded-full blur-[130px] animate-float-slow"></div>
+        <div className="absolute bottom-10 -right-36 w-[500px] h-[500px] bg-emerald-700/15 rounded-full blur-[140px] animate-float-slow" style={{ animationDelay: '3.5s' }}></div>
       </div>
 
       <div className="relative max-w-5xl mx-auto text-center z-10">
         
-        {/* Jubilee Seal Header Badge */}
-        <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-jubilee-gold/40 text-jubilee-lightgold text-xs sm:text-sm font-semibold mb-6 shadow-lg animate-pulse-slow">
-          <Sparkles className="w-4 h-4 text-jubilee-gold animate-spin" style={{ animationDuration: '8s' }} />
-          <span>NOVEMBER 13–15, 2026 • 45TH JUBILEE ALUMNI HOMECOMING</span>
+        {/* Heritage Pill Tag */}
+        <div className="inline-flex items-center space-x-2.5 px-5 py-2 rounded-full bg-white/[0.04] backdrop-blur-md border border-jubilee-gold/30 text-jubilee-lightgold text-xs sm:text-sm font-semibold tracking-wider mb-8 shadow-luxury">
+          <Sparkles className="w-4 h-4 text-jubilee-gold" />
+          <span className="font-sans uppercase tracking-[0.2em] text-[11px] sm:text-xs">
+            1981 – 2026 • 45TH JUBILEE CELEBRATION
+          </span>
           <span className="w-1.5 h-1.5 rounded-full bg-jubilee-gold"></span>
-          <span className="text-white/80">RIVERS STATE UNIVERSITY</span>
+          <span className="text-white/80 font-sans tracking-wider text-[11px] sm:text-xs">RSU PORT HARCOURT</span>
         </div>
 
-        {/* Biblical Theme */}
-        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-tight mb-4 drop-shadow-md">
-          Rooted to <span className="bg-gradient-to-r from-jubilee-lightgold via-jubilee-gold to-amber-400 bg-clip-text text-transparent">Rise</span>
-        </h1>
+        {/* Master Throwback Typography Headline */}
+        <div className="mb-4">
+          <h1 className="font-retro text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[0.95] text-white">
+            Rooted <span className="font-editorial italic font-normal text-jubilee-gold font-light tracking-normal">to</span> Rise
+          </h1>
+        </div>
         
-        <p className="font-serif italic text-lg sm:text-2xl text-emerald-200/90 font-medium max-w-3xl mx-auto mb-3">
+        {/* Scriptural Theme Banner */}
+        <p className="font-editorial italic text-2xl sm:text-3xl md:text-4xl text-emerald-100/95 font-medium max-w-3xl mx-auto mb-3">
           “Honouring our Heritage, Igniting our Future”
         </p>
         
-        <p className="text-xs sm:text-sm uppercase tracking-widest text-jubilee-gold font-bold mb-4">
+        <p className="font-sans text-xs sm:text-sm uppercase tracking-[0.3em] text-jubilee-gold font-bold mb-6">
           — ISAIAH 61:3 —
         </p>
 
-        <div className="inline-block px-4 py-1 rounded-full bg-jubilee-gold/15 border border-jubilee-gold/30 text-jubilee-lightgold text-xs font-bold mb-8">
-          📅 November 13th – 15th, 2026 • Grand Jubilee Sabbath: Saturday, November 14th
+        {/* Official Date Badge */}
+        <div className="inline-flex items-center space-x-2 px-5 py-2 rounded-xl bg-emerald-900/60 border border-jubilee-gold/40 text-jubilee-lightgold text-xs sm:text-sm font-bold shadow-lg mb-8 backdrop-blur-sm">
+          <Calendar className="w-4 h-4 text-jubilee-gold" />
+          <span className="tracking-wide">NOVEMBER 13–15, 2026 • GRAND JUBILEE SABBATH: SATURDAY, NOV 14</span>
         </div>
 
-        <p className="max-w-2xl mx-auto text-sm sm:text-base text-emerald-100/80 mb-10 leading-relaxed font-light">
-          Welcome to the official 45-year commemorative portal of the Adventist Students’ Fellowship (RSU Chapter). 
-          Four decades of divine guidance, spiritual leadership, and transformative brotherhood—uniting our pioneers, contemporary alumni, and global diaspora.
+        {/* Crisp Editorial Intro Paragraph */}
+        <p className="max-w-2xl mx-auto text-sm sm:text-base text-emerald-100/75 mb-10 leading-relaxed font-light">
+          Celebrating 45 years of divine faithfulness, spiritual leadership, and transformative brotherhood at Rivers State University. 
+          Uniting our pioneers, contemporary alumni, and global diaspora in one sacred family.
         </p>
 
-        {/* Countdown Box */}
-        <div className="bg-emerald-950/80 border border-jubilee-gold/30 rounded-2xl p-4 sm:p-6 backdrop-blur-md max-w-xl mx-auto mb-10 shadow-2xl">
-          <div className="text-xs uppercase tracking-widest text-emerald-300 font-bold mb-3 flex items-center justify-center space-x-2">
-            <Calendar className="w-3.5 h-3.5 text-jubilee-gold" />
-            <span>Countdown to Grand Jubilee Sabbath (Saturday, Nov 14, 2026)</span>
+        {/* Luxury Grand Countdown Container */}
+        <div className="luxury-glass rounded-3xl p-6 sm:p-8 max-w-xl mx-auto mb-10 shadow-luxury border border-jubilee-gold/30 relative overflow-hidden group hover:border-jubilee-gold/50 transition-all duration-500">
+          <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-jubilee-gold to-transparent"></div>
+          
+          <div className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-emerald-300 font-bold mb-4 flex items-center justify-center space-x-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-jubilee-gold animate-ping"></span>
+            <span>Countdown to Grand Jubilee Sabbath</span>
           </div>
           
-          <div className="grid grid-cols-4 gap-2 sm:gap-4">
+          <div className="grid grid-cols-4 gap-2.5 sm:gap-4">
             {[
               { label: 'Days', value: timeLeft.days },
               { label: 'Hours', value: timeLeft.hours },
               { label: 'Minutes', value: timeLeft.minutes },
               { label: 'Seconds', value: timeLeft.seconds },
             ].map((item, idx) => (
-              <div key={idx} className="bg-white/5 border border-white/10 rounded-xl p-2 sm:p-3 text-center">
-                <span className="block text-2xl sm:text-4xl font-extrabold text-jubilee-gold font-mono">
+              <div key={idx} className="bg-black/30 border border-white/[0.08] rounded-2xl p-3 sm:p-4 text-center hover:border-jubilee-gold/40 transition-colors">
+                <span className="block text-3xl sm:text-5xl font-black text-jubilee-gold font-retro tracking-tight">
                   {String(item.value).padStart(2, '0')}
                 </span>
-                <span className="text-[10px] sm:text-xs text-emerald-200 uppercase tracking-wider font-semibold">
+                <span className="text-[10px] sm:text-xs text-emerald-200/80 uppercase tracking-widest font-sans font-semibold mt-1">
                   {item.label}
                 </span>
               </div>
@@ -100,44 +110,24 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+        {/* Bespoke Action Triggers */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
           <a
             href="#census-rsvp"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-8 py-3.5 rounded-full text-base font-bold bg-gradient-to-r from-jubilee-gold via-amber-400 to-yellow-500 text-emerald-950 shadow-xl hover:shadow-jubilee-gold/40 hover:scale-105 transition-all duration-200 group"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-9 py-4 rounded-full text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 group"
           >
-            <UserCheck className="w-5 h-5 text-emerald-950" />
-            <span>Alumni Census & RSVP</span>
+            <UserCheck className="w-4 h-4 text-emerald-950" />
+            <span className="tracking-wide">Alumni Census & RSVP</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
 
           <a
             href="#dp-generator"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-8 py-3.5 rounded-full text-base font-bold bg-white/10 hover:bg-white/20 border border-jubilee-gold/40 text-white backdrop-blur-md hover:scale-105 transition-all duration-200 shadow-md"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-full text-sm font-bold bg-white/[0.05] hover:bg-white/[0.1] border border-jubilee-gold/40 hover:border-jubilee-gold text-white backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 shadow-md"
           >
-            <ImageIcon className="w-5 h-5 text-jubilee-gold" />
-            <span>Create "I Will Be There" DP</span>
+            <ImageIcon className="w-4 h-4 text-jubilee-gold" />
+            <span className="tracking-wide">Create "I Will Be There" DP</span>
           </a>
-        </div>
-
-        {/* Quick Assurance Badges */}
-        <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-emerald-200/80">
-          <div className="flex items-center justify-center space-x-2">
-            <span className="text-jubilee-gold font-bold">✓</span>
-            <span>1981–2026 Sets Welcome</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2">
-            <span className="text-jubilee-gold font-bold">✓</span>
-            <span>Worldwide Diaspora Access</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2">
-            <span className="text-jubilee-gold font-bold">✓</span>
-            <span>Physical & Virtual RSVP</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2">
-            <span className="text-jubilee-gold font-bold">✓</span>
-            <span>Permanent Cloud Archive</span>
-          </div>
         </div>
 
       </div>
