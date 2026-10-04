@@ -34,19 +34,17 @@ export default function CensusRsvpSection() {
   const [formData, setFormData] = useState({
     fullName: '',
     maidenName: '',
-    gradYear: '1995',
-    activePeriod: '1990–1995',
+    gradYear: '',
     department: '',
     fellowshipRoles: '',
     currentRole: '',
     phone: '',
     email: '',
-    city: 'Port Harcourt',
+    city: '',
     country: 'Nigeria',
     attendanceMode: 'PHYSICAL', // 'PHYSICAL' | 'VIRTUAL'
     arrivalDate: '2026-11-13',
     accommodationNeeded: 'NO',
-    dietaryNotes: '',
     tributeQuote: '',
     willingToSupport: false,
     supportCategory: 'General Homecoming Support',
@@ -75,7 +73,11 @@ export default function CensusRsvpSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setSubmitError('');
+    if (!formData.gradYear) {
+      setSubmitError('Please select your graduation set year.');
+      setLoading(false);
+      return;
+    }
 
     const tag = `ASF-45TH-${Math.floor(100000 + Math.random() * 900000)}`;
 
@@ -247,11 +249,13 @@ export default function CensusRsvpSection() {
                     Graduation Year / Set *
                   </label>
                   <select
+                    required
                     name="gradYear"
                     value={formData.gradYear}
                     onChange={handleChange}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none bg-white text-sm font-medium"
                   >
+                    <option value="">Select Graduation Set Year *</option>
                     {Array.from({ length: 46 }, (_, i) => 2026 - i).map(year => (
                       <option key={year} value={year}>{year} {year <= 1999 ? '(Pioneer Cohort)' : '(Contemporary)'}</option>
                     ))}

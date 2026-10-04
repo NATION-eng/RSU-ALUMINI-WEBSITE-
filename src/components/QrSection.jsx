@@ -10,7 +10,7 @@ export default function QrSection() {
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    if (typeof window !== 'undefined' && window.location.origin) {
       setSiteUrl(window.location.origin);
     }
   }, []);

@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { 
   Shield, Lock, Search, Filter, Download, CheckCircle, XCircle, 
   Users, UserCheck, HeartHandshake, Hotel, RefreshCw, Eye, ArrowLeft,
-  Calendar, Phone, Mail, MapPin, Award, Check, Sparkles
+  Calendar, Phone, Mail, MapPin, Award, Check, Sparkles, Trash2
 } from 'lucide-react';
 
 export default function AdminDashboard({ onBackToSite }) {
@@ -86,6 +86,33 @@ export default function AdminDashboard({ onBackToSite }) {
         );
         if (selectedAttendee?.id === attendee.id) {
           setSelectedAttendee(prev => ({ ...prev, checked_in: newStatus, checked_in_at: now }));
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Delete attendee (For purging test data or duplicates)
+  const deleteAttendee = async (attendee) => {
+    if (!window.confirm(`Are you sure you want to delete the registration for "${attendee.full_name}" (${attendee.registration_tag})?`)) {
+      return;
+    }
+    setUpdatingId(attendee.id);
+    try {
+      const { error } = await supabase
+        .from('alumni_registrations')
+        .delete()
+        .eq('id', attendee.id);
+
+      if (error) {
+        alert('Notice: ' + error.message);
+      } else {
+        setRegistrations(prev => prev.filter(r => r.id !== attendee.id));
+        if (selectedAttendee?.id === attendee.id) {
+          setSelectedAttendee(null);
         }
       }
     } catch (err) {
@@ -612,14 +639,21 @@ export default function AdminDashboard({ onBackToSite }) {
                         </button>
                       </td>
 
-                      {/* Details View */}
-                      <td className="px-4 py-3.5 text-right">
+                      {/* Details & Actions View */}
+                      <td className="px-4 py-3.5 text-right whitespace-nowrap space-x-1.5">
                         <button
                           onClick={() => setSelectedAttendee(attendee)}
-                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-jubilee-lightgold transition-colors"
+                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-jubilee-lightgold transition-colors inline-block"
                           title="View Full Profile"
                         >
                           <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteAttendee(attendee)}
+                          className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 transition-colors inline-block"
+                          title="Delete Record"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </td>
                     </tr>
@@ -733,17 +767,27 @@ export default function AdminDashboard({ onBackToSite }) {
               )}
             </div>
 
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-              <button
-                onClick={() => toggleCheckIn(selectedAttendee)}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  selectedAttendee.checked_in
-                    ? 'bg-teal-500 text-emerald-950 hover:bg-teal-400'
-                    : 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-extrabold'
-                }`}
-              >
-                {selectedAttendee.checked_in ? 'Mark as Not Checked In' : 'Accredit & Check In'}
-              </button>
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleCheckIn(selectedAttendee)}
+                  className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    selectedAttendee.checked_in
+                      ? 'bg-teal-500 text-emerald-950 hover:bg-teal-400'
+                      : 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-extrabold'
+                  }`}
+                >
+                  {selectedAttendee.checked_in ? 'Mark as Not Checked In' : 'Accredit & Check In'}
+                </button>
+
+                <button
+                  onClick={() => deleteAttendee(selectedAttendee)}
+                  className="p-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs transition-colors"
+                  title="Delete Record"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
 
               <button
                 onClick={() => setSelectedAttendee(null)}

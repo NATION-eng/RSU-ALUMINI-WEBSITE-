@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Play, Volume2, Radio, Sparkles } from 'lucide-react';
+import { Play, Volume2, Radio, Sparkles, X, Tv, Bell } from 'lucide-react';
 
 export default function MediaSection() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   return (
     <section id="media-hub" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture">
@@ -26,13 +27,16 @@ export default function MediaSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-8">
           
           {/* Main Video Showcase */}
-          <div className="lg:col-span-8 bg-black/40 rounded-3xl overflow-hidden border border-white/10 shadow-luxury flex flex-col justify-between group">
+          <div 
+            onClick={() => setShowVideoModal(true)}
+            className="lg:col-span-8 bg-black/40 rounded-3xl overflow-hidden border border-white/10 shadow-luxury flex flex-col justify-between group cursor-pointer hover:border-jubilee-gold/40 transition-all"
+          >
             <div className="relative aspect-video bg-[#072013] flex items-center justify-center overflow-hidden">
               
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
               
               <div className="relative text-center p-6 z-10">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-jubilee-gold to-amber-300 text-emerald-950 flex items-center justify-center mx-auto mb-4 shadow-luxury group-hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-jubilee-gold to-amber-300 text-emerald-950 flex items-center justify-center mx-auto mb-4 shadow-luxury group-hover:scale-110 transition-transform duration-300">
                   <Play className="w-8 h-8 ml-1 text-emerald-950 fill-current" />
                 </div>
                 <span className="inline-block px-3 py-1 rounded-full bg-emerald-900/90 text-jubilee-lightgold text-[10px] font-bold uppercase tracking-widest mb-2 border border-jubilee-gold/30">
@@ -146,6 +150,57 @@ export default function MediaSection() {
         </div>
 
       </div>
+
+      {/* Official Media & Broadcast Modal */}
+      {showVideoModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-[#051A0F] border-2 border-jubilee-gold/50 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative text-white text-center space-y-4">
+            <button
+              onClick={() => setShowVideoModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-stone-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-16 h-16 rounded-2xl bg-emerald-950/80 border border-jubilee-gold/40 text-jubilee-gold flex items-center justify-center mx-auto shadow-luxury">
+              <Tv className="w-8 h-8 text-jubilee-gold" />
+            </div>
+
+            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-wider">
+              <Radio className="w-3.5 h-3.5 text-jubilee-gold animate-pulse" />
+              <span>Official 45th Live Broadcast Channel</span>
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-retro font-bold text-white">
+              Live Stream & Documentary Center
+            </h3>
+
+            <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
+              The official multi-camera high-definition livestream will broadcast live from the RSU Amphitheatre starting <strong>Friday, November 13, 2026</strong>.
+            </p>
+
+            <div className="bg-black/50 p-4 rounded-2xl border border-white/10 text-left text-xs space-y-2 font-sans">
+              <div className="flex items-center space-x-2 text-emerald-300 font-semibold">
+                <Bell className="w-4 h-4 text-jubilee-gold shrink-0" />
+                <span>Streaming Schedule (Port Harcourt Local Time):</span>
+              </div>
+              <ul className="text-stone-300 space-y-1 pl-6 list-disc text-[11px]">
+                <li><strong>Nov 13 (6:00 PM):</strong> Opening Sunset Vespers</li>
+                <li><strong>Nov 14 (8:30 AM):</strong> Grand Jubilee Sabbath Service & Roll Call</li>
+                <li><strong>Nov 14 (4:00 PM):</strong> Combined 4-Decade Mass Choir Cantata</li>
+                <li><strong>Nov 15 (10:00 AM):</strong> Alumni Legacy Banquet & Awards</li>
+              </ul>
+            </div>
+
+            <button
+              onClick={() => setShowVideoModal(false)}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs uppercase tracking-wider shadow-luxury active:scale-95 transition-all"
+            >
+              Close Window
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

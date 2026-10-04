@@ -25,8 +25,8 @@ function drawSafeRoundRect(ctx, x, y, width, height, radius) {
 export default function DpGenerator() {
   const [image, setImage] = useState(null);
   const [hasCustomPhoto, setHasCustomPhoto] = useState(false);
-  const [name, setName] = useState('Elder Tamuno Briggs');
-  const [gradSet, setGradSet] = useState("Class of '94");
+  const [name, setName] = useState('');
+  const [gradSet, setGradSet] = useState('');
   const [cohortBadge, setCohortBadge] = useState('Pioneer Cohort (1981–1999)');
   const [zoom, setZoom] = useState(1);
   const [panX, setPanX] = useState(0);
@@ -321,11 +321,12 @@ export default function DpGenerator() {
       ctx.stroke();
 
       // Row A: User Name (Majestic Display Typography)
-      ctx.fillStyle = '#FFFFFF';
+      const isPlaceholderName = !name.trim();
+      const displayName = isPlaceholderName ? 'YOUR FULL NAME' : name.trim();
+      ctx.fillStyle = isPlaceholderName ? 'rgba(255, 255, 255, 0.45)' : '#FFFFFF';
       ctx.textAlign = 'center';
 
       // Dynamic font sizing if name is long
-      const displayName = name.trim() || 'Distinguished Alumnus';
       if (displayName.length > 28) {
         ctx.font = 'bold 36px "Playfair Display", Georgia, serif';
       } else if (displayName.length > 20) {
@@ -339,7 +340,7 @@ export default function DpGenerator() {
       ctx.fillStyle = '#34D399'; // Mint Glow
       ctx.font = 'bold 25px "Plus Jakarta Sans", sans-serif';
       ctx.letterSpacing = '1px';
-      const setDisplay = gradSet.trim() ? `${gradSet} • ` : '';
+      const setDisplay = gradSet.trim() ? `${gradSet.trim()} • ` : '';
       ctx.fillText(`${setDisplay}${cohortBadge}`.toUpperCase(), size / 2, bottomCardY + 116);
 
       // Row C: Thin Gold Divider
@@ -372,6 +373,14 @@ export default function DpGenerator() {
   // Robust Download Function
   const handleDownload = () => {
     setErrorMessage('');
+    if (!hasCustomPhoto) {
+      setErrorMessage('Please upload your photo before downloading your personalized DP.');
+      return;
+    }
+    if (!name.trim()) {
+      setErrorMessage('Please enter your full name in the box below before downloading.');
+      return;
+    }
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
 
@@ -556,7 +565,7 @@ export default function DpGenerator() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Elder Tamuno Briggs"
+                  placeholder="Type your full name (e.g. Dr. Grace Amadi / Bro. Emmanuel)"
                   className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-jubilee-gold text-sm font-medium"
                 />
               </div>
@@ -570,7 +579,7 @@ export default function DpGenerator() {
                   type="text"
                   value={gradSet}
                   onChange={(e) => setGradSet(e.target.value)}
-                  placeholder="e.g. Class of '94, Set of 2012, or 1985"
+                  placeholder="e.g. Class of 1994, Set of 2012, or 1985"
                   className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-jubilee-gold text-sm font-medium"
                 />
               </div>

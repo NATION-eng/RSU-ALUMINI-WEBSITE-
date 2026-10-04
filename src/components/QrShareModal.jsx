@@ -11,8 +11,7 @@ export default function QrShareModal({ isOpen, onClose }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // If running in browser and has custom host, update siteUrl or keep asfrsu.org default
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    if (typeof window !== 'undefined' && window.location.origin) {
       setSiteUrl(window.location.origin);
     }
   }, []);
