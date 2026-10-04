@@ -46,7 +46,10 @@ export default function CensusRsvpSection() {
     arrivalDate: '2026-11-13',
     accommodationNeeded: 'NO',
     dietaryNotes: '',
-    tributeQuote: ''
+    tributeQuote: '',
+    willingToSupport: false,
+    supportCategory: 'General Homecoming Support',
+    supportPledge: ''
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -400,6 +403,86 @@ export default function CensusRsvpSection() {
                 />
               </div>
 
+            </div>
+
+            {/* Step 3: BOLD SUPPORT & JUBILEE SPONSORSHIP */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#051A0F] via-[#092B19] to-[#0E3B23] text-white border-2 border-jubilee-gold/70 shadow-luxury relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-jubilee-gold to-transparent"></div>
+
+              <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-white/10">
+                <span className="w-7 h-7 rounded-full bg-jubilee-gold text-emerald-950 flex items-center justify-center font-bold text-xs font-retro">
+                  3
+                </span>
+                <h3 className="text-base sm:text-xl font-retro font-bold text-white tracking-wide">
+                  PARTNER & SUPPORT THE 45TH JUBILEE
+                </h3>
+              </div>
+
+              {/* BOLD NOTICE */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-black/50 border border-jubilee-gold/60 mb-5">
+                <div className="text-jubilee-gold font-retro font-extrabold text-sm sm:text-base mb-1.5 flex items-center space-x-2">
+                  <span>📢 OFFICIAL DEDICATED BANK ACCOUNT DETAILS WILL BE PROVIDED SOON</span>
+                </div>
+                <p className="text-xs sm:text-sm text-emerald-100/90 font-light leading-relaxed">
+                  The Central Planning Committee (CPC) Financial Directorate is setting up dedicated audited accounts for the 45th Anniversary. If you desire to sponsor, pledge, or financially support the Homecoming, indicate below so the official bank details are forwarded directly to you once released.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <label className="flex items-start sm:items-center space-x-3.5 cursor-pointer p-4 rounded-2xl bg-white/[0.06] border border-white/15 hover:border-jubilee-gold transition-colors">
+                  <input
+                    type="checkbox"
+                    name="willingToSupport"
+                    checked={formData.willingToSupport}
+                    onChange={(e) => setFormData(prev => ({ ...prev, willingToSupport: e.target.checked }))}
+                    className="w-5 h-5 rounded text-jubilee-gold focus:ring-jubilee-gold border-stone-300 accent-jubilee-gold shrink-0 mt-0.5 sm:mt-0"
+                  />
+                  <div>
+                    <span className="text-sm sm:text-base font-bold text-white block">
+                      YES, I WANT TO SUPPORT / SPONSOR THE 45TH JUBILEE
+                    </span>
+                    <span className="text-xs text-emerald-200/80 font-light block mt-0.5">
+                      Check this box to indicate your partnership intention.
+                    </span>
+                  </div>
+                </label>
+
+                {formData.willingToSupport && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 font-sans">
+                    <div>
+                      <label className="block text-xs font-bold text-jubilee-lightgold mb-1.5 uppercase tracking-wider">
+                        Sponsorship Area of Interest
+                      </label>
+                      <select
+                        name="supportCategory"
+                        value={formData.supportCategory}
+                        onChange={handleChange}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-jubilee-gold/50 text-white text-xs sm:text-sm font-medium focus:outline-none"
+                      >
+                        <option value="General Homecoming Support">General Homecoming Support</option>
+                        <option value="Student Welfare & Feeding">Undergraduate Student Welfare & Feeding</option>
+                        <option value="Mass Choir & Cantata Production">Mass Choir & Cantata Production</option>
+                        <option value="45th Legacy Project Endowment">45th Legacy Project Endowment</option>
+                        <option value="Alumni Compendium Publication">Alumni Compendium Publication</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-jubilee-lightgold mb-1.5 uppercase tracking-wider">
+                        Estimated Pledge / Note (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        name="supportPledge"
+                        value={formData.supportPledge}
+                        onChange={handleChange}
+                        placeholder="e.g. ₦50,000 / $100 or 'Contact me'"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/20 text-white placeholder-white/40 text-xs sm:text-sm focus:outline-none focus:border-jubilee-gold"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Submit */}

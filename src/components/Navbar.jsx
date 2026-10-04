@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Calendar, UserCheck, Sparkles, Image as ImageIcon, Video, Shield } from 'lucide-react';
+import { Menu, X, Calendar, UserCheck, Sparkles, Image as ImageIcon, Video, Shield, QrCode } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +73,15 @@ export default function Navbar() {
 
           {/* Properly Situated RSVP & Census Action Area */}
           <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+            <a
+              href="#qr-share"
+              title="Share & Download Official QR Code"
+              className="hidden md:inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105"
+            >
+              <QrCode className="w-3.5 h-3.5 text-jubilee-gold" />
+              <span>QR Code</span>
+            </a>
+
             <a
               href="#census-rsvp"
               className="inline-flex items-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 font-sans tracking-wide shrink-0"

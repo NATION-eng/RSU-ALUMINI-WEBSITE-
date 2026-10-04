@@ -8,6 +8,7 @@ import DpGenerator from './components/DpGenerator';
 import CensusRsvpSection from './components/CensusRsvpSection';
 import MediaSection from './components/MediaSection';
 import DiasporaHub from './components/DiasporaHub';
+import QrSection from './components/QrSection';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -31,7 +32,7 @@ export default function App() {
       {/* 6. In-Page Live "I Will Be There" DP Generator */}
       <DpGenerator />
 
-      {/* 7. Dual-Purpose Alumni Census Directory & Event RSVP System */}
+      {/* 7. Dual-Purpose Alumni Census Directory & Event RSVP System (With Bold Support Card) */}
       <CensusRsvpSection />
 
       {/* 8. Media, Livestream Center & Institutional Coverage */}
@@ -40,7 +41,10 @@ export default function App() {
       {/* 9. Global Diaspora Fellowship Hub */}
       <DiasporaHub />
 
-      {/* 10. Grand Footer & Governance Credits */}
+      {/* 10. Official Scannable QR Code Share & Download Section */}
+      <QrSection />
+
+      {/* 11. Grand Footer & Governance Credits */}
       <Footer />
     </div>
   );
