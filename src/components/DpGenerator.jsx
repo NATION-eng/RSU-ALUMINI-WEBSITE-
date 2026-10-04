@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Image as ImageIcon, Upload, Download, Sparkles, ZoomIn, ZoomOut, Share2, CheckCircle2, User, AlertCircle, RefreshCw } from 'lucide-react';
+import { Image as ImageIcon, Upload, Download, ZoomIn, ZoomOut, Share2, CheckCircle2, User, AlertCircle, RefreshCw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 // Safe cross-browser rounded rectangle helper (never throws if ctx.roundRect is absent)
@@ -427,8 +427,7 @@ export default function DpGenerator() {
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/[0.04] text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-widest mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-jubilee-gold" />
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-widest mb-3">
             <span>Official Jubilee Mobilization</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-white tracking-tight mb-3">

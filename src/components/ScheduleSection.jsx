@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Globe, Sparkles } from 'lucide-react';
+import { Calendar, Clock, MapPin, Globe } from 'lucide-react';
 
 export default function ScheduleSection() {
   const [selectedDay, setSelectedDay] = useState(0);

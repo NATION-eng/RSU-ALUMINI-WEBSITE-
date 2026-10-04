@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Sparkles, Send, ShieldCheck, AlertCircle, Building2 } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Building2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 

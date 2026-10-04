@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
-import { QrCode, Download, Share2, Copy, Check, Sparkles } from 'lucide-react';
+import { QrCode, Download, Share2, Copy, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function QrSection() {

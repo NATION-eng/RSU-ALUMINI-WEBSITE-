@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ChevronRight, Compass, Music, Shield, Flame } from 'lucide-react';
+import { ChevronRight, Compass, Music, Shield, Flame } from 'lucide-react';
 
 export default function TimelineSection() {
   const [activeEra, setActiveEra] = useState(0);
@@ -69,8 +69,7 @@ export default function TimelineSection() {
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-widest mb-3 border border-emerald-900/15">
-            <Sparkles className="w-3.5 h-3.5 text-jubilee-darkgold" />
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-widest mb-3 border border-emerald-900/15">
             <span>45-Year Heritage Journey (1981–2026)</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-emerald-950 tracking-tight mb-3">

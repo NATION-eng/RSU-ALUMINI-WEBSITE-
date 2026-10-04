@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Volume2, Radio, Sparkles, X, Tv, Bell } from 'lucide-react';
+import { Play, Volume2, Radio, X, Tv, Bell } from 'lucide-react';
 
 export default function MediaSection() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -140,7 +140,7 @@ export default function MediaSection() {
                 Choir alumni from four decades uniting voices for the grand Sabbath afternoon sacred concert.
               </p>
               <div className="text-[11px] font-semibold text-emerald-300 flex items-center space-x-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-jubilee-gold" />
+                <Radio className="w-3.5 h-3.5 text-jubilee-gold" />
                 <span>Rehearsals in progress</span>
               </div>
             </div>

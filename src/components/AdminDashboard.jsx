@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { 
   Shield, Lock, Search, Filter, Download, CheckCircle, XCircle, 
   Users, UserCheck, HeartHandshake, RefreshCw, Eye, ArrowLeft,
-  Calendar, Phone, Mail, MapPin, Award, Check, Sparkles, Trash2
+  Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2
 } from 'lucide-react';
 
 export default function AdminDashboard({ onBackToSite }) {
@@ -384,7 +384,7 @@ export default function AdminDashboard({ onBackToSite }) {
           <div className="luxury-glass rounded-2xl p-4 border border-white/10">
             <div className="flex items-center justify-between text-xs text-stone-400 mb-1">
               <span>Virtual Diaspora</span>
-              <Sparkles className="w-4 h-4 text-sky-400" />
+              <Globe className="w-4 h-4 text-sky-400" />
             </div>
             <div className="text-2xl sm:text-3xl font-retro font-black text-sky-300">
               {stats.virtual}
@@ -588,7 +588,7 @@ export default function AdminDashboard({ onBackToSite }) {
                         {attendee.willing_to_support ? (
                           <div>
                             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-jubilee-gold/20 text-jubilee-gold text-[10px] font-bold border border-jubilee-gold/30">
-                              <Sparkles className="w-2.5 h-2.5" />
+                              <Award className="w-2.5 h-2.5" />
                               <span>Sponsor</span>
                             </span>
                             {attendee.support_pledge && (
@@ -729,7 +729,7 @@ export default function AdminDashboard({ onBackToSite }) {
               {selectedAttendee.willing_to_support && (
                 <div className="bg-jubilee-gold/10 p-3.5 rounded-2xl border border-jubilee-gold/40">
                   <span className="inline-flex items-center space-x-1.5 text-jubilee-gold font-bold text-xs uppercase mb-1">
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Award className="w-3.5 h-3.5" />
                     <span>Jubilee Partnership & Sponsorship</span>
                   </span>
                   <div className="text-xs text-white">

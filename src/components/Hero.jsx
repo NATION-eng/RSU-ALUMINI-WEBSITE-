@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Sparkles, Image as ImageIcon, UserCheck, ArrowRight } from 'lucide-react';
+import { Calendar, Image as ImageIcon, UserCheck, ArrowRight } from 'lucide-react';
 
 export default function Hero() {
   // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
@@ -46,7 +46,6 @@ export default function Hero() {
         
         {/* Heritage Pill Tag (Mobile-optimized text & wrap) */}
         <div className="inline-flex items-center space-x-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/[0.04] backdrop-blur-md border border-jubilee-gold/30 text-jubilee-lightgold text-[10px] sm:text-xs font-semibold tracking-wider mb-5 sm:mb-7 shadow-luxury max-w-full">
-          <Sparkles className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
           <span className="font-sans uppercase tracking-[0.15em] truncate">
             1981 – 2026 • 45TH JUBILEE CELEBRATION
           </span>

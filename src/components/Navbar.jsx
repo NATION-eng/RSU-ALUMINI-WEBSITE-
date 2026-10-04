@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Calendar, UserCheck, Sparkles, Image as ImageIcon, Video, Shield, QrCode } from 'lucide-react';
+import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +32,7 @@ export default function Navbar() {
     { name: 'Program', href: '#program', icon: Calendar },
     { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon, badge: 'Popular' },
     { name: 'Media Hub', href: '#media-hub', icon: Video },
-    { name: 'Diaspora', href: '#diaspora', icon: Sparkles },
+    { name: 'Diaspora', href: '#diaspora', icon: Globe },
     { name: 'Official QR', href: '#qr-share', icon: QrCode },
   ];
 

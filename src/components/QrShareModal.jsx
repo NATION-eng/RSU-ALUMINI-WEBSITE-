@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
-import { QrCode, Download, Share2, Copy, Check, Sparkles, X, ExternalLink } from 'lucide-react';
+import { QrCode, Download, Share2, Copy, Check, X, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function QrShareModal({ isOpen, onClose }) {

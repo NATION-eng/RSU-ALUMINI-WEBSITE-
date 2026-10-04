@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Shield, Sparkles, MessageCircle, ExternalLink, Code } from 'lucide-react';
+import { Heart, Shield, MessageCircle, ExternalLink, Code } from 'lucide-react';
 
 export default function Footer() {
   return (
