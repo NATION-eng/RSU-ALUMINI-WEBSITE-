@@ -338,10 +338,10 @@ export default function AdminDashboard({ onBackToSite }) {
 
             <button
               onClick={onBackToSite}
-              className="inline-flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-medium text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+              className="inline-flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-medium text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors touch-manipulation active:scale-95"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Back to Site</span>
+              <ArrowLeft className="w-3.5 h-3.5 pointer-events-none" />
+              <span className="hidden sm:inline pointer-events-none">Back to Site</span>
             </button>
 
             <button

@@ -6,10 +6,24 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
+    let lastScrolled = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 15);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 20;
+          if (isScrolled !== lastScrolled) {
+            lastScrolled = isScrolled;
+            setScrolled(isScrolled);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -78,10 +92,10 @@ export default function Navbar() {
             <a
               href="#qr-share"
               title="Share & Download Official QR Code"
-              className="inline-flex items-center space-x-1 p-2 sm:px-3 sm:py-2 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0"
+              className="inline-flex items-center space-x-1 p-2 sm:px-3 sm:py-2 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
             >
-              <QrCode className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
-              <span className="hidden sm:inline">QR</span>
+              <QrCode className="w-3.5 h-3.5 text-jubilee-gold shrink-0 pointer-events-none" />
+              <span className="hidden sm:inline pointer-events-none">QR</span>
             </a>
 
             {/* RSVP & Census CTA Button */}

@@ -5,12 +5,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     background-color: #FAF7EE;
     color: #141E18;
     overflow-x: hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  a, button, input, select, textarea {
+    touch-action: manipulation;
   }
 }
 
