@@ -44,8 +44,17 @@ export default function Hero() {
 
       <div className="relative max-w-5xl mx-auto text-center z-10">
         
+        {/* Official 45th Anniversary Celebration & Alumni Homecoming Logo */}
+        <div className="flex justify-center mb-6">
+          <img
+            src="/official-logo.png"
+            alt="45th Anniversary Celebration & Alumni Homecoming Logo"
+            className="h-24 sm:h-32 md:h-40 w-auto object-contain drop-shadow-[0_12px_30px_rgba(212,175,55,0.3)] hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+
         {/* Heritage Pill Tag */}
-        <div className="inline-flex items-center space-x-2.5 px-5 py-2 rounded-full bg-white/[0.04] backdrop-blur-md border border-jubilee-gold/30 text-jubilee-lightgold text-xs sm:text-sm font-semibold tracking-wider mb-8 shadow-luxury">
+        <div className="inline-flex items-center space-x-2.5 px-5 py-2 rounded-full bg-white/[0.04] backdrop-blur-md border border-jubilee-gold/30 text-jubilee-lightgold text-xs sm:text-sm font-semibold tracking-wider mb-6 shadow-luxury">
           <Sparkles className="w-4 h-4 text-jubilee-gold" />
           <span className="font-sans uppercase tracking-[0.2em] text-[11px] sm:text-xs">
             1981 – 2026 • 45TH JUBILEE CELEBRATION

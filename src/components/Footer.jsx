@@ -12,12 +12,11 @@ export default function Footer() {
           {/* Fellowship Identity */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-jubilee-gold flex items-center justify-center p-0.5 shadow-lg">
-                <div className="w-full h-full bg-emerald-950 rounded-full flex items-center justify-center flex-col">
-                  <span className="text-[9px] font-bold text-jubilee-gold">ASF</span>
-                  <span className="text-[10px] font-black text-white">45th</span>
-                </div>
-              </div>
+              <img
+                src="/official-logo.png"
+                alt="ASF RSU 45th Anniversary Logo"
+                className="h-12 w-auto object-contain"
+              />
               <div>
                 <span className="font-retro font-bold text-white text-base tracking-wide">
                   ADVENTIST STUDENTS' FELLOWSHIP

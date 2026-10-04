@@ -33,9 +33,17 @@ export default function DpGenerator() {
   const [panY, setPanY] = useState(0);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [officialLogo, setOfficialLogo] = useState(null);
 
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const lImg = new Image();
+    lImg.crossOrigin = 'anonymous';
+    lImg.onload = () => setOfficialLogo(lImg);
+    lImg.src = '/official-logo.png';
+  }, []);
 
   const cohorts = [
     'Pioneer Cohort (1981–1999)',
@@ -230,18 +238,33 @@ export default function DpGenerator() {
       drawSafeRoundRect(ctx, size / 2 - 460, 56, 920, 100, 18);
       ctx.stroke();
 
-      // Top Text Line 1: Organization
-      ctx.fillStyle = '#FAF7EE';
-      ctx.font = 'bold 26px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.letterSpacing = '3px';
-      ctx.fillText("ADVENTIST STUDENTS' FELLOWSHIP (RSU)", size / 2, 92);
+      // Draw Official 45th Jubilee Logo if loaded
+      if (officialLogo) {
+        ctx.drawImage(officialLogo, size / 2 - 435, 62, 125, 88);
+        
+        // Centered text with offset to balance the logo
+        ctx.fillStyle = '#FAF7EE';
+        ctx.font = 'bold 26px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.letterSpacing = '2px';
+        ctx.fillText("ADVENTIST STUDENTS' FELLOWSHIP (RSU)", size / 2 + 50, 92);
 
-      // Top Text Line 2: 45th Anniversary Celebration
-      ctx.fillStyle = '#D4AF37';
-      ctx.font = 'bold 21px "Plus Jakarta Sans", sans-serif';
-      ctx.letterSpacing = '2px';
-      ctx.fillText("★ 45TH ANNIVERSARY & ALUMNI HOMECOMING (1981–2026) ★", size / 2, 134);
+        ctx.fillStyle = '#D4AF37';
+        ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+        ctx.letterSpacing = '1.5px';
+        ctx.fillText("★ 45TH ANNIVERSARY & ALUMNI HOMECOMING (1981–2026) ★", size / 2 + 50, 134);
+      } else {
+        ctx.fillStyle = '#FAF7EE';
+        ctx.font = 'bold 26px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.letterSpacing = '3px';
+        ctx.fillText("ADVENTIST STUDENTS' FELLOWSHIP (RSU)", size / 2, 92);
+
+        ctx.fillStyle = '#D4AF37';
+        ctx.font = 'bold 21px "Plus Jakarta Sans", sans-serif';
+        ctx.letterSpacing = '2px';
+        ctx.fillText("★ 45TH ANNIVERSARY & ALUMNI HOMECOMING (1981–2026) ★", size / 2, 134);
+      }
       ctx.restore();
 
       // 5. "I WILL BE THERE!" High-Impact Badge (Situated gracefully across the mid-lower section)
@@ -344,7 +367,7 @@ export default function DpGenerator() {
       setErrorMessage('Canvas rendering error: ' + (err.message || 'Unknown'));
     }
 
-  }, [image, hasCustomPhoto, name, gradSet, cohortBadge, zoom, panX, panY, drawNativePlaceholder]);
+  }, [image, hasCustomPhoto, officialLogo, name, gradSet, cohortBadge, zoom, panX, panY, drawNativePlaceholder]);
 
   // Robust Download Function
   const handleDownload = () => {

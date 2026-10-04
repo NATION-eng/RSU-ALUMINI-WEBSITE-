@@ -13,31 +13,32 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 5 clean, non-redundant nav links (Reunion Roll Call is now the dedicated CTA button)
   const navLinks = [
     { name: 'Heritage', href: '#heritage', icon: Shield },
     { name: 'Program', href: '#program', icon: Calendar },
     { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon, badge: 'Popular' },
-    { name: 'Reunion Roll Call', href: '#census-rsvp', icon: UserCheck },
     { name: 'Media Hub', href: '#media-hub', icon: Video },
     { name: 'Diaspora', href: '#diaspora', icon: Sparkles },
   ];
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-[#051A0F]/95 backdrop-blur-md shadow-luxury py-3 border-b border-jubilee-gold/20' : 'bg-gradient-to-b from-[#051A0F]/90 via-[#051A0F]/50 to-transparent py-5'
+      scrolled 
+        ? 'bg-[#051A0F]/95 backdrop-blur-md shadow-luxury py-2.5 border-b border-jubilee-gold/20' 
+        : 'bg-gradient-to-b from-[#051A0F]/95 via-[#051A0F]/60 to-transparent py-4'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           
-          {/* Logo & Identity */}
-          <a href="#" className="flex items-center space-x-3 group">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-jubilee-gold via-amber-300 to-yellow-600 flex items-center justify-center p-0.5 shadow-lg group-hover:scale-105 transition-transform duration-300">
-              <div className="w-full h-full bg-[#051A0F] rounded-full flex items-center justify-center flex-col">
-                <span className="text-[9px] font-bold text-jubilee-gold tracking-tighter leading-none">ASF</span>
-                <span className="text-xs font-black text-white leading-none font-retro">45th</span>
-              </div>
-            </div>
-            <div>
+          {/* Official 45th Anniversary Logo & Identity */}
+          <a href="#" className="flex items-center space-x-3 group shrink-0">
+            <img
+              src="/official-logo.png"
+              alt="ASF RSU 45th Anniversary Logo"
+              className="h-10 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="hidden sm:block text-left">
               <div className="flex items-center space-x-2">
                 <span className="font-retro font-bold text-white text-base tracking-wide group-hover:text-jubilee-lightgold transition-colors">
                   ASF RSU
@@ -46,14 +47,14 @@ export default function Navbar() {
                   1981–2026
                 </span>
               </div>
-              <p className="text-[11px] text-emerald-200/80 tracking-tight font-light hidden sm:block font-sans">
-                Adventist Students' Fellowship • 45th Jubilee
+              <p className="text-[11px] text-emerald-200/80 tracking-tight font-light font-sans leading-tight">
+                Adventist Students' Fellowship
               </p>
             </div>
           </a>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 font-sans">
+          {/* Desktop Nav Links (Centered & Generously Spaced) */}
+          <div className="hidden lg:flex items-center space-x-2 xl:space-x-4 font-sans">
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -70,24 +71,25 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA & Mobile Toggle */}
-          <div className="flex items-center space-x-3">
+          {/* Properly Situated RSVP & Census Action Area */}
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
             <a
               href="#census-rsvp"
-              className="hidden sm:inline-flex items-center space-x-2 px-4.5 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-md hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-200 font-sans"
+              className="inline-flex items-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 font-sans tracking-wide shrink-0"
             >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>RSVP & Census</span>
+              <UserCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-950 shrink-0" />
+              <span className="whitespace-nowrap">RSVP & Census</span>
             </a>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-lg text-emerald-200 hover:text-white hover:bg-white/10 focus:outline-none"
+              className="lg:hidden p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 focus:outline-none transition-colors"
               aria-label="Toggle Menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
           </div>
+
         </div>
       </div>
 
@@ -122,7 +124,7 @@ export default function Navbar() {
               className="w-full flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-lg font-sans"
             >
               <UserCheck className="w-4 h-4" />
-              <span>RSVP for 45th Homecoming</span>
+              <span>RSVP & Census Directory</span>
             </a>
           </div>
         </div>
