@@ -28,6 +28,11 @@ export default function AdminDashboard({ onBackToSite }) {
   const [videoSubmissions, setVideoSubmissions] = useState([]);
   const [playingVideoUrl, setPlayingVideoUrl] = useState(null);
 
+  // Search & Filter for Sponsorships & Compendium Ads
+  const [sponsorshipSearch, setSponsorshipSearch] = useState('');
+  const [sponsorshipFilterType, setSponsorshipFilterType] = useState('ALL'); // 'ALL' | 'DONATION' | 'AD'
+  const [sponsorshipFilterChannel, setSponsorshipFilterChannel] = useState('ALL'); // 'ALL' | 'PAYSTACK' | 'TRANSFER'
+
   // Check if admin is already logged in for this session
   useEffect(() => {
     const savedAuth = sessionStorage.getItem('asf_cpc_admin_auth');
@@ -113,12 +118,20 @@ export default function AdminDashboard({ onBackToSite }) {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching registrations:', error.message);
-      } else {
-        setRegistrations(data || []);
+        console.info('Supabase registrations note:', error.message);
       }
+      
+      const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+      const combined = [...(data || [])];
+      local.forEach(item => {
+        if (!combined.some(c => (c.id && c.id === item.id) || (c.registration_tag && c.registration_tag === item.registration_tag))) {
+          combined.push(item);
+        }
+      });
+      setRegistrations(combined);
     } catch (err) {
-      console.error(err);
+      const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+      setRegistrations(local);
     } finally {
       setLoading(false);
     }
@@ -126,7 +139,7 @@ export default function AdminDashboard({ onBackToSite }) {
 
   // Toggle Check-in status (For on-ground accreditation)
   const toggleCheckIn = async (attendee) => {
-    setUpdatingId(attendee.id);
+    setUpdatingId(attendee.id || attendee.registration_tag);
     const newStatus = !attendee.checked_in;
     const now = newStatus ? new Date().toISOString() : null;
 
@@ -153,26 +166,240 @@ export default function AdminDashboard({ onBackToSite }) {
 
   // Delete attendee (For purging test data or duplicates)
   const deleteAttendee = async (attendee) => {
-    if (!window.confirm(`Are you sure you want to delete the registration for "${attendee.full_name}" (${attendee.registration_tag})?`)) {
+    if (!window.confirm(`Are you sure you want to delete the registration for "${attendee.full_name}" (${attendee.registration_tag})?\n\nThis will remove the attendee record permanently.`)) {
       return;
     }
-    setUpdatingId(attendee.id);
+    const targetKey = attendee.id || attendee.registration_tag;
+    setUpdatingId(targetKey);
     try {
-      const { error } = await supabase
-        .from('alumni_registrations')
-        .delete()
-        .eq('id', attendee.id);
-
-      if (error) {
-        alert('Notice: ' + error.message);
-      } else {
-        setRegistrations(prev => prev.filter(r => r.id !== attendee.id));
-        if (selectedAttendee?.id === attendee.id) {
-          setSelectedAttendee(null);
+      // 1. Supabase delete if id exists
+      if (attendee.id) {
+        try {
+          await supabase
+            .from('alumni_registrations')
+            .delete()
+            .eq('id', attendee.id);
+        } catch (sbErr) {
+          console.warn('Supabase delete attendee note:', sbErr);
         }
       }
+
+      // 2. LocalStorage delete
+      try {
+        const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+        const updatedLocal = local.filter(r => 
+          (attendee.id ? r.id !== attendee.id : true) &&
+          (attendee.registration_tag ? r.registration_tag !== attendee.registration_tag : true) &&
+          (attendee.email ? r.email !== attendee.email : true)
+        );
+        localStorage.setItem('asf_census_submissions', JSON.stringify(updatedLocal));
+      } catch (lsErr) {}
+
+      // 3. State update
+      setRegistrations(prev => prev.filter(r => 
+        (attendee.id ? r.id !== attendee.id : true) &&
+        (attendee.registration_tag ? r.registration_tag !== attendee.registration_tag : true)
+      ));
+      if (selectedAttendee?.id === attendee.id || selectedAttendee?.registration_tag === attendee.registration_tag) {
+        setSelectedAttendee(null);
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Delete attendee error:', err);
+      alert('Error deleting registration: ' + err.message);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Bulk purge registrations (test records or all)
+  const purgeRegistrations = async (mode = 'TEST_ONLY') => {
+    if (registrations.length === 0) {
+      alert('No registrations to delete.');
+      return;
+    }
+
+    let toDelete = [];
+    if (mode === 'TEST_ONLY') {
+      toDelete = registrations.filter(r => 
+        (r.full_name && r.full_name.toLowerCase().includes('test')) ||
+        (r.email && r.email.toLowerCase().includes('test')) ||
+        (r.registration_tag && r.registration_tag.includes('TEST'))
+      );
+      if (toDelete.length === 0) {
+        alert('No test registrations found.');
+        return;
+      }
+      if (!window.confirm(`Delete all ${toDelete.length} test registration(s)?`)) return;
+    } else {
+      if (!window.confirm(`WARNING: Are you sure you want to delete ALL ${registrations.length} registrations? This action is irreversible.`)) return;
+      toDelete = [...registrations];
+    }
+
+    const idsToDelete = new Set(toDelete.map(r => r.id).filter(Boolean));
+    const tagsToDelete = new Set(toDelete.map(r => r.registration_tag).filter(Boolean));
+
+    for (const id of idsToDelete) {
+      try {
+        await supabase.from('alumni_registrations').delete().eq('id', id);
+      } catch (e) {}
+    }
+
+    try {
+      const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+      const updatedLocal = local.filter(r => 
+        (!r.id || !idsToDelete.has(r.id)) &&
+        (!r.registration_tag || !tagsToDelete.has(r.registration_tag))
+      );
+      localStorage.setItem('asf_census_submissions', JSON.stringify(updatedLocal));
+    } catch (e) {}
+
+    setRegistrations(prev => prev.filter(r => 
+      (!r.id || !idsToDelete.has(r.id)) &&
+      (!r.registration_tag || !tagsToDelete.has(r.registration_tag))
+    ));
+    alert(`Deleted ${toDelete.length} registration(s).`);
+  };
+
+  // Delete individual sponsorship / donation / ad booking record
+  const deleteSponsorship = async (record) => {
+    const donorName = record.donor_name || record.organization || 'Anonymous';
+    const amountStr = Number(record.amount || 0).toLocaleString();
+    if (!window.confirm(`Are you sure you want to delete this payment record?\n\nContributor: ${donorName}\nAmount: ₦${amountStr}\nReference: ${record.reference}\n\nThis will remove the record permanently from the ledger and local storage.`)) {
+      return;
+    }
+
+    setUpdatingId(record.reference);
+    try {
+      // 1. Supabase delete
+      try {
+        await supabase
+          .from('sponsorship_payments')
+          .delete()
+          .eq('reference', record.reference);
+      } catch (sbErr) {
+        console.warn('Supabase delete sponsorship note:', sbErr);
+      }
+
+      // 2. LocalStorage delete
+      try {
+        const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+        const updatedLocal = local.filter(s => s.reference !== record.reference);
+        localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedLocal));
+      } catch (lsErr) {
+        console.warn('LocalStorage delete error:', lsErr);
+      }
+
+      // 3. State update
+      setSponsorships(prev => prev.filter(s => s.reference !== record.reference));
+    } catch (err) {
+      console.error('Delete sponsorship error:', err);
+      alert('Error deleting record: ' + err.message);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Purge test / all sponsorship records
+  const purgeSponsorships = async (mode = 'TEST_ONLY') => {
+    if (sponsorships.length === 0) {
+      alert('There are no records to delete.');
+      return;
+    }
+
+    let recordsToDelete = [];
+    let promptMsg = '';
+
+    if (mode === 'TEST_ONLY') {
+      recordsToDelete = sponsorships.filter(s => 
+        (s.reference && (s.reference.startsWith('ASF45TH') || s.reference.startsWith('ECO-') || s.reference.includes('TRF') || s.reference.includes('SAMPLE'))) ||
+        (s.donor_name && s.donor_name.toLowerCase().includes('test'))
+      );
+      if (recordsToDelete.length === 0) {
+        alert('No test records found.');
+        return;
+      }
+      promptMsg = `Are you sure you want to delete all ${recordsToDelete.length} test records?\n\nThis will remove test donations and compendium ad bookings.`;
+    } else {
+      recordsToDelete = [...sponsorships];
+      promptMsg = `WARNING: Are you sure you want to delete ALL ${recordsToDelete.length} records in the ledger? This action is irreversible.`;
+    }
+
+    if (!window.confirm(promptMsg)) {
+      return;
+    }
+
+    const refsToDelete = new Set(recordsToDelete.map(r => r.reference));
+
+    // 1. Delete from Supabase
+    try {
+      for (const ref of refsToDelete) {
+        await supabase
+          .from('sponsorship_payments')
+          .delete()
+          .eq('reference', ref);
+      }
+    } catch (e) {
+      console.warn('Supabase batch delete note:', e);
+    }
+
+    // 2. Delete from LocalStorage
+    try {
+      const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      const updatedLocal = local.filter(s => !refsToDelete.has(s.reference));
+      localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedLocal));
+    } catch (e) {}
+
+    // 3. Update state
+    setSponsorships(prev => prev.filter(s => !refsToDelete.has(s.reference)));
+    alert(`Successfully deleted ${recordsToDelete.length} record(s).`);
+  };
+
+  // Delete video submission
+  const deleteVideoSubmission = async (video) => {
+    const name = video.full_name || 'Submissions';
+    if (!window.confirm(`Are you sure you want to delete the goodwill video submission from "${name}"?`)) {
+      return;
+    }
+
+    const vidId = video.id || video.submission_id || video.file_name;
+    setUpdatingId(vidId);
+    try {
+      // 1. Delete from Supabase
+      if (video.id) {
+        try {
+          await supabase
+            .from('video_goodwill_submissions')
+            .delete()
+            .eq('id', video.id);
+        } catch (sbErr) {}
+      } else if (video.submission_id) {
+        try {
+          await supabase
+            .from('video_goodwill_submissions')
+            .delete()
+            .eq('submission_id', video.submission_id);
+        } catch (sbErr) {}
+      }
+
+      // 2. Delete from LocalStorage
+      try {
+        const local = JSON.parse(localStorage.getItem('asf_goodwill_videos') || '[]');
+        const updatedLocal = local.filter(v => 
+          (video.submission_id ? v.submission_id !== video.submission_id : true) &&
+          (video.id ? v.id !== video.id : true) &&
+          (video.file_name ? v.file_name !== video.file_name : true)
+        );
+        localStorage.setItem('asf_goodwill_videos', JSON.stringify(updatedLocal));
+      } catch (lsErr) {}
+
+      // 3. State update
+      setVideoSubmissions(prev => prev.filter(v => 
+        (video.submission_id ? v.submission_id !== video.submission_id : true) &&
+        (video.id ? v.id !== video.id : true)
+      ));
+    } catch (err) {
+      console.error('Delete video error:', err);
+      alert('Error deleting video: ' + err.message);
     } finally {
       setUpdatingId(null);
     }
@@ -268,6 +495,37 @@ export default function AdminDashboard({ onBackToSite }) {
       return matchesSearch && matchesMode && matchesSupport && matchesCheckin;
     });
   }, [registrations, searchQuery, filterMode, filterSupport, filterCheckin]);
+
+  // Filtered sponsorships & compendium ads
+  const filteredSponsorships = useMemo(() => {
+    return sponsorships.filter(s => {
+      const q = sponsorshipSearch.toLowerCase().trim();
+      const matchesSearch = 
+        !q ||
+        (s.donor_name && s.donor_name.toLowerCase().includes(q)) ||
+        (s.organization && s.organization.toLowerCase().includes(q)) ||
+        (s.email && s.email.toLowerCase().includes(q)) ||
+        (s.reference && s.reference.toLowerCase().includes(q)) ||
+        (s.tier_name && s.tier_name.toLowerCase().includes(q)) ||
+        (s.phone && s.phone.toLowerCase().includes(q));
+
+      const isAd = (s.tier_key && s.tier_key.startsWith('ad_')) ||
+                   (s.tier_name && s.tier_name.toLowerCase().includes('ad')) ||
+                   (s.reference && s.reference.includes('-AD-'));
+      const matchesType =
+        sponsorshipFilterType === 'ALL' ||
+        (sponsorshipFilterType === 'AD' && isAd) ||
+        (sponsorshipFilterType === 'DONATION' && !isAd);
+
+      const isPaystack = Boolean(s.payment_method?.includes('Paystack'));
+      const matchesChannel =
+        sponsorshipFilterChannel === 'ALL' ||
+        (sponsorshipFilterChannel === 'PAYSTACK' && isPaystack) ||
+        (sponsorshipFilterChannel === 'TRANSFER' && !isPaystack);
+
+      return matchesSearch && matchesType && matchesChannel;
+    });
+  }, [sponsorships, sponsorshipSearch, sponsorshipFilterType, sponsorshipFilterChannel]);
 
   // Executive Metrics
   const stats = useMemo(() => {
@@ -589,6 +847,15 @@ export default function AdminDashboard({ onBackToSite }) {
             >
               <Download className="w-3.5 h-3.5 shrink-0" />
               <span>Export CSV</span>
+            </button>
+
+            <button
+              onClick={() => purgeRegistrations('TEST_ONLY')}
+              className="w-full sm:w-auto px-2.5 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all"
+              title="Purge Test Registrations"
+            >
+              <Trash2 className="w-3.5 h-3.5 shrink-0" />
+              <span>Purge Test</span>
             </button>
           </div>
 
@@ -949,6 +1216,8 @@ export default function AdminDashboard({ onBackToSite }) {
 
             {/* Sponsorships Table Container */}
             <div className="luxury-glass rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+              
+              {/* Header Title & Top Actions */}
               <div className="p-4 sm:p-5 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base sm:text-lg font-retro font-bold text-white flex items-center space-x-2">
@@ -964,14 +1233,15 @@ export default function AdminDashboard({ onBackToSite }) {
                   <button
                     onClick={() => {
                       if (sponsorships.length === 0) return;
-                      const headers = ['Reference', 'Donor Name', 'Organization', 'Tier', 'Amount (NGN)', 'Channel', 'Email', 'Phone', 'Date'];
-                      const rows = sponsorships.map(s => [
+                      const headers = ['Reference', 'Donor Name', 'Organization', 'Tier', 'Amount (NGN)', 'Channel', 'Status', 'Email', 'Phone', 'Date'];
+                      const rows = filteredSponsorships.map(s => [
                         `"${s.reference}"`,
                         `"${s.donor_name}"`,
                         `"${s.organization || ''}"`,
                         `"${s.tier_name || s.tier_key}"`,
                         s.amount,
                         `"${s.payment_method}"`,
+                        `"${s.status || 'VERIFIED'}"`,
                         `"${s.email}"`,
                         `"${s.phone || ''}"`,
                         `"${s.created_at}"`
@@ -988,7 +1258,16 @@ export default function AdminDashboard({ onBackToSite }) {
                     className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-jubilee-gold/30"
                   >
                     <Download className="w-3.5 h-3.5 text-jubilee-gold" />
-                    <span>Download Ledger (CSV)</span>
+                    <span>Export CSV</span>
+                  </button>
+
+                  <button
+                    onClick={() => purgeSponsorships('TEST_ONLY')}
+                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 active:scale-95 transition-all"
+                    title="Purge Test Donations & Ad Bookings"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Purge Test</span>
                   </button>
 
                   <button
@@ -1001,91 +1280,229 @@ export default function AdminDashboard({ onBackToSite }) {
                 </div>
               </div>
 
+              {/* Filter and Search Bar */}
+              <div className="p-3.5 sm:p-4 border-b border-white/10 bg-black/40 space-y-3 md:space-y-0 md:flex md:items-center md:justify-between md:gap-3">
+                <div className="relative w-full md:w-72">
+                  <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={sponsorshipSearch}
+                    onChange={(e) => setSponsorshipSearch(e.target.value)}
+                    placeholder="Search donor, ref, email..."
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-400 text-xs focus:outline-none focus:border-jubilee-gold"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full md:w-auto text-xs">
+                  <select
+                    value={sponsorshipFilterType}
+                    onChange={(e) => setSponsorshipFilterType(e.target.value)}
+                    className="w-full sm:w-auto px-2.5 py-2 rounded-xl bg-black/60 border border-white/20 text-white text-xs focus:outline-none focus:border-jubilee-gold"
+                  >
+                    <option value="ALL">All Categories</option>
+                    <option value="DONATION">Donations / Support</option>
+                    <option value="AD">Compendium Ads</option>
+                  </select>
+
+                  <select
+                    value={sponsorshipFilterChannel}
+                    onChange={(e) => setSponsorshipFilterChannel(e.target.value)}
+                    className="w-full sm:w-auto px-2.5 py-2 rounded-xl bg-black/60 border border-white/20 text-white text-xs focus:outline-none focus:border-jubilee-gold"
+                  >
+                    <option value="ALL">All Channels</option>
+                    <option value="PAYSTACK">Paystack Online</option>
+                    <option value="TRANSFER">Ecobank Transfer</option>
+                  </select>
+
+                  <span className="text-xs text-stone-400 font-mono self-center px-1">
+                    {filteredSponsorships.length} record{filteredSponsorships.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+              </div>
+
               {sponsorships.length === 0 ? (
                 <div className="p-12 text-center text-stone-400 space-y-2">
                   <HeartHandshake className="w-10 h-10 text-stone-600 mx-auto" />
                   <p className="text-sm font-medium">No sponsorship records logged yet.</p>
                   <p className="text-xs text-stone-500">Payments made via Paystack or direct transfer notifications will appear here immediately.</p>
                 </div>
+              ) : filteredSponsorships.length === 0 ? (
+                <div className="p-12 text-center text-stone-400 space-y-2">
+                  <Search className="w-8 h-8 text-stone-600 mx-auto" />
+                  <p className="text-sm font-medium">No records match your search criteria.</p>
+                </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-stone-300">
-                    <thead className="bg-black/60 text-stone-400 font-mono uppercase text-[10px] tracking-wider border-b border-white/10">
-                      <tr>
-                        <th className="p-3.5">Contributor / Brand</th>
-                        <th className="p-3.5">Tier / Item</th>
-                        <th className="p-3.5">Amount (₦)</th>
-                        <th className="p-3.5">Channel / Ref</th>
-                        <th className="p-3.5">Contact</th>
-                        <th className="p-3.5">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {sponsorships.map((s, idx) => (
-                        <tr key={idx} className="hover:bg-white/[0.04] transition-colors">
-                          <td className="p-3.5">
-                            <div className="font-bold text-white text-sm">{s.donor_name}</div>
-                            {s.organization && (
-                              <div className="text-[11px] text-jubilee-lightgold font-medium">{s.organization}</div>
-                            )}
-                            {s.is_anonymous && (
-                              <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-stone-800 text-stone-300 font-bold">
-                                Anonymous
+                <>
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full text-left text-xs text-stone-300">
+                      <thead className="bg-black/60 text-stone-400 font-mono uppercase text-[10px] tracking-wider border-b border-white/10">
+                        <tr>
+                          <th className="p-3.5">Contributor / Brand</th>
+                          <th className="p-3.5">Category / Placement</th>
+                          <th className="p-3.5">Amount (₦)</th>
+                          <th className="p-3.5">Channel / Ref</th>
+                          <th className="p-3.5">Status</th>
+                          <th className="p-3.5">Contact</th>
+                          <th className="p-3.5">Date</th>
+                          <th className="p-3.5 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {filteredSponsorships.map((s, idx) => (
+                          <tr key={idx} className="hover:bg-white/[0.04] transition-colors">
+                            <td className="p-3.5">
+                              <div className="font-bold text-white text-sm">{s.donor_name}</div>
+                              {s.organization && (
+                                <div className="text-[11px] text-jubilee-lightgold font-medium">{s.organization}</div>
+                              )}
+                              {s.is_anonymous && (
+                                <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-stone-800 text-stone-300 font-bold">
+                                  Anonymous
+                                </span>
+                              )}
+                            </td>
+                            <td className="p-3.5">
+                              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-jubilee-gold/20 text-jubilee-lightgold border border-jubilee-gold/30">
+                                {s.tier_name || s.tier_key}
                               </span>
-                            )}
-                          </td>
-                          <td className="p-3.5">
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-jubilee-gold/20 text-jubilee-lightgold border border-jubilee-gold/30">
-                              {s.tier_name || s.tier_key}
-                            </span>
-                          </td>
-                          <td className="p-3.5">
-                            <div className="font-retro font-bold text-base text-amber-400">
-                              ₦{Number(s.amount).toLocaleString()}
-                            </div>
-                          </td>
-                          <td className="p-3.5">
-                            <div className="text-[11px] text-emerald-300 font-medium">{s.payment_method}</div>
-                            <div className="font-mono text-[10px] text-stone-400">{s.reference}</div>
-                          </td>
-                          <td className="p-3.5">
-                            <div className="flex items-center space-x-1.5">
-                              <span className="font-mono text-white text-[11px] truncate max-w-[150px]">{s.email}</span>
+                            </td>
+                            <td className="p-3.5">
+                              <div className="font-retro font-bold text-base text-amber-400">
+                                ₦{Number(s.amount).toLocaleString()}
+                              </div>
+                            </td>
+                            <td className="p-3.5">
+                              <div className="text-[11px] text-emerald-300 font-medium">{s.payment_method}</div>
+                              <div className="font-mono text-[10px] text-stone-400">{s.reference}</div>
+                            </td>
+                            <td className="p-3.5">
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                                s.status === 'VERIFIED'
+                                  ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40'
+                                  : 'bg-amber-950/40 text-amber-300 border-amber-800/40'
+                              }`}>
+                                {s.status === 'VERIFIED' ? 'Cleared' : 'Pending Bank Rec'}
+                              </span>
+                            </td>
+                            <td className="p-3.5">
+                              <div className="flex items-center space-x-1.5">
+                                <span className="font-mono text-white text-[11px] truncate max-w-[140px]">{s.email}</span>
+                              </div>
+                              {s.phone && (
+                                <div className="mt-0.5">
+                                  <a
+                                    href={`https://wa.me/${s.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Dear ${s.donor_name}, warm greetings from the NAAS RSU 45th Jubilee Secretariat. Thank you for your partnership!`)}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-emerald-400 hover:underline text-[11px]"
+                                  >
+                                    {s.phone}
+                                  </a>
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-3.5 text-stone-400 text-[11px] whitespace-nowrap">
+                              {new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td className="p-3.5 text-right whitespace-nowrap space-x-1.5">
                               <a
                                 href={getMailtoLink({
                                   email: s.email,
                                   donorName: s.donor_name,
                                   tierName: s.tier_name || s.tier_key,
                                   amount: s.amount,
-                                  reference: s.reference
+                                  reference: s.reference,
+                                  isAd: Boolean(s.tier_key?.startsWith('ad_') || s.reference?.includes('-AD-'))
                                 })}
-                                title="Send / Resend Official Letter to Sponsor"
-                                className="p-1 rounded bg-white/10 hover:bg-white/20 text-jubilee-lightgold transition-colors"
+                                title="Open Pre-filled Acknowledgment Email"
+                                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-jubilee-lightgold transition-colors inline-block"
                               >
                                 <Mail className="w-3.5 h-3.5" />
                               </a>
-                            </div>
-                            {s.phone && (
-                              <div className="mt-0.5">
-                                <a
-                                  href={`https://wa.me/${s.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Dear ${s.donor_name}, warm greetings from the NAAS RSU 45th Jubilee Secretariat. Thank you for your partnership!`)}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-emerald-400 hover:underline text-[11px]"
-                                >
-                                  {s.phone}
-                                </a>
-                              </div>
+                              <button
+                                onClick={() => deleteSponsorship(s)}
+                                disabled={updatingId === s.reference}
+                                className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 transition-colors inline-block"
+                                title="Delete Record"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile Dedicated Card List (< md screens) */}
+                  <div className="block md:hidden divide-y divide-white/[0.06] p-3 space-y-3">
+                    {filteredSponsorships.map((s, idx) => (
+                      <div key={idx} className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-3 shadow-md">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <div className="font-bold text-white text-sm">{s.donor_name}</div>
+                            {s.organization && (
+                              <div className="text-[11px] text-jubilee-lightgold">{s.organization}</div>
                             )}
-                          </td>
-                          <td className="p-3.5 text-stone-400 text-[11px] whitespace-nowrap">
-                            {new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          </div>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                            s.status === 'VERIFIED'
+                              ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40'
+                              : 'bg-amber-950/40 text-amber-300 border-amber-800/40'
+                          }`}>
+                            {s.status === 'VERIFIED' ? 'Cleared' : 'Pending Bank Rec'}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs pt-1 border-t border-white/5">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-jubilee-gold/20 text-jubilee-lightgold border border-jubilee-gold/30">
+                            {s.tier_name || s.tier_key}
+                          </span>
+                          <span className="font-retro font-bold text-base text-amber-400">
+                            ₦{Number(s.amount).toLocaleString()}
+                          </span>
+                        </div>
+
+                        <div className="text-[11px] text-stone-400 space-y-1 font-mono pt-1">
+                          <div>Ref: <span className="text-white">{s.reference}</span></div>
+                          <div>Method: <span className="text-emerald-300">{s.payment_method}</span></div>
+                          <div>Contact: <span className="text-white">{s.email}</span></div>
+                        </div>
+
+                        <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+                          <span className="text-[10px] text-stone-500">
+                            {new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            <a
+                              href={getMailtoLink({
+                                email: s.email,
+                                donorName: s.donor_name,
+                                tierName: s.tier_name || s.tier_key,
+                                amount: s.amount,
+                                reference: s.reference,
+                                isAd: Boolean(s.tier_key?.startsWith('ad_') || s.reference?.includes('-AD-'))
+                              })}
+                              className="px-2.5 py-1.5 rounded-lg bg-white/10 text-jubilee-lightgold text-xs font-semibold flex items-center space-x-1"
+                            >
+                              <Mail className="w-3 h-3" />
+                              <span>Email</span>
+                            </a>
+                            <button
+                              onClick={() => deleteSponsorship(s)}
+                              disabled={updatingId === s.reference}
+                              className="px-2.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold flex items-center space-x-1"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -1205,17 +1622,27 @@ export default function AdminDashboard({ onBackToSite }) {
                         <span className="text-[11px] text-stone-500 font-mono">Local Stored</span>
                       )}
 
-                      {video.phone && (
-                        <a
-                          href={`https://wa.me/${video.phone.replace(/[^0-9]/g, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-400 text-xs"
-                          title="Contact Submitter on WhatsApp"
+                      <div className="flex items-center space-x-1.5">
+                        {video.phone && (
+                          <a
+                            href={`https://wa.me/${video.phone.replace(/[^0-9]/g, '')}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-400 text-xs transition-colors"
+                            title="Contact Submitter on WhatsApp"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                        <button
+                          onClick={() => deleteVideoSubmission(video)}
+                          disabled={updatingId === (video.id || video.submission_id || video.file_name)}
+                          className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs transition-colors"
+                          title="Delete Video Submission"
                         >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
