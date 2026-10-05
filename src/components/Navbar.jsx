@@ -89,9 +89,9 @@ export default function Navbar({ onOpenSponsors }) {
           {/* Action Area (Mobile-optimized touch buttons) */}
           <div className="flex items-center space-x-2 shrink-0">
             
-            {/* Corporate Sponsorship Button */}
+            {/* Donate / Support Button */}
             <a
-              href="#sponsors"
+              href="#donate"
               onClick={(e) => {
                 if (onOpenSponsors) {
                   e.preventDefault();
@@ -107,7 +107,7 @@ export default function Navbar({ onOpenSponsors }) {
 
             {/* Compendium Ad Booking - Wide desktop only */}
             <a
-              href="#sponsors"
+              href="#compendium-ads"
               onClick={(e) => {
                 if (onOpenSponsors) {
                   e.preventDefault();
@@ -174,7 +174,7 @@ export default function Navbar({ onOpenSponsors }) {
           
           <div className="pt-3 border-t border-white/10 space-y-2">
             <a
-              href="#sponsors"
+              href="#donate"
               onClick={(e) => {
                 setIsOpen(false);
                 if (onOpenSponsors) {
@@ -189,7 +189,7 @@ export default function Navbar({ onOpenSponsors }) {
             </a>
 
             <a
-              href="#sponsors"
+              href="#compendium-ads"
               onClick={(e) => {
                 setIsOpen(false);
                 if (onOpenSponsors) {

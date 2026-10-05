@@ -11,9 +11,18 @@ import DiasporaHub from './components/DiasporaHub';
 import QrSection from './components/QrSection';
 import Footer from './components/Footer';
 
-// Code-split AdminDashboard & SponsorshipPortal for fast initial load and non-blocking view transitions
+// Code-split AdminDashboard, SupportDonatePortal & CompendiumAdsPortal for fast initial load
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
-const SponsorshipPortal = lazy(() => import('./components/SponsorshipPortal'));
+const SupportDonatePortal = lazy(() => import('./components/SupportDonatePortal'));
+const CompendiumAdsPortal = lazy(() => import('./components/CompendiumAdsPortal'));
+
+const isHashAds = (hash, path) => {
+  return hash === '#compendium-ads' || hash === '#ads' || hash === '#sponsors-ads' || path === '/compendium-ads' || path === '/ads';
+};
+
+const isHashDonate = (hash, path) => {
+  return hash === '#donate' || hash === '#support' || hash === '#sponsors' || path === '/donate' || path === '/support' || path === '/sponsors';
+};
 
 export default function App() {
   const [isAdminView, setIsAdminView] = useState(() => {
@@ -23,31 +32,34 @@ export default function App() {
     return false;
   });
 
-  const [isSponsorsView, setIsSponsorsView] = useState(() => {
+  const [isDonateView, setIsDonateView] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.location.hash.startsWith('#sponsors') || window.location.pathname === '/sponsors';
+      const h = window.location.hash;
+      const p = window.location.pathname;
+      return isHashDonate(h, p) && !isHashAds(h, p);
     }
     return false;
   });
 
-  const [sponsorsTab, setSponsorsTab] = useState(() => {
-    if (typeof window !== 'undefined' && window.location.hash.includes('ads')) {
-      return 'ads';
+  const [isAdsView, setIsAdsView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const h = window.location.hash;
+      const p = window.location.pathname;
+      return isHashAds(h, p);
     }
-    return 'sponsors';
+    return false;
   });
 
   useEffect(() => {
     const handleHashChange = () => {
       startTransition(() => {
-        setIsAdminView(window.location.hash === '#admin' || window.location.pathname === '/admin');
-        const isSponsors = window.location.hash.startsWith('#sponsors') || window.location.pathname === '/sponsors';
-        setIsSponsorsView(isSponsors);
-        if (window.location.hash.includes('ads')) {
-          setSponsorsTab('ads');
-        } else if (isSponsors) {
-          setSponsorsTab('sponsors');
-        }
+        const h = window.location.hash;
+        const p = window.location.pathname;
+        setIsAdminView(h === '#admin' || p === '/admin');
+        const ads = isHashAds(h, p);
+        const donate = isHashDonate(h, p) && !ads;
+        setIsAdsView(ads);
+        setIsDonateView(donate);
       });
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -62,15 +74,35 @@ export default function App() {
     window.location.hash = 'admin';
     startTransition(() => {
       setIsAdminView(true);
+      setIsDonateView(false);
+      setIsAdsView(false);
     });
   };
 
-  const handleOpenSponsors = (tab = 'sponsors') => {
-    window.location.hash = tab === 'ads' ? 'sponsors-ads' : 'sponsors';
+  const handleOpenDonate = () => {
+    window.location.hash = 'donate';
     startTransition(() => {
-      setSponsorsTab(tab);
-      setIsSponsorsView(true);
+      setIsDonateView(true);
+      setIsAdsView(false);
+      setIsAdminView(false);
     });
+  };
+
+  const handleOpenAds = () => {
+    window.location.hash = 'compendium-ads';
+    startTransition(() => {
+      setIsAdsView(true);
+      setIsDonateView(false);
+      setIsAdminView(false);
+    });
+  };
+
+  const handleOpenSponsors = (target = 'sponsors') => {
+    if (target === 'ads') {
+      handleOpenAds();
+    } else {
+      handleOpenDonate();
+    }
   };
 
   const handleBackToSite = () => {
@@ -79,7 +111,8 @@ export default function App() {
     }
     startTransition(() => {
       setIsAdminView(false);
-      setIsSponsorsView(false);
+      setIsDonateView(false);
+      setIsAdsView(false);
     });
   };
 
@@ -98,17 +131,32 @@ export default function App() {
     );
   }
 
-  if (isSponsorsView) {
+  if (isDonateView) {
     return (
       <Suspense fallback={
         <div className="min-h-screen bg-[#051A0F] text-white flex items-center justify-center p-4">
           <div className="text-center space-y-3">
             <div className="w-10 h-10 border-2 border-jubilee-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-xs text-stone-300 font-mono tracking-wider">Loading Sponsorship &amp; Advertising Portal...</p>
+            <p className="text-xs text-stone-300 font-mono tracking-wider">Loading Donate &amp; Support Portal...</p>
           </div>
         </div>
       }>
-        <SponsorshipPortal onBackToSite={handleBackToSite} initialTab={sponsorsTab} />
+        <SupportDonatePortal onBackToSite={handleBackToSite} onOpenAds={handleOpenAds} />
+      </Suspense>
+    );
+  }
+
+  if (isAdsView) {
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-[#051A0F] text-white flex items-center justify-center p-4">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-2 border-jubilee-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-xs text-stone-300 font-mono tracking-wider">Loading Compendium Advertising Portal...</p>
+          </div>
+        </div>
+      }>
+        <CompendiumAdsPortal onBackToSite={handleBackToSite} onOpenDonate={handleOpenDonate} />
       </Suspense>
     );
   }

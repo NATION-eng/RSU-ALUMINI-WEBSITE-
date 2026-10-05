@@ -465,7 +465,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
               <a
-                href="#sponsors"
+                href="#donate"
                 onClick={(e) => {
                   if (onOpenSponsors) {
                     e.preventDefault();
@@ -479,7 +479,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
               </a>
 
               <a
-                href="#sponsors"
+                href="#compendium-ads"
                 onClick={(e) => {
                   if (onOpenSponsors) {
                     e.preventDefault();

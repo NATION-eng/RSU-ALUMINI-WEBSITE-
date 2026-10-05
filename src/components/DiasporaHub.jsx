@@ -124,7 +124,7 @@ export default function DiasporaHub({ onOpenSponsors }) {
 
                 {pillar.actionType === 'SUPPORT_ENDOWMENT' && (
                   <a
-                    href="#sponsors"
+                    href="#donate"
                     onClick={(e) => {
                       if (onOpenSponsors) {
                         e.preventDefault();
