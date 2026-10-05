@@ -131,6 +131,15 @@ export default function Navbar({ onOpenSponsors }) {
               <span className="pointer-events-none">QR</span>
             </a>
 
+            {/* RSVP & Census CTA Button - Desktop only (>= 1024px) */}
+            <a
+              href="#census-rsvp"
+              className="hidden lg:inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-full text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 touch-manipulation hover:border-jubilee-gold/50"
+            >
+              <UserCheck className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+              <span className="whitespace-nowrap font-black">RSVP</span>
+            </a>
+
             {/* Three-Dash Nav Dropdown Button - Mobile & Tablet only (< 1024px) */}
             <button
               onClick={() => setIsOpen(!isOpen)}
