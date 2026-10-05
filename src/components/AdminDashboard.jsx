@@ -1201,6 +1201,8 @@ export default function AdminDashboard({ onBackToSite }) {
           </div>
         )}
 
+      </main>
+
       {/* Profile Detail Modal */}
       {selectedAttendee && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fade-in">
