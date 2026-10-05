@@ -333,15 +333,15 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
             </div>
 
             {/* 5 Distinct Tiers Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               
               {/* 1. Platinum Sponsor */}
-              <div className={`rounded-3xl p-6 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                 selectedTier === 'platinum'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
               }`}>
-                <div className="absolute top-0 right-0 px-4 py-1 bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 text-[10px] font-black uppercase tracking-wider rounded-bl-xl">
+                <div className="absolute top-0 right-0 px-3.5 sm:px-4 py-1 bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 text-[10px] font-black uppercase tracking-wider rounded-bl-xl shadow-sm">
                   Most Prestigious
                 </div>
 
@@ -351,10 +351,10 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     <span>Premier Category</span>
                   </div>
 
-                  <h3 className={`text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'platinum' ? 'text-white' : 'text-emerald-950'}`}>
+                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'platinum' ? 'text-white' : 'text-emerald-950'}`}>
                     Platinum Sponsor
                   </h3>
-                  <div className="text-3xl font-retro font-black text-amber-500 mb-4">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
                     ₦2,000,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
                   </div>
 
@@ -379,7 +379,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
                 <button
                   onClick={() => handleSelectTier('platinum', 2000000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'platinum'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -390,7 +390,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 2. Gold Sponsor */}
-              <div className={`rounded-3xl p-6 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
                 selectedTier === 'gold'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
@@ -401,10 +401,10 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     <span>Executive Tier</span>
                   </div>
 
-                  <h3 className={`text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'gold' ? 'text-white' : 'text-emerald-950'}`}>
+                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'gold' ? 'text-white' : 'text-emerald-950'}`}>
                     Gold Sponsor
                   </h3>
-                  <div className="text-3xl font-retro font-black text-amber-500 mb-4">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
                     ₦1,000,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
                   </div>
 
@@ -429,7 +429,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
                 <button
                   onClick={() => handleSelectTier('gold', 1000000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'gold'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -440,7 +440,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 3. Silver Sponsor */}
-              <div className={`rounded-3xl p-6 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
                 selectedTier === 'silver'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
@@ -451,10 +451,10 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     <span>Associate Tier</span>
                   </div>
 
-                  <h3 className={`text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'silver' ? 'text-white' : 'text-emerald-950'}`}>
+                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'silver' ? 'text-white' : 'text-emerald-950'}`}>
                     Silver Sponsor
                   </h3>
-                  <div className="text-3xl font-retro font-black text-amber-600 mb-4">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-600 mb-4">
                     ₦500,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
                   </div>
 
@@ -479,7 +479,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
                 <button
                   onClick={() => handleSelectTier('silver', 500000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'silver'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -490,7 +490,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 4. Bronze Sponsor */}
-              <div className={`rounded-3xl p-6 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
                 selectedTier === 'bronze'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
@@ -501,10 +501,10 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     <span>Affiliate Tier</span>
                   </div>
 
-                  <h3 className={`text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'bronze' ? 'text-white' : 'text-emerald-950'}`}>
+                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'bronze' ? 'text-white' : 'text-emerald-950'}`}>
                     Bronze Sponsor
                   </h3>
-                  <div className="text-3xl font-retro font-black text-amber-700 mb-4">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-700 mb-4">
                     ₦250,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
                   </div>
 
@@ -529,7 +529,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
                 <button
                   onClick={() => handleSelectTier('bronze', 250000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'bronze'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -540,7 +540,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 5. Support Partner */}
-              <div className={`rounded-3xl p-6 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
                 selectedTier === 'support'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
@@ -551,10 +551,10 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     <span>Fellowship Supporter</span>
                   </div>
 
-                  <h3 className={`text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'support' ? 'text-white' : 'text-emerald-950'}`}>
+                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'support' ? 'text-white' : 'text-emerald-950'}`}>
                     Support Partner
                   </h3>
-                  <div className="text-3xl font-retro font-black text-emerald-700 mb-4">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-emerald-700 mb-4">
                     ₦100,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
                   </div>
 
@@ -579,7 +579,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
                 <button
                   onClick={() => handleSelectTier('support', 100000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'support'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -590,7 +590,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 6. Custom Contribution / Endowment */}
-              <div className={`rounded-3xl p-6 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
                 selectedTier === 'custom'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
@@ -601,10 +601,10 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     <span>Direct Impact</span>
                   </div>
 
-                  <h3 className={`text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'custom' ? 'text-white' : 'text-emerald-950'}`}>
+                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'custom' ? 'text-white' : 'text-emerald-950'}`}>
                     Custom Jubilee Pledge
                   </h3>
-                  <div className="text-3xl font-retro font-black text-amber-500 mb-4">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
                     Flexible<span className="text-xs font-sans font-medium text-stone-400"> (Any Amount)</span>
                   </div>
 
@@ -629,7 +629,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
                 <button
                   onClick={() => handleSelectTier('custom', 50000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'custom'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -660,15 +660,15 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
             </div>
 
             {/* 6 Official Compendium Placement Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
 
               {/* 1. Back Cover (Premium Space) */}
-              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                 selectedTier === 'ad_back_cover'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-amber-300/80 bg-gradient-to-b from-white to-amber-50/50 hover:border-amber-500 text-stone-900 shadow-lg'
               }`}>
-                <div className="absolute top-0 right-0 px-3.5 py-1 bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 text-[10px] font-black uppercase tracking-wider rounded-bl-xl shadow-sm">
+                <div className="absolute top-0 right-0 px-3 sm:px-3.5 py-1 bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 text-[10px] font-black uppercase tracking-wider rounded-bl-xl shadow-sm">
                   Most Prestigious Space
                 </div>
                 <div>
@@ -679,7 +679,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_back_cover' ? 'text-white' : 'text-emerald-950'}`}>
                     Back Cover (Premium Space)
                   </h3>
-                  <div className="text-3xl font-retro font-black text-amber-600 mb-3">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-600 mb-3">
                     ₦500,000
                   </div>
                   <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_back_cover' ? 'text-stone-300' : 'text-stone-600'}`}>
@@ -693,7 +693,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 </div>
                 <button
                   onClick={() => handleSelectTier('ad_back_cover', 500000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'ad_back_cover'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -704,7 +704,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 2. Inside Front Cover */}
-              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                 selectedTier === 'ad_inside_front'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-sky-500/50 text-stone-900 shadow-md'
@@ -720,7 +720,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_inside_front' ? 'text-white' : 'text-emerald-950'}`}>
                     Inside Front Cover
                   </h3>
-                  <div className="text-3xl font-retro font-black text-sky-700 mb-3">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-sky-700 mb-3">
                     ₦350,000
                   </div>
                   <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_inside_front' ? 'text-stone-300' : 'text-stone-600'}`}>
@@ -734,7 +734,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 </div>
                 <button
                   onClick={() => handleSelectTier('ad_inside_front', 350000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'ad_inside_front'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -745,7 +745,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 3. Inside Back Cover */}
-              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                 selectedTier === 'ad_inside_back'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-purple-500/50 text-stone-900 shadow-md'
@@ -761,7 +761,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_inside_back' ? 'text-white' : 'text-emerald-950'}`}>
                     Inside Back Cover
                   </h3>
-                  <div className="text-3xl font-retro font-black text-purple-700 mb-3">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-purple-700 mb-3">
                     ₦300,000
                   </div>
                   <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_inside_back' ? 'text-stone-300' : 'text-stone-600'}`}>
@@ -775,7 +775,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 </div>
                 <button
                   onClick={() => handleSelectTier('ad_inside_back', 300000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'ad_inside_back'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -786,7 +786,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 4. Full Page */}
-              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                 selectedTier === 'ad_full'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-blue-500/50 text-stone-900 shadow-md'
@@ -802,7 +802,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_full' ? 'text-white' : 'text-emerald-950'}`}>
                     Full Page Advert
                   </h3>
-                  <div className="text-3xl font-retro font-black text-blue-700 mb-3">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-blue-700 mb-3">
                     ₦150,000
                   </div>
                   <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_full' ? 'text-stone-300' : 'text-stone-600'}`}>
@@ -816,7 +816,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 </div>
                 <button
                   onClick={() => handleSelectTier('ad_full', 150000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'ad_full'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -827,7 +827,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 5. Half Page */}
-              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                 selectedTier === 'ad_half'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-indigo-500/50 text-stone-900 shadow-md'
@@ -843,7 +843,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_half' ? 'text-white' : 'text-emerald-950'}`}>
                     Half Page Advert
                   </h3>
-                  <div className="text-3xl font-retro font-black text-indigo-700 mb-3">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-indigo-700 mb-3">
                     ₦75,000
                   </div>
                   <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_half' ? 'text-stone-300' : 'text-stone-600'}`}>
@@ -857,7 +857,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 </div>
                 <button
                   onClick={() => handleSelectTier('ad_half', 75000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'ad_half'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
@@ -868,7 +868,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </div>
 
               {/* 6. Quarter Page */}
-              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                 selectedTier === 'ad_quarter'
                   ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                   : 'border-stone-200 bg-white hover:border-emerald-500/50 text-stone-900 shadow-md'
@@ -884,7 +884,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_quarter' ? 'text-white' : 'text-emerald-950'}`}>
                     Quarter Page Advert
                   </h3>
-                  <div className="text-3xl font-retro font-black text-emerald-700 mb-3">
+                  <div className="text-2xl sm:text-3xl font-retro font-black text-emerald-700 mb-3">
                     ₦40,000
                   </div>
                   <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_quarter' ? 'text-stone-300' : 'text-stone-600'}`}>
@@ -898,7 +898,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 </div>
                 <button
                   onClick={() => handleSelectTier('ad_quarter', 40000)}
-                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                     selectedTier === 'ad_quarter'
                       ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
