@@ -400,7 +400,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'platinum' ? '✓ Tier Selected' : 'Select Platinum Tier'}
+                  PAY ₦2,000,000
                 </button>
               </div>
 
@@ -450,7 +450,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'gold' ? '✓ Tier Selected' : 'Select Gold Tier'}
+                  PAY ₦1,000,000
                 </button>
               </div>
 
@@ -500,7 +500,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'silver' ? '✓ Tier Selected' : 'Select Silver Tier'}
+                  PAY ₦500,000
                 </button>
               </div>
 
@@ -550,7 +550,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'bronze' ? '✓ Tier Selected' : 'Select Bronze Tier'}
+                  PAY ₦250,000
                 </button>
               </div>
 
@@ -600,7 +600,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'support' ? '✓ Tier Selected' : 'Select Support Partner'}
+                  PAY ₦100,000
                 </button>
               </div>
 
@@ -650,7 +650,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'custom' ? '✓ Tier Selected' : 'Enter Custom Pledge'}
+                  PAY CUSTOM AMOUNT
                 </button>
               </div>
 
@@ -714,7 +714,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'ad_back_cover' ? '✓ Slot Selected' : 'Book Back Cover & Pay'}
+                  PAY ₦500,000
                 </button>
               </div>
 
@@ -755,7 +755,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'ad_inside_front' ? '✓ Slot Selected' : 'Book Inside Front & Pay'}
+                  PAY ₦350,000
                 </button>
               </div>
 
@@ -796,7 +796,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'ad_inside_back' ? '✓ Slot Selected' : 'Book Inside Back & Pay'}
+                  PAY ₦300,000
                 </button>
               </div>
 
@@ -837,7 +837,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'ad_full' ? '✓ Slot Selected' : 'Book Full Page Space & Pay'}
+                  PAY ₦150,000
                 </button>
               </div>
 
@@ -878,7 +878,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'ad_half' ? '✓ Slot Selected' : 'Book Half Page Space & Pay'}
+                  PAY ₦75,000
                 </button>
               </div>
 
@@ -919,7 +919,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                       : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                   }`}
                 >
-                  {selectedTier === 'ad_quarter' ? '✓ Slot Selected' : 'Book Quarter Page Space & Pay'}
+                  PAY ₦40,000
                 </button>
               </div>
 
@@ -1220,10 +1220,8 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   <ShieldCheck className="w-5 h-5 text-emerald-950" />
                   <span>
                     {isProcessing 
-                      ? 'Processing Secure Checkout...' 
-                      : formData.paymentMethod === 'PAYSTACK'
-                        ? `Proceed to Secure Payment via Paystack 🟢 (₦${Number(customAmount || 0).toLocaleString()})`
-                        : `Submit Transfer Notification (₦${Number(customAmount || 0).toLocaleString()})`
+                      ? 'Processing...' 
+                      : `PAY ₦${Number(customAmount || 0).toLocaleString()}`
                     }
                   </span>
                 </button>
