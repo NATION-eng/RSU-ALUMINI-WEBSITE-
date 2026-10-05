@@ -30,7 +30,7 @@ export default function Navbar({ onOpenSponsors }) {
   const navLinks = [
     { name: 'Heritage', href: '#heritage', icon: Shield },
     { name: 'Program', href: '#program', icon: Calendar },
-    { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon, badge: 'Popular' },
+    { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon },
     { name: 'Media Hub', href: '#media-hub', icon: Video },
     { name: 'Diaspora', href: '#diaspora', icon: Globe },
   ];
@@ -62,19 +62,14 @@ export default function Navbar({ onOpenSponsors }) {
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center space-x-2 xl:space-x-3 font-sans">
+          <div className="hidden lg:flex items-center justify-center space-x-1 xl:space-x-2 font-sans">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="relative px-3 py-2 text-xs font-semibold text-emerald-100/90 hover:text-white rounded-lg hover:bg-white/[0.08] transition-all duration-200 flex items-center space-x-1.5"
+                className="px-3 py-2 text-xs xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
               >
-                <span>{link.name}</span>
-                {link.badge && (
-                  <span className="bg-jubilee-leaf text-[9px] text-emerald-950 font-extrabold px-1.5 py-0.2 rounded-full uppercase tracking-tighter">
-                    {link.badge}
-                  </span>
-                )}
+                {link.name}
               </a>
             ))}
           </div>
@@ -156,17 +151,10 @@ export default function Navbar({ onOpenSponsors }) {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:bg-white/10 hover:text-white font-sans active:bg-emerald-900/50"
+                className="flex items-center space-x-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:bg-white/10 hover:text-white font-sans active:bg-emerald-900/50 transition-colors"
               >
-                <div className="flex items-center space-x-3">
-                  <Icon className="w-4 h-4 text-jubilee-gold shrink-0" />
-                  <span>{link.name}</span>
-                </div>
-                {link.badge && (
-                  <span className="bg-jubilee-leaf text-[10px] text-emerald-950 font-bold px-2 py-0.5 rounded-full uppercase">
-                    {link.badge}
-                  </span>
-                )}
+                <Icon className="w-4 h-4 text-jubilee-gold shrink-0" />
+                <span>{link.name}</span>
               </a>
             );
           })}
