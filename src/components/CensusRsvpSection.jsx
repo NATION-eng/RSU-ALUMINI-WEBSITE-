@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Building2, Copy, Check } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Building2, Copy, Check, Award, HeartHandshake, BookOpen } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 import { WORLD_COUNTRIES } from '../data/countries';
 import CountrySelect from './CountrySelect';
 
-export default function CensusRsvpSection() {
+export default function CensusRsvpSection({ onOpenSponsors }) {
   const [copiedAcct, setCopiedAcct] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -20,10 +20,7 @@ export default function CensusRsvpSection() {
     country: 'Nigeria',
     attendanceMode: 'PHYSICAL', // 'PHYSICAL' | 'VIRTUAL'
     arrivalDate: '2026-11-13',
-    tributeQuote: '',
-    willingToSupport: false,
-    supportCategory: 'General Homecoming Support',
-    supportPledge: ''
+    tributeQuote: ''
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -72,9 +69,9 @@ export default function CensusRsvpSection() {
       attendance_mode: formData.attendanceMode,
       arrival_date: formData.attendanceMode === 'PHYSICAL' && formData.arrivalDate ? formData.arrivalDate : null,
       tribute_quote: formData.tributeQuote.trim() || null,
-      willing_to_support: Boolean(formData.willingToSupport),
-      support_category: formData.willingToSupport ? formData.supportCategory : null,
-      support_pledge: formData.willingToSupport ? (formData.supportPledge.trim() || null) : null
+      willing_to_support: false,
+      support_category: null,
+      support_pledge: null
     };
 
     try {
@@ -420,131 +417,6 @@ export default function CensusRsvpSection() {
 
             </div>
 
-            {/* Step 3: BOLD SUPPORT & JUBILEE SPONSORSHIP */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#051A0F] via-[#092B19] to-[#0E3B23] text-white border-2 border-jubilee-gold/70 shadow-luxury relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-jubilee-gold to-transparent"></div>
-
-              <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-white/10">
-                <span className="w-7 h-7 rounded-full bg-jubilee-gold text-emerald-950 flex items-center justify-center font-bold text-xs font-retro">
-                  3
-                </span>
-                <h3 className="text-base sm:text-xl font-retro font-bold text-white tracking-wide">
-                  PARTNER & SUPPORT THE 45TH JUBILEE
-                </h3>
-              </div>
-
-              {/* OFFICIAL AUDITED BANK ACCOUNT DETAILS */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-black/60 border border-jubilee-gold/80 mb-5 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
-                  <div>
-                    <div className="text-jubilee-gold font-retro font-extrabold text-sm sm:text-base flex items-center space-x-2">
-                      <Building2 className="w-4 h-4 text-jubilee-gold shrink-0" />
-                      <span>OFFICIAL DEDICATED AUDITED BANK ACCOUNT</span>
-                    </div>
-                    <p className="text-xs text-stone-300 font-light mt-0.5">
-                      Central Planning Committee (CPC) Financial Directorate
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText('0570076237');
-                      setCopiedAcct(true);
-                      setTimeout(() => setCopiedAcct(false), 2500);
-                    }}
-                    className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all active:scale-95 shrink-0 touch-manipulation"
-                  >
-                    {copiedAcct ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedAcct ? 'Copied 0570076237!' : 'Copy Account No.'}</span>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10">
-                    <span className="text-stone-400 block text-[10px] uppercase tracking-wider">Bank Name</span>
-                    <span className="font-bold text-white text-sm">ECOBANK</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10">
-                    <span className="text-stone-400 block text-[10px] uppercase tracking-wider">Account Number</span>
-                    <span className="font-bold text-jubilee-lightgold font-mono text-base tracking-wider">0570076237</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10">
-                    <span className="text-stone-400 block text-[10px] uppercase tracking-wider">Account Name</span>
-                    <span className="font-bold text-white text-xs truncate block" title="NAAS RSU ALUMNI PROJECT">NAAS RSU ALUMNI PROJECT</span>
-                  </div>
-                </div>
-
-                <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs border-t border-white/10">
-                  <span className="text-emerald-100/80 font-light">
-                    Want to pay online via card or view exclusive sponsorship perks?
-                  </span>
-                  <a
-                    href="#sponsors"
-                    className="inline-flex items-center space-x-1 text-xs font-bold text-jubilee-gold hover:text-amber-200 underline decoration-jubilee-gold underline-offset-4"
-                  >
-                    <span>View 5 Sponsorship Tiers &amp; Pay via Paystack →</span>
-                  </a>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <label className="flex items-start sm:items-center space-x-3.5 cursor-pointer p-4 rounded-2xl bg-white/[0.06] border border-white/15 hover:border-jubilee-gold transition-colors">
-                  <input
-                    type="checkbox"
-                    name="willingToSupport"
-                    checked={formData.willingToSupport}
-                    onChange={(e) => setFormData(prev => ({ ...prev, willingToSupport: e.target.checked }))}
-                    className="w-5 h-5 rounded text-jubilee-gold focus:ring-jubilee-gold border-stone-300 accent-jubilee-gold shrink-0 mt-0.5 sm:mt-0"
-                  />
-                  <div>
-                    <span className="text-sm sm:text-base font-bold text-white block">
-                      YES, I WANT TO SUPPORT / SPONSOR THE 45TH JUBILEE
-                    </span>
-                    <span className="text-xs text-emerald-200/80 font-light block mt-0.5">
-                      Check this box to indicate your partnership intention.
-                    </span>
-                  </div>
-                </label>
-
-                {formData.willingToSupport && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 font-sans">
-                    <div>
-                      <label className="block text-xs font-bold text-jubilee-lightgold mb-1.5 uppercase tracking-wider">
-                        Sponsorship Area of Interest
-                      </label>
-                      <select
-                        name="supportCategory"
-                        value={formData.supportCategory}
-                        onChange={handleChange}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-jubilee-gold/50 text-white text-xs sm:text-sm font-medium focus:outline-none"
-                      >
-                        <option value="General Homecoming Support">General Homecoming Support</option>
-                        <option value="Student Welfare & Feeding">Undergraduate Student Welfare & Feeding</option>
-                        <option value="Mass Choir & Cantata Production">Mass Choir & Cantata Production</option>
-                        <option value="45th Legacy Project Endowment">45th Legacy Project Endowment</option>
-                        <option value="Alumni Compendium Publication">Alumni Compendium Publication</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-jubilee-lightgold mb-1.5 uppercase tracking-wider">
-                        Estimated Pledge / Note (Optional)
-                      </label>
-                      <input
-                        type="text"
-                        name="supportPledge"
-                        value={formData.supportPledge}
-                        onChange={handleChange}
-                        placeholder="e.g. ₦50,000 / $100 or 'Contact me'"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/20 text-white placeholder-white/40 text-xs sm:text-sm focus:outline-none focus:border-jubilee-gold"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
             {/* Submit */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-stone-100">
               <div className="text-[11px] text-stone-400 font-sans flex items-center space-x-1">
@@ -570,6 +442,88 @@ export default function CensusRsvpSection() {
 
           </form>
         )}
+
+        {/* Bold Indicator & Action Button Leading to Support / Sponsorship Section */}
+        <div className="mt-10 sm:mt-14 p-6 sm:p-10 rounded-3xl bg-gradient-to-br from-[#051A0F] via-[#092B19] to-[#0E3B23] text-white border-2 border-jubilee-gold/70 shadow-luxury relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-jubilee-gold to-transparent" />
+          
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-3 max-w-xl text-left">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 text-[11px] font-bold uppercase tracking-widest">
+                <Award className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+                <span>Partner &amp; Support the 45th Jubilee</span>
+              </div>
+              
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-retro font-bold text-white tracking-tight leading-tight">
+                Support the Fellowship &amp; Promote Your Brand
+              </h3>
+              
+              <p className="text-xs sm:text-sm text-emerald-100/80 font-sans font-light leading-relaxed">
+                Empower the 45th Homecoming, fund student welfare, Mass Choir cantatas, and the 45-year legacy endowment across 5 distinguished sponsorship tiers or book compendium advertising.
+              </p>
+
+              {/* Official Bank Account Details with Copy Button */}
+              <div className="pt-2 p-3.5 rounded-2xl bg-black/40 border border-jubilee-gold/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                <div>
+                  <div className="text-[10px] uppercase font-bold tracking-wider text-jubilee-lightgold flex items-center space-x-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+                    <span>Audited Dedicated Bank Account (Ecobank)</span>
+                  </div>
+                  <div className="text-sm sm:text-base font-mono font-bold text-white mt-0.5">
+                    ECOBANK • <span className="text-jubilee-gold">0570076237</span>
+                  </div>
+                  <div className="text-[11px] text-stone-300">
+                    Account Name: <strong>NAAS RSU ALUMNI PROJECT</strong>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText('0570076237');
+                    setCopiedAcct(true);
+                    setTimeout(() => setCopiedAcct(false), 2500);
+                  }}
+                  className="inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all active:scale-95 shrink-0 touch-manipulation"
+                >
+                  {copiedAcct ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedAcct ? 'Copied 0570076237!' : 'Copy Account No.'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+              <a
+                href="#sponsors"
+                onClick={(e) => {
+                  if (onOpenSponsors) {
+                    e.preventDefault();
+                    onOpenSponsors('sponsors');
+                  }
+                }}
+                className="inline-flex items-center justify-center space-x-2.5 px-7 py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-105 active:scale-95 transition-all text-center touch-manipulation border border-amber-300"
+              >
+                <HeartHandshake className="w-4 h-4 text-emerald-950 shrink-0" />
+                <span>Support the 45th Jubilee</span>
+              </a>
+
+              <a
+                href="#sponsors"
+                onClick={(e) => {
+                  if (onOpenSponsors) {
+                    e.preventDefault();
+                    onOpenSponsors('ads');
+                  }
+                }}
+                className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-xs font-bold bg-white/10 hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/40 hover:scale-105 active:scale-95 transition-all text-center touch-manipulation"
+              >
+                <BookOpen className="w-4 h-4 text-jubilee-gold shrink-0" />
+                <span>Promote Your Brand / Compendium Adverts</span>
+              </a>
+            </div>
+          </div>
+        </div>
 
       </div>
     </section>

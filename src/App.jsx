@@ -133,8 +133,8 @@ export default function App() {
       {/* 6. In-Page Live "I Will Be There" DP Generator */}
       <DpGenerator />
 
-      {/* 7. Dual-Purpose Alumni Census Directory & Event RSVP System (With Bold Support Card) */}
-      <CensusRsvpSection />
+      {/* 7. Dual-Purpose Alumni Census Directory & Event RSVP System */}
+      <CensusRsvpSection onOpenSponsors={handleOpenSponsors} />
 
       {/* 8. Media, Livestream Center & Institutional Coverage */}
       <MediaSection />
