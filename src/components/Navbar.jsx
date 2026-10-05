@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode, Award, BookOpen } from 'lucide-react';
+import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode, Award, BookOpen, HeartHandshake } from 'lucide-react';
 
 export default function Navbar({ onOpenSponsors }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -98,7 +98,7 @@ export default function Navbar({ onOpenSponsors }) {
                   onOpenSponsors('sponsors');
                 }
               }}
-              title="Corporate Sponsorship Tiers & Support Matrix"
+              title="Donate / Support Tiers & Support Matrix"
               className="inline-flex items-center space-x-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
               <Award className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
@@ -184,8 +184,8 @@ export default function Navbar({ onOpenSponsors }) {
               }}
               className="w-full flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury font-sans touch-manipulation active:scale-95"
             >
-              <Award className="w-4 h-4 text-emerald-950 shrink-0" />
-              <span>Corporate Sponsorship (5 Tiers)</span>
+              <HeartHandshake className="w-4 h-4 text-emerald-950 shrink-0" />
+              <span>Donate / Support (5 Tiers)</span>
             </a>
 
             <a

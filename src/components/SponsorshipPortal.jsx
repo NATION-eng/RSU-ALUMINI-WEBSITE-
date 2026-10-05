@@ -95,7 +95,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 { display_name: "Email Address", variable_name: "email", value: formData.email.trim() },
                 { display_name: "Phone Number", variable_name: "phone", value: formData.phone },
                 { display_name: "Selected Category", variable_name: "selected_category", value: TIER_DETAILS[selectedTier]?.name || selectedTier },
-                { display_name: "Engagement Type", variable_name: "engagement_type", value: activeTab === 'ads' ? 'Compendium Ad Booking' : 'Corporate Sponsorship' },
+                { display_name: "Engagement Type", variable_name: "engagement_type", value: activeTab === 'ads' ? 'Compendium Ad Booking' : 'Donate / Support' },
                 { display_name: "Company / Alumni Set", variable_name: "organization", value: formData.organization || formData.alumniSet || "Individual Contributor" },
                 { display_name: "Amount (₦)", variable_name: "amount_naira", value: numAmount }
               ]
@@ -312,8 +312,8 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     : 'text-stone-300 hover:text-white'
                 }`}
               >
-                <Award className={`w-4 h-4 shrink-0 ${activeTab === 'sponsors' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-                <span>Corporate Sponsorship</span>
+                <HeartHandshake className={`w-4 h-4 shrink-0 ${activeTab === 'sponsors' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+                <span>Donate / Support</span>
               </button>
               <button
                 onClick={() => setActiveTab('ads')}
@@ -340,10 +340,10 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
             
             <div className="text-center max-w-3xl mx-auto space-y-2">
               <h2 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
-                Tiered Sponsorship Benefits &amp; Perks
+                Donate / Support Tiers &amp; Benefits
               </h2>
               <p className="text-sm text-stone-600">
-                To maximize value for our partners, visibility and ceremonial recognition scale across five clear investment tiers.
+                To empower the 45th Jubilee Homecoming and recognize every valued partner, visibility and ceremonial honors scale across five clear tiers.
               </p>
             </div>
 
@@ -986,7 +986,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-                    Step 1 &amp; 2: {activeTab === 'ads' ? 'Compendium Ad Space Selected' : 'Corporate Sponsorship Tier Selected'}
+                    Step 1 &amp; 2: {activeTab === 'ads' ? 'Compendium Ad Space Selected' : 'Donate / Support Tier Selected'}
                   </span>
                   <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
                     Step 3: Registration &amp; Contact Info
