@@ -3,6 +3,7 @@ import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Build
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 import { WORLD_COUNTRIES } from '../data/countries';
+import CountrySelect from './CountrySelect';
 
 export default function CensusRsvpSection() {
   const [copiedAcct, setCopiedAcct] = useState(false);
@@ -296,28 +297,17 @@ export default function CensusRsvpSection() {
                   />
                 </div>
 
-                {/* Updated: Comprehensive Searchable Country Selector (195+ Countries) */}
+                {/* Updated: Searchable Country Dropdown Menu (All 195+ Countries) */}
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1">
                     Country *
                   </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      list="world-countries-list"
-                      required
-                      name="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      placeholder="Type or select country (e.g. Nigeria, United Kingdom)"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none bg-white text-sm font-medium"
-                    />
-                    <datalist id="world-countries-list">
-                      {WORLD_COUNTRIES.map((c) => (
-                        <option key={c} value={c} />
-                      ))}
-                    </datalist>
-                  </div>
+                  <CountrySelect
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    required={true}
+                  />
                 </div>
 
                 <div>
