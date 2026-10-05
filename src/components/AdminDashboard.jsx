@@ -415,38 +415,62 @@ export default function AdminDashboard({ onBackToSite }) {
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 space-y-5 sm:space-y-8">
         
         {/* Admin Navigation Tabs */}
-        <div className="flex items-center space-x-2 border-b border-white/10 pb-3 overflow-x-auto">
+        <div className="flex items-center space-x-2.5 border-b border-white/10 pb-3 overflow-x-auto">
           <button
             onClick={() => setActiveAdminTab('REGISTRATIONS')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'REGISTRATIONS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
-                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            📋 Alumni Directory &amp; RSVP ({registrations.length})
+            <Users className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'REGISTRATIONS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span>Alumni Directory &amp; RSVP</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+              activeAdminTab === 'REGISTRATIONS'
+                ? 'bg-emerald-950/20 text-emerald-950'
+                : 'bg-white/10 text-stone-300'
+            }`}>
+              {registrations.length}
+            </span>
           </button>
 
           <button
             onClick={() => setActiveAdminTab('SPONSORSHIPS')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'SPONSORSHIPS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
-                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            🏆 Sponsorships &amp; Payments ({sponsorships.length})
+            <Award className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'SPONSORSHIPS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span>Sponsorships &amp; Payments</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+              activeAdminTab === 'SPONSORSHIPS'
+                ? 'bg-emerald-950/20 text-emerald-950'
+                : 'bg-white/10 text-stone-300'
+            }`}>
+              {sponsorships.length}
+            </span>
           </button>
 
           <button
             onClick={() => setActiveAdminTab('VIDEOS')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'VIDEOS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
-                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            🎬 Goodwill Video Messages ({videoSubmissions.length})
+            <Video className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'VIDEOS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span>Goodwill Video Messages</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+              activeAdminTab === 'VIDEOS'
+                ? 'bg-emerald-950/20 text-emerald-950'
+                : 'bg-white/10 text-stone-300'
+            }`}>
+              {videoSubmissions.length}
+            </span>
           </button>
         </div>
 

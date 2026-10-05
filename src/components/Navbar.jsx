@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode } from 'lucide-react';
+import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode, Award, BookOpen } from 'lucide-react';
 
 export default function Navbar({ onOpenSponsors }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -181,7 +181,8 @@ export default function Navbar({ onOpenSponsors }) {
               }}
               className="w-full flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury font-sans"
             >
-              <span>🏆 45th Jubilee Sponsorship Tiers (Support)</span>
+              <Award className="w-4 h-4 text-emerald-950 shrink-0" />
+              <span>45th Jubilee Sponsorship Tiers (Support)</span>
             </a>
 
             <a
@@ -195,6 +196,7 @@ export default function Navbar({ onOpenSponsors }) {
               }}
               className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white/10 text-jubilee-lightgold border border-jubilee-gold/30 font-sans"
             >
+              <BookOpen className="w-4 h-4 text-jubilee-gold shrink-0" />
               <span>Promote Your Brand / Compendium Adverts</span>
             </a>
 

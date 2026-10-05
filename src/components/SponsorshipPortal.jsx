@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, Award, CheckCircle2, ShieldCheck, CreditCard, Building2, 
   Copy, Check, Sparkles, HeartHandshake, Download, Printer, ExternalLink,
-  Info, MessageSquare, ChevronRight, Share2, Mail
+  Info, MessageSquare, ChevronRight, Share2, Mail, BookOpen, Lock
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
@@ -289,23 +289,25 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
             <div className="grid grid-cols-1 sm:grid-cols-2 p-1.5 rounded-2xl bg-black/40 border border-white/20 backdrop-blur-md w-full gap-1">
               <button
                 onClick={() => setActiveTab('sponsors')}
-                className={`w-full py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all text-center touch-manipulation ${
+                className={`w-full py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 touch-manipulation ${
                   activeTab === 'sponsors'
                     ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
                     : 'text-stone-300 hover:text-white'
                 }`}
               >
-                🏆 5 Sponsorship Tiers
+                <Award className={`w-4 h-4 shrink-0 ${activeTab === 'sponsors' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+                <span>5 Sponsorship Tiers</span>
               </button>
               <button
                 onClick={() => setActiveTab('ads')}
-                className={`w-full py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all text-center touch-manipulation ${
+                className={`w-full py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 touch-manipulation ${
                   activeTab === 'ads'
                     ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
                     : 'text-stone-300 hover:text-white'
                 }`}
               >
-                📖 Compendium Adverts
+                <BookOpen className={`w-4 h-4 shrink-0 ${activeTab === 'ads' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+                <span>Compendium Adverts</span>
               </button>
             </div>
           </div>
@@ -967,8 +969,9 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                   </span>
                 </button>
 
-                <p className="text-[11px] text-stone-400 text-center sm:text-right font-light">
-                  🔒 256-Bit SSL Encrypted • Central Planning Committee Audited
+                <p className="text-[11px] text-stone-400 text-center sm:text-right font-light flex items-center justify-center sm:justify-end space-x-1">
+                  <Lock className="w-3.5 h-3.5 text-emerald-800 shrink-0" />
+                  <span>256-Bit SSL Encrypted • Central Planning Committee Audited</span>
                 </p>
               </div>
 

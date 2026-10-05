@@ -47,7 +47,7 @@ export default function Footer() {
               <li><a href="#dp-generator" className="hover:text-white transition-colors">DP Generator</a></li>
               <li><a href="#census-rsvp" className="hover:text-white transition-colors">Alumni Census Directory</a></li>
               <li><a href="#media-hub" className="hover:text-white transition-colors">Media & Livestream</a></li>
-              <li><a href="#sponsors" className="text-jubilee-lightgold font-bold hover:text-white transition-colors">🏆 Sponsorship &amp; Ad Matrix</a></li>
+              <li><a href="#sponsors" className="text-jubilee-lightgold font-bold hover:text-white transition-colors">Sponsorship &amp; Ad Matrix</a></li>
               <li><a href="#diaspora" className="hover:text-white transition-colors">Diaspora Network</a></li>
             </ul>
           </div>
