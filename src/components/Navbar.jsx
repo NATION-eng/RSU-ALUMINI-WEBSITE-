@@ -45,17 +45,17 @@ export default function Navbar({ onOpenSponsors }) {
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Official 45th Anniversary Logo & Identity */}
-          <a href="#" className="flex items-center space-x-1.5 sm:space-x-3 group min-w-0 shrink">
+          <a href="#" className="flex items-center space-x-1.5 sm:space-x-2.5 group min-w-0 shrink overflow-hidden max-w-[58%] xs:max-w-[65%] sm:max-w-none">
             <img
               src="/official-logo.png"
               alt="ASF RSU 45th Anniversary Logo"
               className="h-8 xs:h-9 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
-            <div className="text-left flex flex-col justify-center min-w-0">
-              <span className="font-retro font-bold text-white text-[11px] xs:text-sm sm:text-[15px] md:text-base tracking-tight sm:tracking-wide group-hover:text-jubilee-lightgold transition-colors leading-tight truncate">
+            <div className="text-left flex flex-col justify-center min-w-0 overflow-hidden">
+              <span className="font-retro font-bold text-white text-[11px] xs:text-sm sm:text-[15px] md:text-base tracking-tight sm:tracking-wide group-hover:text-jubilee-lightgold transition-colors leading-tight truncate block">
                 Anniversary Celebration &amp;
               </span>
-              <span className="text-[9px] xs:text-[11px] sm:text-xs text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase leading-tight mt-0.5 truncate">
+              <span className="text-[9px] xs:text-[11px] sm:text-xs text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase leading-tight mt-0.5 truncate block">
                 Alumni Homecoming
               </span>
             </div>
@@ -93,7 +93,7 @@ export default function Navbar({ onOpenSponsors }) {
               <span>Sponsor</span>
             </a>
 
-            {/* Compendium Ad Booking */}
+            {/* Compendium Ad Booking - Wide desktop only */}
             <a
               href="#sponsors"
               onClick={(e) => {
@@ -103,32 +103,32 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="Compendium Advertising Rates & Space Booking"
-              className="hidden md:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.05] hover:border-jubilee-gold hover:bg-white/[0.12] transition-all hover:scale-105 shrink-0"
+              className="hidden xl:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.05] hover:border-jubilee-gold hover:bg-white/[0.12] transition-all hover:scale-105 shrink-0"
             >
               <BookOpen className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
               <span>Compendium Ads</span>
             </a>
 
-            {/* Quick QR Code Shortcut (Shown on tablets & desktop, accessible via mobile drawer on phones) */}
+            {/* Quick QR Code Shortcut - Wide desktop only */}
             <a
               href="#qr-share"
               title="Share & Download Official QR Code"
-              className="hidden sm:inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
+              className="hidden xl:inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
             >
               <QrCode className="w-3.5 h-3.5 text-jubilee-gold shrink-0 pointer-events-none" />
               <span className="pointer-events-none">QR</span>
             </a>
 
-            {/* RSVP & Census CTA Button - Hidden on small mobile screens to keep three-dash dropdown cleanly in-frame */}
+            {/* RSVP & Census CTA Button - Desktop only (>= 1024px) to guarantee zero mobile/tablet overflow */}
             <a
               href="#census-rsvp"
-              className="hidden sm:inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 touch-manipulation"
+              className="hidden lg:inline-flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 touch-manipulation"
             >
               <UserCheck className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
               <span className="whitespace-nowrap font-black">RSVP</span>
             </a>
 
-            {/* Hamburger / Three-Dash Nav Dropdown Button */}
+            {/* Three-Dash Nav Dropdown Button - Mobile & Tablet only (< 1024px) */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden flex items-center justify-center p-2 rounded-xl text-jubilee-lightgold hover:text-white bg-white/[0.08] hover:bg-white/15 border border-jubilee-gold/30 hover:border-jubilee-gold focus:outline-none transition-all duration-200 shrink-0 touch-manipulation active:scale-95 shadow-sm"
