@@ -69,25 +69,79 @@ export const TIER_DETAILS = {
       'Special mention and name recognition in the commemorative souvenir booklet'
     ]
   },
+  ad_back_cover: {
+    name: 'Back Cover (Premium Space)',
+    minAmount: 500000,
+    badge: '🌟 Back Cover (Premium)',
+    color: '#D4AF37',
+    leadTime: 'Immediate Reservation & Placement',
+    dimensions: '210mm × 297mm (+3mm bleed)',
+    perks: [
+      'Maximum visibility on the outer back cover; prime real estate for leading corporate partners or major alumni sets',
+      'High-impact permanent placement in both print edition and digital cloud compendium',
+      'Complimentary corporate feature & digital link inside the interactive PDF edition'
+    ]
+  },
+  ad_inside_front: {
+    name: 'Inside Front Cover',
+    minAmount: 350000,
+    badge: '💎 Inside Front Cover',
+    color: '#0284C7',
+    leadTime: 'Priority Placement Verification',
+    dimensions: '210mm × 297mm (+3mm bleed)',
+    perks: [
+      'High-impact initial placement immediately inside the front cover for top-tier sponsors and businesses',
+      'First advertising page seen by dignitaries, alumni, and conference delegates',
+      'Full-page vibrant color layout in print & digital downloadable compendium'
+    ]
+  },
+  ad_inside_back: {
+    name: 'Inside Back Cover',
+    minAmount: 300000,
+    badge: '✨ Inside Back Cover',
+    color: '#8B5CF6',
+    leadTime: 'Priority Placement Verification',
+    dimensions: '210mm × 297mm (+3mm bleed)',
+    perks: [
+      'Premium interior placement facing the final pages; excellent visibility for established brands and set tributes',
+      'High-resolution archival finish in print and permanent cloud repository'
+    ]
+  },
   ad_full: {
-    name: 'Full Page Compendium Advert',
+    name: 'Full Page Advert',
     minAmount: 150000,
     badge: '📖 Full Page Advert',
     color: '#3B82F6',
     leadTime: 'Artwork Submission within 7 days',
+    dimensions: '210mm × 297mm (+3mm bleed)',
     perks: [
-      'Full-page high-resolution color advert in the permanent 45th Jubilee Compendium',
+      'Full-page colorful editorial layout, business feature, or commemorative set tribute',
+      'Full A4 color page in print & digital downloadable compendium archive',
       'Digital link inside the digital downloadable PDF compendium edition'
     ]
   },
   ad_half: {
-    name: 'Half Page Compendium Advert',
-    minAmount: 85000,
+    name: 'Half Page Advert',
+    minAmount: 75000,
     badge: '📄 Half Page Advert',
     color: '#6366F1',
     leadTime: 'Artwork Submission within 7 days',
+    dimensions: '210mm × 148mm (+3mm bleed)',
     perks: [
-      'Half-page color advert or family congratulatory spotlight in the compendium'
+      'Standard half-page display ad for medium-scale businesses, professional services, or group shout-outs',
+      'Ideal for family tributes, consultancy practices, clinics, law chambers, and tech agencies'
+    ]
+  },
+  ad_quarter: {
+    name: 'Quarter Page Advert',
+    minAmount: 40000,
+    badge: '📇 Quarter Page Advert',
+    color: '#10B981',
+    leadTime: 'Artwork Submission within 7 days',
+    dimensions: '105mm × 148mm',
+    perks: [
+      'Compact quarter-page layout suitable for individual business card listings and personal congratulatory notes',
+      'Perfect for personal congratulatory notes, alumni set milestones, and professional service listings'
     ]
   },
   custom: {
@@ -192,10 +246,11 @@ export function generateSponsorEmailHtml({
               <!-- Next Steps for Advert & Branding Materials -->
               <div style="background-color: #FEF3C7; border-left: 4px solid #D97706; padding: 16px; border-radius: 8px; margin: 25px 0;">
                 <h4 style="margin: 0 0 6px 0; font-size: 13px; color: #92400E; text-transform: uppercase; font-weight: 800;">
-                  📌 Next Steps for Compendium & Media Submission:
+                  📌 Next Steps for Compendium &amp; Media Submission:
                 </h4>
-                <p style="margin: 0; font-size: 12.5px; color: #78350F; line-height: 1.5;">
-                  Please reply to this email or send your high-resolution corporate logo, goodwill photo, and full-page/half-page advertisement artwork (PDF/TIFF/PNG 300DPI) to the Compendium Directorate at <strong>Asfrsu@gmail.com</strong> or WhatsApp <strong>+234 803 000 0000</strong>.
+                <p style="margin: 0; font-size: 12.5px; color: #78350F; line-height: 1.6;">
+                  All artwork, tributes, personal messages, or ad copy must be submitted in high-resolution print-ready format (PDF, TIFF, or high-DPI JPEG at 300 DPI) with a 3mm bleed.<br/><br/>
+                  Please send your materials directly to <strong>Ekpor Jephta</strong> at <a href="mailto:ekporjephta@gmail.com" style="color: #92400E; font-weight: 700; text-decoration: underline;">ekporjephta@gmail.com</a>, with copy to the Jubilee Secretariat at <a href="mailto:Asfrsu@gmail.com" style="color: #92400E; font-weight: 700; text-decoration: underline;">Asfrsu@gmail.com</a>.
                 </p>
               </div>
 

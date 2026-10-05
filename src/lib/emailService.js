@@ -191,7 +191,10 @@ Contribution Details:
 • Reference: ${reference}
 • Bank Account: ECOBANK | 0570076237 | NAAS RSU ALUMNI PROJECT
 
-Please forward your high-resolution corporate logo or compendium advert artwork (PDF/TIFF/PNG 300DPI) to Asfrsu@gmail.com.
+Next Steps for Advert & Media Submission:
+Please send your print-ready artwork, tribute, or ad copy (PDF, TIFF, or 300 DPI JPEG with 3mm bleed) to:
+• Ekpor Jephta: ekporjephta@gmail.com
+• Secretariat: Asfrsu@gmail.com
 
 Warm regards in Christ,
 Central Planning Committee (CPC)

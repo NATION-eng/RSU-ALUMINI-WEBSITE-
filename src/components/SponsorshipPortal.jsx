@@ -83,11 +83,13 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
           ref: reference,
           metadata: {
             custom_fields: [
-              { display_name: "Donor Name", variable_name: "donor_name", value: formData.fullName },
-              { display_name: "Organization", variable_name: "organization", value: formData.organization || "Individual" },
-              { display_name: "Sponsorship Tier", variable_name: "tier", value: TIER_DETAILS[selectedTier]?.name || selectedTier },
-              { display_name: "Alumni Set / Chapter", variable_name: "alumni_set", value: formData.alumniSet || "General Supporter" },
-              { display_name: "Phone Number", variable_name: "phone", value: formData.phone }
+              { display_name: "Customer Name", variable_name: "customer_name", value: formData.fullName },
+              { display_name: "Email Address", variable_name: "email", value: formData.email.trim() },
+              { display_name: "Phone Number", variable_name: "phone", value: formData.phone },
+              { display_name: "Selected Category", variable_name: "selected_category", value: TIER_DETAILS[selectedTier]?.name || selectedTier },
+              { display_name: "Engagement Type", variable_name: "engagement_type", value: activeTab === 'ads' ? 'Compendium Ad Booking' : 'Corporate Sponsorship' },
+              { display_name: "Company / Alumni Set", variable_name: "organization", value: formData.organization || formData.alumniSet || "Individual Contributor" },
+              { display_name: "Amount (₦)", variable_name: "amount_naira", value: numAmount }
             ]
           },
           callback: function (response) {
@@ -248,14 +250,14 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
           </div>
 
           <h1 className="text-2xl sm:text-5xl lg:text-6xl font-retro font-extrabold text-white tracking-tight leading-tight">
-            ASF RSU 45TH JUBILEE <br />
+            PARTNER &amp; ADVERTISE <br />
             <span className="bg-gradient-to-r from-jubilee-gold via-amber-200 to-yellow-400 bg-clip-text text-transparent">
-              SPONSORSHIP &amp; ADVERTISING MATRIX
+              ASF RSU 45TH JUBILEE
             </span>
           </h1>
 
-          <p className="max-w-3xl mx-auto text-xs sm:text-base text-emerald-100/80 font-light leading-relaxed px-2">
-            Partner with us as we celebrate 45 years of God's faithfulness at Rivers State University. Support the legacy, empower the next generation, and position your brand before thousands of alumni, captains of industry, and international delegates.
+          <p className="max-w-3xl mx-auto text-xs sm:text-base text-emerald-100/90 font-light leading-relaxed px-2">
+            Position your brand before thousands of alumni, dignitaries, and guests while permanently supporting the 45th Jubilee Homecoming and historical compendium.
           </p>
 
           {/* Quick Bank Banner */}
@@ -296,7 +298,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 }`}
               >
                 <Award className={`w-4 h-4 shrink-0 ${activeTab === 'sponsors' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-                <span>5 Sponsorship Tiers</span>
+                <span>Corporate Sponsorship</span>
               </button>
               <button
                 onClick={() => setActiveTab('ads')}
@@ -307,7 +309,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 }`}
               >
                 <BookOpen className={`w-4 h-4 shrink-0 ${activeTab === 'ads' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-                <span>Compendium Adverts</span>
+                <span>Compendium Ad Booking</span>
               </button>
             </div>
           </div>
@@ -645,102 +647,319 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
         {activeTab === 'ads' && (
           <div className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-2">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-800 text-[11px] font-bold uppercase tracking-wider">
+                <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+                <span>Section B: Compendium Advertising Rates</span>
+              </div>
               <h2 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
-                Promote Your Brand or Business
+                Compendium Advertising Rates &amp; Ad Booking
               </h2>
-              <p className="text-sm text-stone-600">
-                Position your corporate products, professional services, or family goodwill congratulatory tributes in the permanent 45th Jubilee Souvenir Compendium (1981–2026).
+              <p className="text-xs sm:text-sm text-stone-600 max-w-2xl mx-auto">
+                Position your corporate brand, professional services, alumni set milestones, or special 45th Jubilee congratulatory tributes before thousands of alumni, captains of industry, and dignitaries.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Full Page Ad */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-stone-200 shadow-md flex flex-col justify-between">
+            {/* 6 Official Compendium Placement Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+              {/* 1. Back Cover (Premium Space) */}
+              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                selectedTier === 'ad_back_cover'
+                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                  : 'border-amber-300/80 bg-gradient-to-b from-white to-amber-50/50 hover:border-amber-500 text-stone-900 shadow-lg'
+              }`}>
+                <div className="absolute top-0 right-0 px-3.5 py-1 bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 text-[10px] font-black uppercase tracking-wider rounded-bl-xl shadow-sm">
+                  Most Prestigious Space
+                </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100 text-blue-900">
-                    High Impact
-                  </span>
-                  <h3 className="text-xl font-retro font-bold text-emerald-950 mt-3 mb-1">
-                    Full Page Color Advert
+                  <div className="flex items-center space-x-2 text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Prime Real Estate</span>
+                  </div>
+                  <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_back_cover' ? 'text-white' : 'text-emerald-950'}`}>
+                    Back Cover (Premium Space)
                   </h3>
-                  <div className="text-2xl font-black text-emerald-950 font-retro mb-3">
+                  <div className="text-3xl font-retro font-black text-amber-600 mb-3">
+                    ₦500,000
+                  </div>
+                  <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_back_cover' ? 'text-stone-300' : 'text-stone-600'}`}>
+                    Maximum visibility on the outer back cover; prime real estate for leading corporate partners or major alumni sets.
+                  </p>
+                  <div className={`text-[11px] space-y-1 font-mono mb-6 border-t pt-3 ${selectedTier === 'ad_back_cover' ? 'border-white/10 text-emerald-200/80' : 'border-stone-200 text-stone-500'}`}>
+                    <div>• Placement: Outer Back Cover</div>
+                    <div>• Format: 210mm × 297mm (+3mm bleed)</div>
+                    <div>• Resolution: 300 DPI CMYK Print-Ready</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleSelectTier('ad_back_cover', 500000)}
+                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                    selectedTier === 'ad_back_cover'
+                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                  }`}
+                >
+                  {selectedTier === 'ad_back_cover' ? '✓ Slot Selected' : 'Book Back Cover & Pay'}
+                </button>
+              </div>
+
+              {/* 2. Inside Front Cover */}
+              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                selectedTier === 'ad_inside_front'
+                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                  : 'border-stone-200 bg-white hover:border-sky-500/50 text-stone-900 shadow-md'
+              }`}>
+                <div className="absolute top-0 right-0 px-3 py-1 bg-sky-100 text-sky-900 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl">
+                  High Impact
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2 text-[11px] font-bold text-sky-700 uppercase tracking-wider mb-2">
+                    <Award className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Premier Interior</span>
+                  </div>
+                  <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_inside_front' ? 'text-white' : 'text-emerald-950'}`}>
+                    Inside Front Cover
+                  </h3>
+                  <div className="text-3xl font-retro font-black text-sky-700 mb-3">
+                    ₦350,000
+                  </div>
+                  <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_inside_front' ? 'text-stone-300' : 'text-stone-600'}`}>
+                    High-impact initial placement immediately inside the front cover for top-tier sponsors and businesses.
+                  </p>
+                  <div className={`text-[11px] space-y-1 font-mono mb-6 border-t pt-3 ${selectedTier === 'ad_inside_front' ? 'border-white/10 text-emerald-200/80' : 'border-stone-200 text-stone-500'}`}>
+                    <div>• Placement: Immediate Inside Front Cover</div>
+                    <div>• Format: 210mm × 297mm (+3mm bleed)</div>
+                    <div>• Resolution: 300 DPI CMYK High-Res</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleSelectTier('ad_inside_front', 350000)}
+                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                    selectedTier === 'ad_inside_front'
+                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                  }`}
+                >
+                  {selectedTier === 'ad_inside_front' ? '✓ Slot Selected' : 'Book Inside Front & Pay'}
+                </button>
+              </div>
+
+              {/* 3. Inside Back Cover */}
+              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                selectedTier === 'ad_inside_back'
+                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                  : 'border-stone-200 bg-white hover:border-purple-500/50 text-stone-900 shadow-md'
+              }`}>
+                <div className="absolute top-0 right-0 px-3 py-1 bg-purple-100 text-purple-900 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl">
+                  Strategic Placement
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2 text-[11px] font-bold text-purple-700 uppercase tracking-wider mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Closing Prime Space</span>
+                  </div>
+                  <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_inside_back' ? 'text-white' : 'text-emerald-950'}`}>
+                    Inside Back Cover
+                  </h3>
+                  <div className="text-3xl font-retro font-black text-purple-700 mb-3">
+                    ₦300,000
+                  </div>
+                  <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_inside_back' ? 'text-stone-300' : 'text-stone-600'}`}>
+                    Premium interior placement facing the final pages; excellent visibility for established brands and set tributes.
+                  </p>
+                  <div className={`text-[11px] space-y-1 font-mono mb-6 border-t pt-3 ${selectedTier === 'ad_inside_back' ? 'border-white/10 text-emerald-200/80' : 'border-stone-200 text-stone-500'}`}>
+                    <div>• Placement: Facing Final Commemorative Pages</div>
+                    <div>• Format: 210mm × 297mm (+3mm bleed)</div>
+                    <div>• Resolution: 300 DPI Archival Resolution</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleSelectTier('ad_inside_back', 300000)}
+                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                    selectedTier === 'ad_inside_back'
+                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                  }`}
+                >
+                  {selectedTier === 'ad_inside_back' ? '✓ Slot Selected' : 'Book Inside Back & Pay'}
+                </button>
+              </div>
+
+              {/* 4. Full Page */}
+              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                selectedTier === 'ad_full'
+                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                  : 'border-stone-200 bg-white hover:border-blue-500/50 text-stone-900 shadow-md'
+              }`}>
+                <div className="absolute top-0 right-0 px-3 py-1 bg-blue-100 text-blue-900 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl">
+                  Full Page Layout
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2 text-[11px] font-bold text-blue-700 uppercase tracking-wider mb-2">
+                    <BookOpen className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Editorial &amp; Tribute</span>
+                  </div>
+                  <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_full' ? 'text-white' : 'text-emerald-950'}`}>
+                    Full Page Advert
+                  </h3>
+                  <div className="text-3xl font-retro font-black text-blue-700 mb-3">
                     ₦150,000
                   </div>
-                  <p className="text-xs text-stone-600 leading-relaxed mb-4">
-                    Full A4 color page in print &amp; digital downloadable archive edition. Perfect for corporate brands, set reunions, and enterprise products.
+                  <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_full' ? 'text-stone-300' : 'text-stone-600'}`}>
+                    Full-page colorful editorial layout, business feature, or commemorative set tribute.
                   </p>
-                  <div className="text-[11px] text-stone-500 font-mono space-y-1 mb-6">
-                    <div>• Dimensions: 210mm × 297mm (+3mm bleed)</div>
-                    <div>• Resolution: 300 DPI CMYK</div>
-                    <div>• Formats: PDF, TIFF, or High-Res JPEG</div>
+                  <div className={`text-[11px] space-y-1 font-mono mb-6 border-t pt-3 ${selectedTier === 'ad_full' ? 'border-white/10 text-emerald-200/80' : 'border-stone-200 text-stone-500'}`}>
+                    <div>• Format: 210mm × 297mm (+3mm bleed)</div>
+                    <div>• 300 DPI CMYK Print &amp; Digital PDF Link</div>
+                    <div>• High-resolution editorial showcase</div>
                   </div>
                 </div>
                 <button
                   onClick={() => handleSelectTier('ad_full', 150000)}
-                  className="w-full py-3 rounded-xl text-xs font-bold bg-emerald-950 hover:bg-emerald-900 text-white transition-all"
+                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                    selectedTier === 'ad_full'
+                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                  }`}
                 >
-                  Book Full Page Space
+                  {selectedTier === 'ad_full' ? '✓ Slot Selected' : 'Book Full Page Space & Pay'}
                 </button>
               </div>
 
-              {/* Half Page Ad */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-stone-200 shadow-md flex flex-col justify-between">
+              {/* 5. Half Page */}
+              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                selectedTier === 'ad_half'
+                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                  : 'border-stone-200 bg-white hover:border-indigo-500/50 text-stone-900 shadow-md'
+              }`}>
+                <div className="absolute top-0 right-0 px-3 py-1 bg-indigo-100 text-indigo-900 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl">
+                  Popular Choice
+                </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-indigo-100 text-indigo-900">
-                    Popular Choice
-                  </span>
-                  <h3 className="text-xl font-retro font-bold text-emerald-950 mt-3 mb-1">
-                    Half Page Color Advert
-                  </h3>
-                  <div className="text-2xl font-black text-emerald-950 font-retro mb-3">
-                    ₦85,000
+                  <div className="flex items-center space-x-2 text-[11px] font-bold text-indigo-700 uppercase tracking-wider mb-2">
+                    <HeartHandshake className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Standard Display</span>
                   </div>
-                  <p className="text-xs text-stone-600 leading-relaxed mb-4">
-                    Half horizontal/vertical page. Ideal for family tributes, consultancy practices, clinics, law chambers, and tech agencies.
+                  <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_half' ? 'text-white' : 'text-emerald-950'}`}>
+                    Half Page Advert
+                  </h3>
+                  <div className="text-3xl font-retro font-black text-indigo-700 mb-3">
+                    ₦75,000
+                  </div>
+                  <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_half' ? 'text-stone-300' : 'text-stone-600'}`}>
+                    Standard half-page display ad for medium-scale businesses, professional services, or group shout-outs.
                   </p>
-                  <div className="text-[11px] text-stone-500 font-mono space-y-1 mb-6">
-                    <div>• Dimensions: 210mm × 148mm</div>
-                    <div>• Resolution: 300 DPI CMYK</div>
-                    <div>• Formats: PDF or High-Res PNG</div>
+                  <div className={`text-[11px] space-y-1 font-mono mb-6 border-t pt-3 ${selectedTier === 'ad_half' ? 'border-white/10 text-emerald-200/80' : 'border-stone-200 text-stone-500'}`}>
+                    <div>• Format: 210mm × 148mm (+3mm bleed)</div>
+                    <div>• 300 DPI CMYK High-Res Layout</div>
+                    <div>• Ideal for family &amp; business features</div>
                   </div>
                 </div>
                 <button
-                  onClick={() => handleSelectTier('ad_half', 85000)}
-                  className="w-full py-3 rounded-xl text-xs font-bold bg-emerald-950 hover:bg-emerald-900 text-white transition-all"
+                  onClick={() => handleSelectTier('ad_half', 75000)}
+                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                    selectedTier === 'ad_half'
+                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                  }`}
                 >
-                  Book Half Page Space
+                  {selectedTier === 'ad_half' ? '✓ Slot Selected' : 'Book Half Page Space & Pay'}
                 </button>
               </div>
 
-              {/* Prime Exhibition Booth */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-jubilee-gold/80 shadow-luxury flex flex-col justify-between bg-gradient-to-br from-white to-amber-50/40">
+              {/* 6. Quarter Page */}
+              <div className={`rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                selectedTier === 'ad_quarter'
+                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                  : 'border-stone-200 bg-white hover:border-emerald-500/50 text-stone-900 shadow-md'
+              }`}>
+                <div className="absolute top-0 right-0 px-3 py-1 bg-emerald-100 text-emerald-900 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl">
+                  Entry Slot
+                </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-amber-200 text-amber-950 font-black">
-                    On-Ground Booth
-                  </span>
-                  <h3 className="text-xl font-retro font-bold text-emerald-950 mt-3 mb-1">
-                    Homecoming Exhibition Space
-                  </h3>
-                  <div className="text-2xl font-black text-amber-700 font-retro mb-3">
-                    ₦300,000
+                  <div className="flex items-center space-x-2 text-[11px] font-bold text-emerald-700 uppercase tracking-wider mb-2">
+                    <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Business Card / Note</span>
                   </div>
-                  <p className="text-xs text-stone-600 leading-relaxed mb-4">
-                    Dedicated product display &amp; sales exhibition marquee space at Rivers State University campus throughout November 13–15, 2026.
+                  <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_quarter' ? 'text-white' : 'text-emerald-950'}`}>
+                    Quarter Page Advert
+                  </h3>
+                  <div className="text-3xl font-retro font-black text-emerald-700 mb-3">
+                    ₦40,000
+                  </div>
+                  <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_quarter' ? 'text-stone-300' : 'text-stone-600'}`}>
+                    Compact quarter-page layout suitable for individual business card listings and personal congratulatory notes.
                   </p>
-                  <div className="text-[11px] text-stone-500 font-mono space-y-1 mb-6">
-                    <div>• 3m × 3m Branded Canopy Space</div>
-                    <div>• Power supply &amp; banquet table</div>
-                    <div>• Direct access to 2,000+ delegates</div>
+                  <div className={`text-[11px] space-y-1 font-mono mb-6 border-t pt-3 ${selectedTier === 'ad_quarter' ? 'border-white/10 text-emerald-200/80' : 'border-stone-200 text-stone-500'}`}>
+                    <div>• Format: 105mm × 148mm</div>
+                    <div>• 300 DPI CMYK High-Res Layout</div>
+                    <div>• Compact personal congratulatory slot</div>
                   </div>
                 </div>
                 <button
-                  onClick={() => handleSelectTier('platinum', 300000)}
-                  className="w-full py-3 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-emerald-950 transition-all font-extrabold"
+                  onClick={() => handleSelectTier('ad_quarter', 40000)}
+                  className={`w-full py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
+                    selectedTier === 'ad_quarter'
+                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                  }`}
                 >
-                  Secure Exhibition Booth
+                  {selectedTier === 'ad_quarter' ? '✓ Slot Selected' : 'Book Quarter Page Space & Pay'}
                 </button>
+              </div>
+
+            </div>
+
+            {/* Ad Submission Guidelines & Specifications Callout Box */}
+            <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-[#051A0F] to-[#0A331D] text-white border-2 border-jubilee-gold/50 shadow-luxury">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <div className="space-y-3 max-w-2xl">
+                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-jubilee-gold/20 text-jubilee-lightgold text-[11px] font-bold uppercase tracking-wider border border-jubilee-gold/40">
+                    <Info className="w-3.5 h-3.5 text-jubilee-gold" />
+                    <span>Ad Submission Guidelines &amp; Specifications</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-retro font-bold text-white">
+                    Print Requirements &amp; Artwork Delivery
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-emerald-100/90 leading-relaxed pt-1">
+                    <div className="space-y-1.5">
+                      <div className="font-bold text-jubilee-lightgold uppercase text-[11px] tracking-wider">Format Requirements:</div>
+                      <p>All artwork and copy must be submitted in high-resolution print-ready format (<strong>PDF, TIFF, or high-DPI JPEG at 300 DPI</strong>) with a <strong>3mm bleed</strong>.</p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="font-bold text-jubilee-lightgold uppercase text-[11px] tracking-wider">Content Focus:</div>
+                      <p>Advertisements may feature corporate branding, professional services, alumni set milestones, or special 45th Jubilee congratulatory tributes.</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-stone-300 pt-1">
+                    Booking &amp; Deadlines: Ads can be reserved directly through the fellowship web portal (<span className="font-mono text-jubilee-gold">asfrsu.org</span> / <span className="font-mono text-jubilee-gold">alumni.asfrsu.org</span>) under this Compendium submission page.
+                  </p>
+                </div>
+
+                <div className="w-full lg:w-auto p-4 sm:p-5 rounded-2xl bg-white/[0.08] border border-jubilee-gold/40 space-y-3 shrink-0">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-jubilee-lightgold">
+                    Send Artworks, Tributes or Ad Copy To:
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <div className="font-semibold text-white">Ekpor Jephta</div>
+                    <a
+                      href="mailto:ekporjephta@gmail.com"
+                      className="inline-flex items-center space-x-1.5 text-jubilee-lightgold hover:text-white font-mono underline"
+                    >
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>ekporjephta@gmail.com</span>
+                    </a>
+                    <div className="text-[11px] text-stone-300 pt-1">
+                      CC: <a href="mailto:Asfrsu@gmail.com" className="underline hover:text-white font-mono">Asfrsu@gmail.com</a>
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-emerald-200/80 pt-1">
+                    Central Planning Committee (CPC) Secretariat
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         )}
 
@@ -750,19 +969,35 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
             
             <div className="border-b border-stone-100 pb-5 mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div>
-                <span className="text-[11px] sm:text-xs uppercase tracking-wider font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full">
-                  Step 2: Partner Registration &amp; Payment
-                </span>
-                <h3 className="text-xl sm:text-2xl font-retro font-bold text-emerald-950 mt-2">
-                  Complete Your Partnership Details
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                    Step 1 &amp; 2: {activeTab === 'ads' ? 'Compendium Ad Space Selected' : 'Corporate Sponsorship Tier Selected'}
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+                    Step 3: Registration &amp; Contact Info
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-retro font-bold text-emerald-950 mt-1">
+                  Complete Your Partner &amp; Booking Details
                 </h3>
                 <p className="text-xs text-stone-500 mt-0.5">
-                  Selected Category: <strong className="text-emerald-900">{TIER_DETAILS[selectedTier]?.name || selectedTier}</strong>
+                  Selected Category: <strong className="text-emerald-900 font-semibold">{TIER_DETAILS[selectedTier]?.name || selectedTier}</strong>
+                  <span className="mx-2 text-stone-300">•</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const tabs = document.querySelector('main');
+                      if (tabs) tabs.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="text-amber-700 hover:text-amber-900 underline font-semibold"
+                  >
+                    Change selection
+                  </button>
                 </p>
               </div>
 
               <div className="text-left sm:text-right p-3 rounded-2xl bg-amber-50/60 border border-amber-200/60 sm:bg-transparent sm:border-none sm:p-0">
-                <span className="text-[11px] text-stone-400 block font-sans">Contribution Amount</span>
+                <span className="text-[11px] text-stone-400 block font-sans">Payable Contribution / Ad Rate</span>
                 <span className="text-2xl font-retro font-black text-amber-600">
                   ₦{Number(customAmount || 0).toLocaleString()}
                 </span>
@@ -963,7 +1198,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     {isProcessing 
                       ? 'Processing Secure Checkout...' 
                       : formData.paymentMethod === 'PAYSTACK'
-                        ? `Pay ₦${Number(customAmount || 0).toLocaleString()} with Paystack`
+                        ? `Proceed to Secure Payment via Paystack 🟢 (₦${Number(customAmount || 0).toLocaleString()})`
                         : `Submit Transfer Notification (₦${Number(customAmount || 0).toLocaleString()})`
                     }
                   </span>
@@ -1054,15 +1289,21 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 <div className="font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div className="flex items-center space-x-1.5 text-emerald-900">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Official Acknowledgment Email Sent to Sponsor</span>
+                    <span>Official Acknowledgment Email Dispatched to Sponsor</span>
                   </div>
                   <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-200 text-emerald-900 self-start sm:self-auto">
                     Direct Mail Delivery
                   </span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-emerald-800 font-light">
-                  A personalized official letter of appreciation detailing your tier benefits, compendium specifications, and CPC contacts has been sent directly to <strong>{receiptData.email}</strong>.
+                  A personalized official confirmation detailing your sponsorship perks, compendium ad specifications, and submission instructions has been delivered directly to <strong>{receiptData.email}</strong>.
                 </p>
+                <div className="p-2.5 rounded-xl bg-white border border-emerald-300/80 text-[11px] space-y-1">
+                  <div className="font-semibold text-emerald-950">Artwork / Tribute Submission Notice:</div>
+                  <div className="text-stone-600">
+                    Please forward your 300 DPI print-ready artwork (PDF/TIFF/JPEG with 3mm bleed) to <strong>Ekpor Jephta</strong> at <a href="mailto:ekporjephta@gmail.com" className="text-emerald-800 underline font-semibold">ekporjephta@gmail.com</a> (CC: <a href="mailto:Asfrsu@gmail.com" className="text-emerald-800 underline">Asfrsu@gmail.com</a>).
+                  </div>
+                </div>
                 <div className="pt-1 flex items-center space-x-3 text-[11px]">
                   <a
                     href={getMailtoLink({

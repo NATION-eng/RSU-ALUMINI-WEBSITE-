@@ -82,7 +82,7 @@ export default function Navbar({ onOpenSponsors }) {
           {/* Action Area (Mobile-optimized touch buttons) */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             
-            {/* Bold Support Button (Leads to Sponsorship Matrix) */}
+            {/* Corporate Sponsorship Button */}
             <a
               href="#sponsors"
               onClick={(e) => {
@@ -91,13 +91,14 @@ export default function Navbar({ onOpenSponsors }) {
                   onOpenSponsors('sponsors');
                 }
               }}
-              title="ASF RSU 45th Jubilee Sponsorship Tiers & Matrix"
-              className="inline-flex items-center space-x-1 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
+              title="Corporate Sponsorship Tiers & Support Matrix"
+              className="inline-flex items-center space-x-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
-              <span>Support</span>
+              <Award className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
+              <span>Sponsor</span>
             </a>
 
-            {/* Promote Brand / Business (Leads to Compendium Ad tab) */}
+            {/* Compendium Ad Booking */}
             <a
               href="#sponsors"
               onClick={(e) => {
@@ -106,10 +107,11 @@ export default function Navbar({ onOpenSponsors }) {
                   onOpenSponsors('ads');
                 }
               }}
-              title="Compendium Adverts & Brand Promotion"
-              className="hidden md:inline-flex items-center space-x-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-jubilee-lightgold border border-jubilee-gold/40 hover:border-jubilee-gold hover:bg-white/[0.08] transition-all hover:scale-105 shrink-0"
+              title="Compendium Advertising Rates & Space Booking"
+              className="hidden md:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.05] hover:border-jubilee-gold hover:bg-white/[0.12] transition-all hover:scale-105 shrink-0"
             >
-              <span>Promote Brand</span>
+              <BookOpen className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+              <span>Compendium Ads</span>
             </a>
 
             {/* Quick QR Code Shortcut (Shown on tablets & desktop, accessible via mobile drawer on phones) */}
