@@ -43,6 +43,7 @@ export default {
         'float-slow': 'floatSlow 7s ease-in-out infinite',
         'pulse-subtle': 'pulseSubtle 4s ease-in-out infinite',
         'shimmer': 'shimmer 2.5s linear infinite',
+        'slow-pan': 'slowPan 28s ease-in-out infinite alternate',
       },
       keyframes: {
         floatSlow: {
@@ -56,7 +57,12 @@ export default {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
-        }
+        },
+        slowPan: {
+          '0%': { transform: 'scale(1.05) translate(0%, 0%)' },
+          '50%': { transform: 'scale(1.12) translate(-2%, -1%)' },
+          '100%': { transform: 'scale(1.06) translate(2%, 1%)' },
+        },
       }
     },
   },

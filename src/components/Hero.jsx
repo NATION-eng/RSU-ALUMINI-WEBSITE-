@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Camera } from 'lucide-react';
 
-const HERITAGE_PHOTOS = [
-  { id: 1, src: '/heritage/heritage_01.jpg', title: 'Pioneer Altar Handshake & Presentation' },
-  { id: 2, src: '/heritage/heritage_02.jpg', title: 'Fellowship Award Presentation' },
-  { id: 3, src: '/heritage/heritage_03.jpg', title: 'ASF Sacred Mass Choir in Formal Navy & Hats' },
-  { id: 4, src: '/heritage/heritage_04.jpg', title: 'Sisterhood Token Presentation' },
-  { id: 5, src: '/heritage/heritage_05.jpg', title: 'Fellowship Commendation Smiles' },
-  { id: 6, src: '/heritage/heritage_06.jpg', title: 'Campus Prayer & Unity in Fellowship' },
-  { id: 7, src: '/heritage/heritage_07.jpg', title: 'Celebratory Headwraps & Fellowship Attire' },
-  { id: 8, src: '/heritage/heritage_08.jpg', title: 'Grand Staircase Native Attire Gathering' },
-  { id: 9, src: '/heritage/heritage_09.jpg', title: 'NAAS UST Chapter 1998/99 Historic Congregation' },
-  { id: 10, src: '/heritage/heritage_10.jpg', title: 'Hilltop Outreach & Nature Mission Retreat' }
-];
-
 export default function Hero() {
   // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
   const targetDate = new Date('2026-11-14T08:30:00');
@@ -48,39 +35,30 @@ export default function Hero() {
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center pt-24 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white overflow-hidden vintage-texture">
       
-      {/* 10-Square Heritage Background Photo Grid with Fillers & Contrast Masks */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+      {/* The Single Merged 10-Photo Historical Backdrop (Matching connected-in-praise architecture) */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
         
-        {/* Responsive Square Mosaic Grid */}
-        <div className="absolute -inset-4 sm:-inset-6 opacity-20 sm:opacity-25 transition-opacity duration-700">
-          <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3 p-2 sm:p-4 h-full w-full">
-            {HERITAGE_PHOTOS.concat(HERITAGE_PHOTOS.slice(0, 5)).map((photo, idx) => (
-              <div
-                key={idx}
-                className="relative aspect-square rounded-2xl overflow-hidden border border-jubilee-gold/25 shadow-[inset_0_0_24px_rgba(0,0,0,0.85)] bg-black/50"
-              >
-                <img
-                  src={photo.src}
-                  alt={photo.title}
-                  className="w-full h-full object-cover object-center filter contrast-125 brightness-90 saturate-110 scale-105"
-                  loading="eager"
-                />
-                {/* Micro-border & corner vignette filler */}
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-black/40 pointer-events-none" />
-                <div className="absolute inset-0 border border-jubilee-gold/15 rounded-2xl pointer-events-none" />
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Single Panoramic Master Backdrop Image with Slow Drift Pan Animation */}
+        <img
+          src="/heritage/asf_heritage_master_backdrop.jpg"
+          alt="ASF RSU 45th Anniversary Historical Heritage Mural"
+          className="w-full h-full object-cover animate-slow-pan filter contrast-120 brightness-[0.78] saturate-110"
+          loading="eager"
+        />
 
-        {/* High-Contrast Luxury Gradient Fillers & Vignette Mask */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#051A0F] via-[#051A0F]/80 to-[#051A0F] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,26,15,0.72)_0%,rgba(5,26,15,0.92)_70%,rgba(5,26,15,0.99)_100%)] pointer-events-none" />
+        {/* 1. Top-to-Bottom Luxury Dark Gradient (Ensures nav & bottom cards stay 100% legible) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#051A0F]/90 via-[#051A0F]/60 to-[#051A0F]" />
 
-        {/* Bespoke Luxury Ambient Glows */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] sm:w-[850px] h-[400px] sm:h-[550px] bg-gradient-to-b from-emerald-800/25 to-transparent rounded-full blur-[120px]" />
-        <div className="absolute top-1/3 -left-36 w-[350px] sm:w-[450px] h-[350px] sm:h-[450px] bg-jubilee-gold/10 rounded-full blur-[110px] animate-float-slow" />
-        <div className="absolute bottom-10 -right-36 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-emerald-700/15 rounded-full blur-[120px] animate-float-slow" style={{ animationDelay: '3.5s' }} />
+        {/* 2. Side-to-Side Edge Vignette (Frames content in the center) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#051A0F]/85 via-transparent to-[#051A0F]/85" />
+
+        {/* 3. Deep Radial Elliptical Vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(5,26,15,0.85)_70%,rgba(5,26,15,0.98)_100%)]" />
+
+        {/* Bespoke Luxury Ambient Glow Orbs */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] sm:w-[850px] h-[400px] sm:h-[550px] bg-gradient-to-b from-emerald-800/30 to-transparent rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-6 sm:left-12 w-64 sm:w-80 h-64 sm:h-80 bg-jubilee-gold/15 rounded-full blur-[110px] animate-float-slow" />
+        <div className="absolute bottom-1/4 right-6 sm:right-12 w-80 sm:w-96 h-80 sm:h-96 bg-emerald-600/20 rounded-full blur-[130px] animate-float-slow" style={{ animationDelay: '3s' }} />
       </div>
 
       <div className="relative max-w-5xl mx-auto text-center z-10 w-full">
