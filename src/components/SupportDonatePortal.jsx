@@ -654,7 +654,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
 
           {/* Cross-Link Banner to Compendium Ad Booking */}
           {onOpenAds && (
-            <div className="p-6 rounded-3xl bg-amber-50 border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-amber-50 border border-amber-200/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
               <div className="flex items-center space-x-3 text-left">
                 <BookOpen className="w-6 h-6 text-amber-700 shrink-0" />
                 <div>
@@ -664,7 +664,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               </div>
               <button
                 onClick={onOpenAds}
-                className="inline-flex items-center space-x-1.5 px-5 py-2.5 rounded-full bg-emerald-950 hover:bg-emerald-900 text-white font-bold text-xs shrink-0 transition-all touch-manipulation active:scale-95"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-5 py-2.5 rounded-full bg-emerald-950 hover:bg-emerald-900 text-white font-bold text-xs shrink-0 transition-all touch-manipulation active:scale-95"
               >
                 <span>View Compendium Ad Rates</span>
                 <ChevronRight className="w-4 h-4 text-jubilee-gold" />

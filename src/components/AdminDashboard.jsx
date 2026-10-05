@@ -2051,53 +2051,53 @@ export default function AdminDashboard({ onBackToSite }) {
           <div className="space-y-6">
             
             {/* Ad Metrics */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-              <div className="luxury-glass rounded-2xl p-4 border border-jubilee-gold/40 bg-jubilee-gold/10">
-                <span className="text-[11px] text-jubilee-lightgold font-bold uppercase tracking-wider block">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+              <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-jubilee-gold/40 bg-jubilee-gold/10">
+                <span className="text-[10px] sm:text-[11px] text-jubilee-lightgold font-bold uppercase tracking-wider block truncate">
                   Total Ad Revenue
                 </span>
-                <div className="text-2xl sm:text-3xl font-retro font-black text-jubilee-gold mt-1">
+                <div className="text-xl sm:text-3xl font-retro font-black text-jubilee-gold mt-1 truncate">
                   ₦{adStats.revenue.toLocaleString()}
                 </div>
-                <div className="text-[10px] text-emerald-200 mt-0.5">Committed Ad Bookings</div>
+                <div className="text-[10px] text-emerald-200 mt-0.5 truncate">Committed Ad Bookings</div>
               </div>
 
-              <div className="luxury-glass rounded-2xl p-4 border border-white/10">
-                <span className="text-[11px] text-stone-400 font-semibold uppercase tracking-wider block">
+              <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-white/10">
+                <span className="text-[10px] sm:text-[11px] text-stone-400 font-semibold uppercase tracking-wider block truncate">
                   Total Ad Placements
                 </span>
-                <div className="text-2xl sm:text-3xl font-retro font-black text-white mt-1">
+                <div className="text-xl sm:text-3xl font-retro font-black text-white mt-1 truncate">
                   {adStats.total}
                 </div>
-                <div className="text-[10px] text-stone-400 mt-0.5">{adStats.withArtwork} Artwork Files Attached</div>
+                <div className="text-[10px] text-stone-400 mt-0.5 truncate">{adStats.withArtwork} Artwork Attached</div>
               </div>
 
-              <div className="luxury-glass rounded-2xl p-4 border border-white/10">
-                <span className="text-[11px] text-sky-400 font-semibold uppercase tracking-wider block">
+              <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-white/10">
+                <span className="text-[10px] sm:text-[11px] text-sky-400 font-semibold uppercase tracking-wider block truncate">
                   In Design / Review
                 </span>
-                <div className="text-2xl sm:text-3xl font-retro font-black text-sky-300 mt-1">
+                <div className="text-xl sm:text-3xl font-retro font-black text-sky-300 mt-1 truncate">
                   {adStats.inReview}
                 </div>
-                <div className="text-[10px] text-sky-400/80 mt-0.5">Proofing &amp; Editorial</div>
+                <div className="text-[10px] text-sky-400/80 mt-0.5 truncate">Proofing &amp; Editorial</div>
               </div>
 
-              <div className="luxury-glass rounded-2xl p-4 border border-white/10">
-                <span className="text-[11px] text-emerald-400 font-semibold uppercase tracking-wider block">
+              <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-white/10">
+                <span className="text-[10px] sm:text-[11px] text-emerald-400 font-semibold uppercase tracking-wider block truncate">
                   Approved For Print
                 </span>
-                <div className="text-2xl sm:text-3xl font-retro font-black text-emerald-300 mt-1">
+                <div className="text-xl sm:text-3xl font-retro font-black text-emerald-300 mt-1 truncate">
                   {adStats.approved}
                 </div>
-                <div className="text-[10px] text-emerald-400/80 mt-0.5">Ready for Press Run</div>
+                <div className="text-[10px] text-emerald-400/80 mt-0.5 truncate">Ready for Press Run</div>
               </div>
             </div>
 
             {/* Header, Export & Filter Actions */}
-            <div className="luxury-glass rounded-2xl p-4 sm:p-5 border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="luxury-glass rounded-2xl p-3.5 sm:p-5 border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
               <div>
                 <h3 className="text-base sm:text-lg font-retro font-bold text-white flex items-center space-x-2">
-                  <BookOpen className="w-5 h-5 text-jubilee-gold" />
+                  <BookOpen className="w-5 h-5 text-jubilee-gold shrink-0" />
                   <span>Commemorative Compendium Ad Manifest &amp; Production Ledger</span>
                 </h3>
                 <p className="text-xs text-stone-400 font-light mt-0.5">
@@ -2109,7 +2109,7 @@ export default function AdminDashboard({ onBackToSite }) {
                 <button
                   type="button"
                   onClick={exportAdManifestCSV}
-                  className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-jubilee-gold/20 hover:bg-jubilee-gold/30 text-jubilee-lightgold border border-jubilee-gold/40 text-xs font-bold transition-all touch-manipulation active:scale-95"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl bg-jubilee-gold/20 hover:bg-jubilee-gold/30 text-jubilee-lightgold border border-jubilee-gold/40 text-xs font-bold transition-all touch-manipulation active:scale-95"
                 >
                   <Download className="w-3.5 h-3.5 pointer-events-none" />
                   <span>Export Production CSV</span>
@@ -2118,7 +2118,7 @@ export default function AdminDashboard({ onBackToSite }) {
                 <button
                   type="button"
                   onClick={fetchAdBookings}
-                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors touch-manipulation active:scale-95"
+                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors touch-manipulation active:scale-95 shrink-0"
                   title="Refresh Compendium Ads"
                 >
                   <RefreshCw className="w-4 h-4 pointer-events-none" />
@@ -2127,7 +2127,7 @@ export default function AdminDashboard({ onBackToSite }) {
                 <button
                   type="button"
                   onClick={() => purgeAdBookings('TEST_ONLY')}
-                  className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold transition-all touch-manipulation active:scale-95"
+                  className="inline-flex items-center space-x-1.5 px-3 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold transition-all touch-manipulation active:scale-95 shrink-0"
                   title="Purge Sample / Test Ad Bookings"
                 >
                   <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
@@ -2137,23 +2137,23 @@ export default function AdminDashboard({ onBackToSite }) {
             </div>
 
             {/* Search & Filters */}
-            <div className="luxury-glass rounded-2xl p-4 border border-white/10 space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="luxury-glass rounded-2xl p-3.5 sm:p-4 border border-white/10 space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
                 {/* Search */}
                 <div className="relative md:col-span-1">
-                  <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
                     value={adSearch}
                     onChange={(e) => setAdSearch(e.target.value)}
                     placeholder="Search advertiser, brand, phone..."
-                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white placeholder-stone-400 text-xs focus:outline-none focus:border-jubilee-gold transition-colors"
+                    className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-stone-400 text-xs focus:outline-none focus:border-jubilee-gold transition-colors"
                   />
                   {adSearch && (
                     <button
                       type="button"
                       onClick={() => setAdSearch('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white p-1"
                     >
                       <X className="w-3.5 h-3.5 pointer-events-none" />
                     </button>
@@ -2166,7 +2166,7 @@ export default function AdminDashboard({ onBackToSite }) {
                     value={adFilterTier}
                     onChange={(e) => setAdFilterTier(e.target.value)}
                     aria-label="Filter by Ad Tier"
-                    className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer"
+                    className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer touch-manipulation"
                   >
                     <option value="ALL" className="bg-[#051A0F]">All Ad Sizes ({adBookings.length})</option>
                     {Object.values(COMPENDIUM_AD_TIERS).map(tier => (
@@ -2183,7 +2183,7 @@ export default function AdminDashboard({ onBackToSite }) {
                     value={adFilterStatus}
                     onChange={(e) => setAdFilterStatus(e.target.value)}
                     aria-label="Filter by Editorial Status"
-                    className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer"
+                    className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer touch-manipulation"
                   >
                     <option value="ALL" className="bg-[#051A0F]">All Production Statuses</option>
                     {AD_EDITORIAL_STATUSES.map(st => (
@@ -2200,7 +2200,7 @@ export default function AdminDashboard({ onBackToSite }) {
                     value={adFilterPayment}
                     onChange={(e) => setAdFilterPayment(e.target.value)}
                     aria-label="Filter by Payment Status"
-                    className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer"
+                    className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer touch-manipulation"
                   >
                     <option value="ALL" className="bg-[#051A0F]">All Payment Statuses</option>
                     <option value="VERIFIED" className="bg-[#051A0F]">Verified Paid</option>
@@ -2415,57 +2415,86 @@ export default function AdminDashboard({ onBackToSite }) {
                       const tierSpec = COMPENDIUM_AD_TIERS[ad.ad_tier_key];
 
                       return (
-                        <div key={ad.booking_reference || ad.reference || idx} className="p-4 space-y-3">
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <h4 className="font-bold text-white text-sm">{advName}</h4>
-                              {org && (
-                                <div className="text-xs text-jubilee-lightgold font-medium flex items-center space-x-1 mt-0.5">
-                                  <Building2 className="w-3 h-3 shrink-0" />
-                                  <span>{org}</span>
-                                </div>
-                              )}
-                              <div className="text-[10px] text-stone-500 font-mono mt-0.5">
-                                Ref: {ad.booking_reference || ad.reference}
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-sm font-bold text-jubilee-gold font-mono">
-                                ₦{Number(ad.amount || 0).toLocaleString()}
-                              </div>
-                              <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border mt-0.5 ${
+                        <div key={ad.booking_reference || ad.reference || idx} className="p-4 sm:p-5 space-y-3.5 bg-white/[0.02]">
+                          
+                          {/* Card Top: Reference + Status Badges */}
+                          <div className="flex items-center justify-between gap-2 text-xs">
+                            <span className="font-mono text-[11px] text-stone-400 font-semibold truncate">
+                              Ref: {ad.booking_reference || ad.reference}
+                            </span>
+                            
+                            <div className="flex items-center space-x-1.5 shrink-0">
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                                 isVerified 
                                   ? 'bg-emerald-950/60 text-emerald-300 border-emerald-700/50' 
                                   : 'bg-amber-950/60 text-amber-300 border-amber-700/50'
                               }`}>
                                 {isVerified ? 'VERIFIED' : 'PENDING'}
                               </span>
+                              <span className="text-[10px] text-stone-400 font-mono">
+                                {ad.payment_method?.includes('Paystack') ? 'Card' : 'Transfer'}
+                              </span>
                             </div>
                           </div>
 
-                          <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5 text-xs">
+                          {/* Advertiser Name & Organization & Amount */}
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0 flex-1">
+                              <h4 className="text-base font-bold text-white leading-tight truncate">
+                                {advName}
+                              </h4>
+                              {org && (
+                                <div className="text-xs text-jubilee-lightgold font-medium flex items-center space-x-1 mt-0.5 truncate">
+                                  <Building2 className="w-3.5 h-3.5 shrink-0" />
+                                  <span className="truncate">{org}</span>
+                                </div>
+                              )}
+                              {ad.alumni_set && (
+                                <div className="text-[11px] text-stone-300 mt-0.5 truncate">
+                                  {ad.alumni_set}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="text-right shrink-0">
+                              <div className="text-base sm:text-lg font-bold text-jubilee-gold font-mono">
+                                ₦{Number(ad.amount || 0).toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Ad Placement & Headline Box */}
+                          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5 text-xs">
                             <div className="flex justify-between items-center">
-                              <span className="text-stone-400">Placement Slot:</span>
-                              <span className="font-semibold text-stone-200">{ad.ad_tier_name || ad.tier_name || 'Ad Slot'}</span>
+                              <span className="text-stone-400">Slot:</span>
+                              <span className="font-semibold text-white truncate max-w-[200px]">
+                                {ad.ad_tier_name || ad.tier_name || 'Ad Slot'}
+                              </span>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="text-stone-400">Dimensions:</span>
-                              <span className="font-mono text-stone-300 text-[11px]">{ad.ad_dimensions || tierSpec?.dimensions || 'A4 Format'}</span>
+                              <span className="font-mono text-jubilee-lightgold text-[11px]">
+                                {ad.ad_dimensions || tierSpec?.dimensions || 'A4 Format'}
+                              </span>
                             </div>
                             {ad.brand_headline && (
-                              <div className="pt-1 border-t border-white/5">
-                                <span className="text-stone-400 text-[11px] block">Headline:</span>
-                                <span className="text-stone-200 text-xs italic">"{ad.brand_headline}"</span>
+                              <div className="pt-1.5 border-t border-white/5">
+                                <span className="text-stone-400 text-[10px] uppercase font-semibold block">Headline / Banner:</span>
+                                <span className="text-stone-200 text-xs italic font-serif leading-snug block mt-0.5">
+                                  "{ad.brand_headline}"
+                                </span>
                               </div>
                             )}
                           </div>
 
-                          {ad.artwork_url && (
-                            <div className="flex items-center space-x-3 p-2 rounded-xl bg-jubilee-gold/10 border border-jubilee-gold/30">
+                          {/* Artwork Asset Preview if provided */}
+                          {ad.artwork_url ? (
+                            <div className="flex items-center space-x-3 p-2.5 rounded-xl bg-jubilee-gold/10 border border-jubilee-gold/30">
                               <img 
                                 src={ad.artwork_url} 
                                 alt="Artwork Thumbnail" 
-                                className="w-12 h-12 object-cover rounded-lg border border-jubilee-gold/50 shadow" 
+                                className="w-12 h-12 object-cover rounded-lg border border-jubilee-gold/50 shadow shrink-0 cursor-pointer"
+                                onClick={() => setSelectedAdBooking(ad)}
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="text-xs font-bold text-jubilee-lightgold truncate">
@@ -2482,26 +2511,68 @@ export default function AdminDashboard({ onBackToSite }) {
                                 </a>
                               </div>
                             </div>
+                          ) : (
+                            <div className="flex items-center space-x-2 p-2 rounded-xl bg-amber-950/20 border border-amber-700/30 text-xs text-amber-200">
+                              <Palette className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                              <span>Secretariat Editorial Design Requested</span>
+                            </div>
                           )}
 
+                          {/* Contact Details (WhatsApp & Email) */}
+                          <div className="grid grid-cols-2 gap-2 text-xs pt-2.5 border-t border-white/[0.06]">
+                            <div className="flex items-center space-x-1.5 text-stone-300 min-w-0">
+                              <Phone className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                              {ad.phone ? (
+                                <a
+                                  href={`https://wa.me/${ad.phone.replace(/[^0-9]/g, '')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="hover:text-emerald-400 hover:underline truncate font-mono text-[11px]"
+                                >
+                                  {ad.phone}
+                                </a>
+                              ) : (
+                                <span className="text-stone-500 font-mono text-[11px]">No phone</span>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-1.5 text-stone-300 min-w-0">
+                              <Mail className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                              {ad.email ? (
+                                <a
+                                  href={`mailto:${ad.email}`}
+                                  className="hover:text-jubilee-lightgold hover:underline truncate text-[11px]"
+                                >
+                                  {ad.email}
+                                </a>
+                              ) : (
+                                <span className="text-stone-500 text-[11px]">No email</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Editorial Page Assignment & Status Row */}
                           <div className="grid grid-cols-2 gap-2 pt-1">
                             <div>
-                              <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">Assigned Page</label>
+                              <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">
+                                Assigned Page
+                              </label>
                               <input
                                 type="text"
                                 defaultValue={ad.assigned_page_number || ''}
                                 placeholder="Pg #"
                                 onBlur={(e) => updateAdAssignedPage(ad, e.target.value.trim())}
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-jubilee-gold"
+                                className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-jubilee-gold"
                               />
                             </div>
                             <div>
-                              <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">Production Status</label>
+                              <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">
+                                Production Status
+                              </label>
                               <select
                                 value={ad.editorial_status || 'RECEIVED'}
                                 onChange={(e) => updateAdEditorialStatus(ad, e.target.value)}
                                 aria-label="Update Editorial Status"
-                                className={`w-full px-2 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer focus:outline-none ${stConfig.color}`}
+                                className={`w-full px-2.5 py-2 rounded-xl text-xs font-semibold border cursor-pointer focus:outline-none touch-manipulation ${stConfig.color}`}
                               >
                                 {AD_EDITORIAL_STATUSES.map(st => (
                                   <option key={st.key} value={st.key} className="bg-[#051A0F] text-white">
@@ -2512,23 +2583,36 @@ export default function AdminDashboard({ onBackToSite }) {
                             </div>
                           </div>
 
-                          <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                          {/* Touch-Friendly Action Bar */}
+                          <div className="flex items-center space-x-2 pt-2.5 border-t border-white/[0.06]">
                             <button
                               type="button"
                               onClick={() => setSelectedAdBooking(ad)}
-                              className="text-xs text-jubilee-lightgold hover:underline font-semibold flex items-center space-x-1"
+                              className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-white/10 flex items-center justify-center space-x-1.5 transition-all touch-manipulation active:scale-95"
                             >
                               <Eye className="w-3.5 h-3.5 pointer-events-none" />
                               <span>View Full Dossier</span>
                             </button>
 
+                            {ad.phone && (
+                              <a
+                                href={`https://wa.me/${ad.phone.replace(/[^0-9]/g, '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/40 transition-colors touch-manipulation active:scale-95 shrink-0"
+                                title="WhatsApp Contact"
+                              >
+                                <Phone className="w-4 h-4 pointer-events-none" />
+                              </a>
+                            )}
+
                             <button
                               type="button"
                               onClick={() => deleteAdBooking(ad)}
-                              className="p-1.5 rounded-lg bg-rose-950/40 text-rose-300 border border-rose-800/40 text-xs flex items-center space-x-1 touch-manipulation active:scale-95"
+                              className="p-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 transition-colors touch-manipulation active:scale-95 shrink-0"
+                              title="Delete Record"
                             >
-                              <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
-                              <span className="pointer-events-none">Delete</span>
+                              <Trash2 className="w-4 h-4 pointer-events-none" />
                             </button>
                           </div>
                         </div>
@@ -2993,24 +3077,24 @@ export default function AdminDashboard({ onBackToSite }) {
             </div>
 
             {/* Contact Advertiser Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10 text-xs">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3.5 border-t border-white/10 text-xs">
               <div className="flex items-center space-x-2">
                 {selectedAdBooking.phone && (
                   <a
                     href={`https://wa.me/${selectedAdBooking.phone.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/40 font-semibold flex items-center space-x-1.5 transition-colors"
+                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/40 font-semibold flex items-center justify-center space-x-1.5 transition-colors touch-manipulation active:scale-95"
                   >
                     <Phone className="w-3.5 h-3.5 pointer-events-none" />
-                    <span>WhatsApp Advertiser</span>
+                    <span>WhatsApp</span>
                   </a>
                 )}
 
                 {selectedAdBooking.email && (
                   <a
                     href={`mailto:${selectedAdBooking.email}?subject=ASF RSU 45th Anniversary Compendium Ad Proof`}
-                    className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 font-semibold flex items-center space-x-1.5 transition-colors"
+                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 font-semibold flex items-center justify-center space-x-1.5 transition-colors touch-manipulation active:scale-95"
                   >
                     <Mail className="w-3.5 h-3.5 pointer-events-none" />
                     <span>Email Proof</span>
@@ -3024,7 +3108,7 @@ export default function AdminDashboard({ onBackToSite }) {
                     setSelectedAdBooking(null);
                     deleteAdBooking(current);
                   }}
-                  className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 transition-colors"
+                  className="p-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 transition-colors touch-manipulation active:scale-95 shrink-0"
                   title="Delete Record"
                 >
                   <Trash2 className="w-4 h-4 pointer-events-none" />
@@ -3034,7 +3118,7 @@ export default function AdminDashboard({ onBackToSite }) {
               <button
                 type="button"
                 onClick={() => setSelectedAdBooking(null)}
-                className="px-4 py-2 rounded-xl bg-white/10 text-stone-300 hover:text-white font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 text-stone-300 hover:text-white font-medium text-center transition-colors touch-manipulation"
               >
                 Close Dossier
               </button>
