@@ -422,18 +422,18 @@ export default function DpGenerator() {
   };
 
   return (
-    <section id="dp-generator" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture">
+    <section id="dp-generator" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture">
       <div className="max-w-6xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-widest mb-3">
             <span>Official Jubilee Mobilization</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-white tracking-tight mb-3">
             "I Will Be There" DP Generator
           </h2>
-          <p className="text-emerald-100/75 text-sm sm:text-base font-light leading-relaxed">
+          <p className="text-emerald-100/75 text-sm sm:text-base font-light leading-relaxed px-2">
             Personalize your commemorative badge and broadcast the Jubilee across WhatsApp and social media.
           </p>
         </div>
@@ -603,22 +603,22 @@ export default function DpGenerator() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 space-y-3">
+              <div className="pt-2 space-y-3 font-sans">
                 <button
                   type="button"
                   onClick={handleDownload}
-                  className="w-full flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl text-base font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-400 to-yellow-500 text-emerald-950 shadow-xl hover:shadow-jubilee-gold/40 hover:scale-[1.01] transition-all cursor-pointer"
+                  className="w-full flex items-center justify-center space-x-2 px-4 sm:px-6 py-3.5 rounded-xl text-sm sm:text-base font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-400 to-yellow-500 text-emerald-950 shadow-xl hover:shadow-jubilee-gold/40 hover:scale-[1.01] active:scale-95 transition-all cursor-pointer touch-manipulation"
                 >
-                  <Download className="w-5 h-5 text-emerald-950" />
+                  <Download className="w-5 h-5 text-emerald-950 shrink-0" />
                   <span>Download High-Res 45th Jubilee DP</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={shareToWhatsApp}
-                  className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-600 transition-colors"
+                  className="w-full flex items-center justify-center space-x-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-white border border-emerald-600 transition-all touch-manipulation"
                 >
-                  <Share2 className="w-4 h-4 text-emerald-300" />
+                  <Share2 className="w-4 h-4 text-emerald-300 shrink-0" />
                   <span>Share DP Generator on WhatsApp Broadcast</span>
                 </button>
               </div>

@@ -64,24 +64,24 @@ export default function TimelineSection() {
   ];
 
   return (
-    <section id="heritage" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#FAF7EE] text-[#141E18] relative">
+    <section id="heritage" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-[#FAF7EE] text-[#141E18] relative">
       <div className="max-w-6xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-widest mb-3 border border-emerald-900/15">
             <span>45-Year Heritage Journey (1981–2026)</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-emerald-950 tracking-tight mb-3">
             Honouring Four Decades
           </h2>
-          <p className="text-stone-600 text-sm sm:text-base font-light leading-relaxed">
+          <p className="text-stone-600 text-sm sm:text-base font-light leading-relaxed px-2">
             From humble Sabbath prayers in 1981 to a global family spanning continents in 2026.
           </p>
         </div>
 
         {/* Sleek Era Switcher Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-12">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
           {eras.map((era, index) => {
             const Icon = era.icon;
             const isSelected = activeEra === index;
@@ -89,13 +89,13 @@ export default function TimelineSection() {
               <button
                 key={index}
                 onClick={() => setActiveEra(index)}
-                className={`flex items-center space-x-2 px-5 py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 ${
+                className={`flex items-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 touch-manipulation ${
                   isSelected
                     ? 'bg-emerald-950 text-white shadow-luxury scale-105 border border-jubilee-gold/50'
                     : 'bg-white text-stone-700 border border-stone-200 hover:border-emerald-800/40 hover:bg-stone-50'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isSelected ? 'text-jubilee-gold' : 'text-stone-400'}`} />
+                <Icon className={`w-3.5 sm:w-4 h-3.5 sm:h-4 ${isSelected ? 'text-jubilee-gold' : 'text-stone-400'}`} />
                 <span className="font-sans">{era.period}</span>
               </button>
             );
@@ -103,11 +103,11 @@ export default function TimelineSection() {
         </div>
 
         {/* Active Era Editorial Showcase Card */}
-        <div className="bg-white rounded-3xl border border-stone-200/90 shadow-luxury overflow-hidden transition-all duration-500 relative">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-luxury overflow-hidden transition-all duration-500 relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
             
             {/* Left Column: Era Identity Plaque */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-[#051A0F] via-[#092B19] to-[#0E3B23] text-white p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden">
+            <div className="lg:col-span-5 bg-gradient-to-br from-[#051A0F] via-[#092B19] to-[#0E3B23] text-white p-6 sm:p-12 flex flex-col justify-between relative overflow-hidden">
               
               {/* Giant Vintage Watermark Year */}
               <div className="absolute -bottom-8 -right-6 font-retro text-9xl sm:text-[11rem] font-black text-white/[0.04] select-none pointer-events-none leading-none">
@@ -118,42 +118,42 @@ export default function TimelineSection() {
                 <span className="inline-block px-3.5 py-1 rounded-full bg-white/10 text-jubilee-lightgold text-xs font-semibold tracking-wider uppercase mb-4 border border-white/15">
                   {eras[activeEra].cohort}
                 </span>
-                <div className="text-4xl sm:text-5xl font-retro font-black text-jubilee-gold mb-2 tracking-tight">
+                <div className="text-3xl sm:text-5xl font-retro font-black text-jubilee-gold mb-2 tracking-tight">
                   {eras[activeEra].period}
                 </div>
                 <h3 className="font-retro text-2xl sm:text-3xl font-bold leading-tight mb-2 text-white">
                   {eras[activeEra].title}
                 </h3>
-                <p className="text-emerald-200/90 font-editorial italic text-lg sm:text-xl font-normal">
+                <p className="text-emerald-200/90 font-editorial italic text-base sm:text-xl font-normal">
                   {eras[activeEra].subtitle}
                 </p>
               </div>
 
-              <div className="relative z-10 mt-8 pt-6 border-t border-white/10">
-                <blockquote className="font-editorial italic text-base sm:text-lg text-emerald-100/90 leading-snug">
+              <div className="relative z-10 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/10">
+                <blockquote className="font-editorial italic text-sm sm:text-lg text-emerald-100/90 leading-snug">
                   {eras[activeEra].quote}
                 </blockquote>
               </div>
             </div>
 
             {/* Right Column: Refined Milestones */}
-            <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-between bg-white">
+            <div className="lg:col-span-7 p-5 sm:p-12 flex flex-col justify-between bg-white">
               <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] text-emerald-950 font-bold mb-6 font-sans flex items-center space-x-2">
+                <h4 className="text-xs uppercase tracking-[0.2em] text-emerald-950 font-bold mb-4 sm:mb-6 font-sans flex items-center space-x-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-jubilee-darkgold"></span>
                   <span>Chapter Milestones</span>
                 </h4>
 
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {eras[activeEra].milestones.map((item, idx) => (
                     <div
                       key={idx}
-                      className="group flex items-start space-x-3.5 p-4 rounded-2xl bg-stone-50 border border-stone-100 hover:border-emerald-800/20 hover:bg-emerald-50/40 transition-all duration-300"
+                      className="group flex items-start space-x-3 sm:space-x-3.5 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-stone-50 border border-stone-100 hover:border-emerald-800/20 hover:bg-emerald-50/40 transition-all duration-300"
                     >
                       <span className="w-6 h-6 rounded-full bg-emerald-950 text-jubilee-gold flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 font-retro">
                         {idx + 1}
                       </span>
-                      <p className="text-stone-700 text-sm leading-relaxed font-sans font-normal">
+                      <p className="text-stone-700 text-xs sm:text-sm leading-relaxed font-sans font-normal">
                         {item}
                       </p>
                     </div>
@@ -161,7 +161,7 @@ export default function TimelineSection() {
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-stone-100 flex items-center justify-between">
+              <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-stone-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
                 <span className="text-xs text-stone-500 font-light">
                   Were you part of this era?
                 </span>

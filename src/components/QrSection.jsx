@@ -159,38 +159,38 @@ export default function QrSection() {
   };
 
   return (
-    <section id="qr-share" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture border-t border-white/10">
+    <section id="qr-share" className="py-16 sm:py-20 px-3 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture border-t border-white/10">
       <div className="max-w-4xl mx-auto">
-        <div className="luxury-glass rounded-3xl p-6 sm:p-10 border-2 border-jubilee-gold/40 shadow-luxury flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-5 sm:p-10 border-2 border-jubilee-gold/40 shadow-luxury flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
           
           {/* Left Column: QR Code Display Card */}
           <div className="shrink-0 flex flex-col items-center">
-            <div className="bg-white rounded-2xl p-4 shadow-2xl border-4 border-jubilee-gold/50 max-w-[240px]">
+            <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-2xl border-4 border-jubilee-gold/50 max-w-[220px] sm:max-w-[240px]">
               {qrDataUrl ? (
                 <img
                   src={qrDataUrl}
                   alt="Official 45th Jubilee QR Code"
-                  className="w-48 h-48 sm:w-52 sm:h-52 object-contain"
+                  className="w-44 h-44 sm:w-52 sm:h-52 object-contain"
                 />
               ) : (
-                <div className="w-48 h-48 flex items-center justify-center text-stone-500 text-xs">
+                <div className="w-44 h-44 sm:w-48 sm:h-48 flex items-center justify-center text-stone-500 text-xs">
                   Generating QR...
                 </div>
               )}
             </div>
-            <span className="text-[11px] font-mono text-jubilee-lightgold mt-2">
+            <span className="text-[10px] sm:text-[11px] font-mono text-jubilee-lightgold mt-2 truncate max-w-[240px]">
               {siteUrl}
             </span>
           </div>
 
           {/* Right Column: Explanations & Download Actions */}
-          <div className="grow space-y-4 text-center md:text-left">
+          <div className="grow space-y-3.5 sm:space-y-4 text-center md:text-left">
             <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white/[0.04] text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-widest">
               <QrCode className="w-3.5 h-3.5 text-jubilee-gold" />
               <span>Official Jubilee QR Code</span>
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-retro font-bold text-white tracking-tight">
+            <h3 className="text-xl sm:text-3xl font-retro font-bold text-white tracking-tight">
               Share the Jubilee With Fellow Alumni
             </h3>
 
@@ -198,11 +198,11 @@ export default function QrSection() {
               Download the official high-resolution QR poster to print on publicity banners, event programs, or forward to graduating set WhatsApp groups.
             </p>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-center gap-3 font-sans">
+            <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 font-sans w-full">
               <button
                 onClick={handleDownloadBrandedQr}
                 disabled={downloading}
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-xs font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-105 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 sm:px-6 py-3 rounded-full text-xs font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-105 active:scale-95 transition-all touch-manipulation"
               >
                 <Download className="w-4 h-4 text-emerald-950" />
                 <span>{downloading ? 'Preparing Flyer...' : 'Download Printable QR Flyer'}</span>
@@ -210,7 +210,7 @@ export default function QrSection() {
 
               <button
                 onClick={handleCopyLink}
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/15 border border-white/20 text-white transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/15 border border-white/20 text-white transition-all active:scale-95 touch-manipulation"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-jubilee-gold" />}
                 <span>{copied ? 'Copied!' : 'Copy Link'}</span>
@@ -218,7 +218,7 @@ export default function QrSection() {
 
               <button
                 onClick={handleShareWhatsApp}
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-full text-xs font-semibold bg-emerald-800 hover:bg-emerald-700 border border-emerald-600 text-white transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-full text-xs font-semibold bg-emerald-800 hover:bg-emerald-700 border border-emerald-600 text-white transition-all active:scale-95 touch-manipulation"
               >
                 <Share2 className="w-3.5 h-3.5 text-emerald-300" />
                 <span>WhatsApp</span>

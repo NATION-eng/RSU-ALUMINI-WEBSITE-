@@ -135,7 +135,7 @@ export default function VideoUploadModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-xl bg-[#092215] text-white rounded-3xl border border-jubilee-gold/40 shadow-2xl overflow-hidden my-6">
+      <div className="relative w-full max-w-xl bg-[#092215] text-white rounded-2xl sm:rounded-3xl border border-jubilee-gold/40 shadow-2xl overflow-y-auto max-h-[92vh] my-auto">
         
         {/* Top Gold Accent */}
         <div className="h-1.5 bg-gradient-to-r from-jubilee-gold via-amber-300 to-jubilee-gold" />
@@ -143,31 +143,31 @@ export default function VideoUploadModal({ isOpen, onClose }) {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-all z-10"
+          className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-all z-10 touch-manipulation"
         >
           <X className="w-5 h-5" />
         </button>
 
         {isSuccess ? (
-          <div className="p-8 sm:p-10 text-center space-y-5">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-9 h-9" />
+          <div className="p-6 sm:p-10 text-center space-y-4 sm:space-y-5">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-8 h-8 sm:w-9 sm:h-9" />
             </div>
             
-            <h3 className="text-2xl sm:text-3xl font-retro font-bold text-jubilee-lightgold">
+            <h3 className="text-xl sm:text-3xl font-retro font-bold text-jubilee-lightgold">
               Video Message Received!
             </h3>
             
-            <p className="text-sm text-emerald-100/90 font-light leading-relaxed max-w-md mx-auto">
+            <p className="text-xs sm:text-sm text-emerald-100/90 font-light leading-relaxed max-w-md mx-auto">
               Thank you, <strong>{formData.fullName}</strong>. Your 30-second goodwill message has been uploaded to the 45th Jubilee Media Archive. It will be reviewed by the Secretariat and broadcast during the Grand Jubilee Gala Banquet!
             </p>
 
-            <div className="p-4 rounded-2xl bg-white/[0.05] border border-white/10 text-xs text-stone-300 max-w-sm mx-auto">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.05] border border-white/10 text-xs text-stone-300 max-w-sm mx-auto">
               <span>File: </span>
-              <span className="font-mono text-jubilee-gold font-semibold">{file?.name}</span>
+              <span className="font-mono text-jubilee-gold font-semibold break-all">{file?.name}</span>
             </div>
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="pt-3 sm:pt-4 flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => {
                   setIsSuccess(false);
@@ -175,7 +175,7 @@ export default function VideoUploadModal({ isOpen, onClose }) {
                   setPreviewUrl('');
                   onClose();
                 }}
-                className="px-6 py-3 rounded-full text-xs font-bold bg-jubilee-gold text-emerald-950 hover:bg-amber-300 transition-all font-sans"
+                className="w-full sm:w-auto px-6 py-3 rounded-full text-xs font-bold bg-jubilee-gold text-emerald-950 hover:bg-amber-300 transition-all font-sans touch-manipulation"
               >
                 Close Window
               </button>
@@ -184,7 +184,7 @@ export default function VideoUploadModal({ isOpen, onClose }) {
                 href={`https://wa.me/2348030000000?text=${encodeURIComponent(`Hello 45th Jubilee Media Secretariat, I just submitted my Goodwill Video Message on the portal: ${formData.fullName} (${formData.chapterSet || 'Alumni'})`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all font-sans border border-white/20"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all font-sans border border-white/20 touch-manipulation"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-400" />
                 <span>Notify Secretariat on WhatsApp</span>
@@ -192,14 +192,14 @@ export default function VideoUploadModal({ isOpen, onClose }) {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-4 sm:space-y-5">
             {/* Header */}
             <div>
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 text-[11px] font-bold uppercase tracking-wider mb-2">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-2">
                 <Sparkles className="w-3 h-3 text-jubilee-gold" />
                 <span>Homecoming Gala Spotlight</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-retro font-bold text-white">
+              <h3 className="text-lg sm:text-2xl font-retro font-bold text-white">
                 Submit Your 30-Second Video Message
               </h3>
               <p className="text-xs text-stone-300 font-light mt-1">

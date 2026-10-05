@@ -212,24 +212,25 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
     <div className="min-h-screen bg-[#FAF7EE] text-[#141E18] font-sans antialiased selection:bg-emerald-900 selection:text-amber-200">
       
       {/* Top Banner Navigation */}
-      <header className="sticky top-0 z-40 bg-[#051A0F]/95 backdrop-blur-md border-b border-jubilee-gold/30 text-white py-3 sm:py-4 px-4 sm:px-6 shadow-luxury">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <header className="sticky top-0 z-40 bg-[#051A0F]/95 backdrop-blur-md border-b border-jubilee-gold/30 text-white py-2.5 sm:py-4 px-3 sm:px-6 shadow-luxury">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
             <button
               onClick={onBackToSite}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-jubilee-lightgold text-xs font-semibold transition-all"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-jubilee-lightgold text-xs font-semibold transition-all shrink-0 touch-manipulation active:scale-95"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Jubilee Portal</span>
+              <span className="hidden xs:inline">Back to Jubilee Portal</span>
+              <span className="xs:hidden">Back</span>
             </button>
             <span className="hidden md:inline-block text-xs text-stone-400">|</span>
-            <span className="hidden md:inline-block text-xs font-retro text-stone-300">
+            <span className="hidden md:inline-block text-xs font-retro text-stone-300 truncate">
               ASF RSU 45th Anniversary &amp; Alumni Homecoming (1981–2026)
             </span>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <span className="text-[11px] uppercase tracking-wider font-bold text-jubilee-lightgold px-3 py-1 rounded-full bg-jubilee-gold/10 border border-jubilee-gold/30">
+          <div className="flex items-center space-x-2 shrink-0">
+            <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-jubilee-lightgold px-2.5 sm:px-3 py-1 rounded-full bg-jubilee-gold/10 border border-jubilee-gold/30">
               Audited CPC Account
             </span>
           </div>
@@ -237,32 +238,32 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#051A0F] via-[#082817] to-[#0D3821] text-white pt-14 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="bg-gradient-to-b from-[#051A0F] via-[#082817] to-[#0D3821] text-white pt-10 sm:pt-14 pb-14 sm:pb-20 px-3 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
         
         <div className="relative max-w-5xl mx-auto text-center space-y-4">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/[0.07] border border-jubilee-gold/40 text-jubilee-lightgold text-xs font-bold uppercase tracking-widest">
-            <Award className="w-3.5 h-3.5 text-jubilee-gold" />
-            <span>Partnership &amp; Investment Prospectus</span>
+          <div className="inline-flex items-center space-x-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-white/[0.07] border border-jubilee-gold/40 text-jubilee-lightgold text-[10px] sm:text-xs font-bold uppercase tracking-widest max-w-full">
+            <Award className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+            <span className="truncate">Partnership &amp; Investment Prospectus</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-retro font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-5xl lg:text-6xl font-retro font-extrabold text-white tracking-tight leading-tight">
             ASF RSU 45TH JUBILEE <br />
             <span className="bg-gradient-to-r from-jubilee-gold via-amber-200 to-yellow-400 bg-clip-text text-transparent">
               SPONSORSHIP &amp; ADVERTISING MATRIX
             </span>
           </h1>
 
-          <p className="max-w-3xl mx-auto text-sm sm:text-base text-emerald-100/80 font-light leading-relaxed">
+          <p className="max-w-3xl mx-auto text-xs sm:text-base text-emerald-100/80 font-light leading-relaxed px-2">
             Partner with us as we celebrate 45 years of God's faithfulness at Rivers State University. Support the legacy, empower the next generation, and position your brand before thousands of alumni, captains of industry, and international delegates.
           </p>
 
           {/* Quick Bank Banner */}
-          <div className="pt-4 max-w-2xl mx-auto">
-            <div className="luxury-glass p-4 rounded-2xl border border-jubilee-gold/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+          <div className="pt-2 sm:pt-4 max-w-2xl mx-auto w-full">
+            <div className="luxury-glass p-4 rounded-2xl border border-jubilee-gold/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-left">
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-jubilee-lightgold font-bold flex items-center space-x-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-jubilee-gold" />
+                  <Building2 className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
                   <span>Direct Bank Deposit / Transfer Details</span>
                 </div>
                 <div className="text-sm sm:text-base font-mono font-bold text-white mt-0.5">
@@ -275,7 +276,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
               <button
                 onClick={handleCopyAccount}
-                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all shrink-0 active:scale-95"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-4 py-2.5 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all shrink-0 active:scale-95 touch-manipulation"
               >
                 {copiedAccount ? <Check className="w-4 h-4 text-emerald-900" /> : <Copy className="w-4 h-4" />}
                 <span>{copiedAccount ? 'Copied 0570076237!' : 'Copy Account No.'}</span>
@@ -283,12 +284,12 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="pt-8 flex justify-center">
-            <div className="inline-flex p-1.5 rounded-2xl bg-black/40 border border-white/20 backdrop-blur-md">
+          {/* Navigation Tabs (Mobile-responsive full-width grid) */}
+          <div className="pt-6 sm:pt-8 flex justify-center w-full max-w-md mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 p-1.5 rounded-2xl bg-black/40 border border-white/20 backdrop-blur-md w-full gap-1">
               <button
                 onClick={() => setActiveTab('sponsors')}
-                className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                className={`w-full py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all text-center touch-manipulation ${
                   activeTab === 'sponsors'
                     ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
                     : 'text-stone-300 hover:text-white'
@@ -298,13 +299,13 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
               </button>
               <button
                 onClick={() => setActiveTab('ads')}
-                className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                className={`w-full py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all text-center touch-manipulation ${
                   activeTab === 'ads'
                     ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
                     : 'text-stone-300 hover:text-white'
                 }`}
               >
-                📖 Compendium Adverts &amp; Business Spotlight
+                📖 Compendium Adverts
               </button>
             </div>
           </div>
@@ -742,15 +743,15 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
         )}
 
         {/* CHECKOUT & PAYMENT INTEGRATION FORM */}
-        <section id="sponsorship-checkout-form" className="mt-16 max-w-4xl mx-auto">
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-stone-200 shadow-luxury">
+        <section id="sponsorship-checkout-form" className="mt-12 sm:mt-16 max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-stone-200 shadow-luxury">
             
             <div className="border-b border-stone-100 pb-5 mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div>
-                <span className="text-xs uppercase tracking-wider font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full">
+                <span className="text-[11px] sm:text-xs uppercase tracking-wider font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full">
                   Step 2: Partner Registration &amp; Payment
                 </span>
-                <h3 className="text-2xl font-retro font-bold text-emerald-950 mt-2">
+                <h3 className="text-xl sm:text-2xl font-retro font-bold text-emerald-950 mt-2">
                   Complete Your Partnership Details
                 </h3>
                 <p className="text-xs text-stone-500 mt-0.5">
@@ -758,7 +759,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                 </p>
               </div>
 
-              <div className="text-right">
+              <div className="text-left sm:text-right p-3 rounded-2xl bg-amber-50/60 border border-amber-200/60 sm:bg-transparent sm:border-none sm:p-0">
                 <span className="text-[11px] text-stone-400 block font-sans">Contribution Amount</span>
                 <span className="text-2xl font-retro font-black text-amber-600">
                   ₦{Number(customAmount || 0).toLocaleString()}
@@ -980,14 +981,14 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
       {/* SUCCESSFUL PAYMENT & ELECTRONIC RECEIPT MODAL */}
       {receiptData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-white text-stone-900 rounded-3xl shadow-2xl border border-jubilee-gold overflow-hidden my-6">
+          <div className="relative w-full max-w-2xl bg-white text-stone-900 rounded-2xl sm:rounded-3xl shadow-2xl border border-jubilee-gold overflow-hidden my-auto max-h-[92vh] overflow-y-auto">
             
             {/* Header */}
-            <div className="bg-[#051A0F] text-white p-6 sm:p-8 text-center border-b-4 border-jubilee-gold relative">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto mb-3">
-                <CheckCircle2 className="w-8 h-8" />
+            <div className="bg-[#051A0F] text-white p-5 sm:p-8 text-center border-b-4 border-jubilee-gold relative">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto mb-2.5">
+                <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-retro font-bold text-jubilee-lightgold">
+              <h3 className="text-lg sm:text-2xl font-retro font-bold text-jubilee-lightgold">
                 Official Jubilee Contribution Receipt
               </h3>
               <p className="text-xs text-stone-300 font-light mt-1">
@@ -996,63 +997,63 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
             </div>
 
             {/* Receipt Details */}
-            <div className="p-6 sm:p-8 space-y-6">
+            <div className="p-4 sm:p-8 space-y-5 sm:space-y-6">
               
-              <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 flex items-center justify-between">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 flex items-center justify-between gap-2">
                 <div>
-                  <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">
+                  <span className="text-[10px] sm:text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">
                     Amount Received
                   </span>
-                  <span className="text-2xl font-black text-emerald-950 font-retro">
+                  <span className="text-xl sm:text-2xl font-black text-emerald-950 font-retro">
                     ₦{Number(receiptData.amount).toLocaleString()}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-emerald-200 text-emerald-900">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-emerald-200 text-emerald-900">
                     {receiptData.status}
                   </span>
-                  <span className="text-[11px] text-stone-500 block font-mono mt-1">
+                  <span className="text-[10px] sm:text-[11px] text-stone-500 block font-mono mt-1 truncate max-w-[140px] sm:max-w-none">
                     Ref: {receiptData.reference}
                   </span>
                 </div>
               </div>
 
               {/* Data Table */}
-              <div className="grid grid-cols-2 gap-4 text-xs font-sans border-y border-stone-100 py-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs font-sans border-y border-stone-100 py-4">
                 <div>
-                  <span className="text-stone-400 block">Contributor Name:</span>
+                  <span className="text-stone-400 block text-[11px]">Contributor Name:</span>
                   <strong className="text-emerald-950 text-sm">{receiptData.donor_name}</strong>
                 </div>
                 <div>
-                  <span className="text-stone-400 block">Organization / Brand:</span>
+                  <span className="text-stone-400 block text-[11px]">Organization / Brand:</span>
                   <strong className="text-emerald-950 text-sm">{receiptData.organization || 'Individual Donor'}</strong>
                 </div>
                 <div>
-                  <span className="text-stone-400 block">Sponsorship Tier / Item:</span>
+                  <span className="text-stone-400 block text-[11px]">Sponsorship Tier / Item:</span>
                   <strong className="text-emerald-950">{receiptData.tier_name}</strong>
                 </div>
                 <div>
-                  <span className="text-stone-400 block">Payment Channel:</span>
+                  <span className="text-stone-400 block text-[11px]">Payment Channel:</span>
                   <strong className="text-emerald-950">{receiptData.payment_method}</strong>
                 </div>
                 <div>
-                  <span className="text-stone-400 block">Email Address:</span>
-                  <span className="text-stone-700">{receiptData.email}</span>
+                  <span className="text-stone-400 block text-[11px]">Email Address:</span>
+                  <span className="text-stone-700 break-all">{receiptData.email}</span>
                 </div>
                 <div>
-                  <span className="text-stone-400 block">Date &amp; Time:</span>
+                  <span className="text-stone-400 block text-[11px]">Date &amp; Time:</span>
                   <span className="text-stone-700">{new Date(receiptData.created_at).toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Automated Email Notice */}
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs space-y-2">
-                <div className="font-bold flex items-center justify-between">
+                <div className="font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div className="flex items-center space-x-1.5 text-emerald-900">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>Official Acknowledgment Email Sent to Sponsor</span>
                   </div>
-                  <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-200 text-emerald-900">
+                  <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-200 text-emerald-900 self-start sm:self-auto">
                     Direct Mail Delivery
                   </span>
                 </div>

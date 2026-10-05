@@ -116,7 +116,7 @@ export default function CensusRsvpSection() {
   };
 
   return (
-    <section id="census-rsvp" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#FAF7EE] text-[#141E18] relative">
+    <section id="census-rsvp" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-[#FAF7EE] text-[#141E18] relative">
       <div className="max-w-4xl mx-auto">
         
         {/* Header */}
@@ -168,7 +168,7 @@ export default function CensusRsvpSection() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-stone-200/90 shadow-luxury p-6 sm:p-10 space-y-8">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-luxury p-4 sm:p-10 space-y-6 sm:space-y-8">
             
             {submitError && (
               <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2">
@@ -453,7 +453,7 @@ export default function CensusRsvpSection() {
                       setCopiedAcct(true);
                       setTimeout(() => setCopiedAcct(false), 2500);
                     }}
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all active:scale-95 shrink-0 self-start sm:self-auto"
+                    className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all active:scale-95 shrink-0 touch-manipulation"
                   >
                     {copiedAcct ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedAcct ? 'Copied 0570076237!' : 'Copy Account No.'}</span>

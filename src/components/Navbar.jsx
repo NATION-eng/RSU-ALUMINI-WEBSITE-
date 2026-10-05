@@ -45,17 +45,17 @@ export default function Navbar({ onOpenSponsors }) {
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Official 45th Anniversary Logo & Identity */}
-          <a href="#" className="flex items-center space-x-2 sm:space-x-3 group shrink-0">
+          <a href="#" className="flex items-center space-x-1.5 sm:space-x-3 group shrink-0 min-w-0">
             <img
               src="/official-logo.png"
               alt="ASF RSU 45th Anniversary Logo"
-              className="h-8 xs:h-9 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+              className="h-8 xs:h-9 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
-            <div className="text-left flex flex-col justify-center">
-              <span className="font-retro font-bold text-white text-xs xs:text-sm sm:text-[15px] md:text-base tracking-wide group-hover:text-jubilee-lightgold transition-colors leading-tight">
+            <div className="text-left flex flex-col justify-center min-w-0">
+              <span className="font-retro font-bold text-white text-[11px] xs:text-sm sm:text-[15px] md:text-base tracking-tight sm:tracking-wide group-hover:text-jubilee-lightgold transition-colors leading-tight truncate">
                 Anniversary Celebration &amp;
               </span>
-              <span className="text-[10px] xs:text-[11px] sm:text-xs text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase leading-tight mt-0.5">
+              <span className="text-[9px] xs:text-[11px] sm:text-xs text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase leading-tight mt-0.5 truncate">
                 Alumni Homecoming
               </span>
             </div>
@@ -92,7 +92,7 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="ASF RSU 45th Jubilee Sponsorship Tiers & Matrix"
-              className="inline-flex items-center space-x-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300"
+              className="inline-flex items-center space-x-1 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
               <span>Support</span>
             </a>
@@ -112,20 +112,20 @@ export default function Navbar({ onOpenSponsors }) {
               <span>Promote Brand</span>
             </a>
 
-            {/* Quick QR Code Shortcut */}
+            {/* Quick QR Code Shortcut (Shown on tablets & desktop, accessible via mobile drawer on phones) */}
             <a
               href="#qr-share"
               title="Share & Download Official QR Code"
-              className="inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
+              className="hidden sm:inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
             >
               <QrCode className="w-3.5 h-3.5 text-jubilee-gold shrink-0 pointer-events-none" />
-              <span className="hidden sm:inline pointer-events-none">QR</span>
+              <span className="pointer-events-none">QR</span>
             </a>
 
             {/* RSVP & Census CTA Button */}
             <a
               href="#census-rsvp"
-              className="inline-flex items-center space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0"
+              className="inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 touch-manipulation"
             >
               <UserCheck className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
               <span className="whitespace-nowrap font-black">RSVP</span>
@@ -205,6 +205,15 @@ export default function Navbar({ onOpenSponsors }) {
             >
               <UserCheck className="w-4 h-4 text-jubilee-gold" />
               <span>Register for 45th Homecoming (RSVP)</span>
+            </a>
+
+            <a
+              href="#qr-share"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/10 text-stone-300 hover:text-white border border-white/10 font-sans"
+            >
+              <QrCode className="w-4 h-4 text-jubilee-gold" />
+              <span>Share &amp; Download Official QR Code</span>
             </a>
           </div>
         </div>

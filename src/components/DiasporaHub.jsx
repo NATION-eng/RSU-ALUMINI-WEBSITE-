@@ -57,11 +57,11 @@ export default function DiasporaHub({ onOpenSponsors }) {
   ];
 
   return (
-    <section id="diaspora" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative overflow-hidden vintage-texture">
+    <section id="diaspora" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative overflow-hidden vintage-texture">
       <div className="relative max-w-6xl mx-auto z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/[0.04] text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-widest mb-3">
             <Globe className="w-3.5 h-3.5 text-jubilee-gold" />
             <span>Global Alumni Connection</span>
@@ -69,19 +69,19 @@ export default function DiasporaHub({ onOpenSponsors }) {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-white tracking-tight mb-4">
             One Family Across Continents
           </h2>
-          <p className="text-emerald-100/75 text-sm sm:text-base font-light leading-relaxed">
+          <p className="text-emerald-100/75 text-sm sm:text-base font-light leading-relaxed px-2">
             For our alumni across the United Kingdom, North America, Europe, the Middle East, and beyond who cannot be on-ground in Port Harcourt — connect live, submit greetings, and celebrate our 45-year heritage.
           </p>
         </div>
 
         {/* 3 Authentic Pillars of Diaspora Engagement */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mb-10 sm:mb-14">
           {diasporaPillars.map((pillar, idx) => {
             const IconComponent = pillar.icon;
             return (
               <div
                 key={idx}
-                className="luxury-glass rounded-3xl p-6 sm:p-7 border border-white/10 hover:border-jubilee-gold/40 transition-all duration-300 flex flex-col justify-between"
+                className="luxury-glass rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-white/10 hover:border-jubilee-gold/40 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -149,14 +149,14 @@ export default function DiasporaHub({ onOpenSponsors }) {
         />
 
         {/* Official Sabbath Broadcast Worldwide Time Guide */}
-        <div className="luxury-glass rounded-3xl p-6 sm:p-8 border border-jubilee-gold/30 mb-12 shadow-luxury">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
+        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-jubilee-gold/30 mb-8 sm:mb-12 shadow-luxury">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-white/10">
             <div>
               <div className="flex items-center space-x-2 text-jubilee-lightgold text-xs font-bold uppercase tracking-wider mb-1">
                 <Clock className="w-3.5 h-3.5 text-jubilee-gold" />
                 <span>Grand Jubilee Sabbath Broadcast Guide</span>
               </div>
-              <h4 className="text-xl sm:text-2xl font-retro font-bold text-white">
+              <h4 className="text-lg sm:text-2xl font-retro font-bold text-white">
                 Saturday, November 14, 2026 • Divine Worship Service
               </h4>
             </div>
@@ -165,19 +165,19 @@ export default function DiasporaHub({ onOpenSponsors }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
             {timezoneSchedule.map((item, idx) => (
               <div
                 key={idx}
-                className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-center hover:bg-white/[0.06] transition-colors"
+                className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white/[0.03] border border-white/10 text-center hover:bg-white/[0.06] transition-colors"
               >
-                <div className="text-[11px] text-stone-400 font-medium truncate mb-1">
+                <div className="text-[10px] sm:text-[11px] text-stone-400 font-medium truncate mb-1">
                   {item.city}
                 </div>
-                <div className="text-lg sm:text-xl font-retro font-black text-jubilee-gold mb-1">
+                <div className="text-base sm:text-xl font-retro font-black text-jubilee-gold mb-1">
                   {item.time}
                 </div>
-                <div className="text-[10px] text-emerald-300/80 font-light leading-tight">
+                <div className="text-[9px] sm:text-[10px] text-emerald-300/80 font-light leading-tight">
                   {item.note}
                 </div>
               </div>
@@ -186,7 +186,7 @@ export default function DiasporaHub({ onOpenSponsors }) {
         </div>
 
         {/* Virtual Registration Callout */}
-        <div className="luxury-glass rounded-3xl p-7 sm:p-9 border border-jubilee-gold/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-luxury">
+        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-5 sm:p-9 border border-jubilee-gold/30 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6 shadow-luxury">
           <div className="max-w-xl text-center md:text-left">
             <h4 className="text-xl sm:text-2xl font-retro font-bold text-white mb-2">
               Join the 45th Anniversary Census as a Virtual Delegate
@@ -196,10 +196,10 @@ export default function DiasporaHub({ onOpenSponsors }) {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+          <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-3 shrink-0">
             <a
               href="#census-rsvp"
-              className="inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-full text-xs sm:text-sm font-bold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 hover:shadow-gold-glow transition-all hover:scale-105"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-full text-xs sm:text-sm font-bold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 hover:shadow-gold-glow transition-all hover:scale-105 touch-manipulation"
             >
               <span>Register as Virtual Delegate</span>
               <ArrowRight className="w-4 h-4" />

@@ -112,11 +112,11 @@ export default function ScheduleSection() {
   ];
 
   return (
-    <section id="program" className="py-24 px-4 sm:px-6 lg:px-8 bg-stone-100/70 text-[#141E18] border-t border-stone-200/80">
+    <section id="program" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-stone-100/70 text-[#141E18] border-t border-stone-200/80">
       <div className="max-w-6xl mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-5 sm:gap-6">
           <div>
             <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-widest mb-3 border border-emerald-900/15">
               <Calendar className="w-3.5 h-3.5 text-emerald-800" />
@@ -131,14 +131,14 @@ export default function ScheduleSection() {
           </div>
 
           {/* Timezone Switcher */}
-          <div className="bg-white px-3.5 py-2 rounded-2xl border border-stone-200/90 shadow-sm flex items-center space-x-2.5">
+          <div className="bg-white px-3 sm:px-3.5 py-2 rounded-2xl border border-stone-200/90 shadow-sm flex items-center space-x-2 self-start md:self-auto overflow-x-auto max-w-full">
             <Globe className="w-4 h-4 text-emerald-800 shrink-0" />
             <div className="flex space-x-1 text-xs">
               {Object.keys(tzOffsets).map((tz) => (
                 <button
                   key={tz}
                   onClick={() => setTimezone(tz)}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition-all ${
+                  className={`px-2 sm:px-2.5 py-1 rounded-lg font-semibold transition-all touch-manipulation ${
                     timezone === tz
                       ? 'bg-emerald-950 text-white shadow-sm'
                       : 'text-stone-600 hover:bg-stone-100'
@@ -152,21 +152,21 @@ export default function ScheduleSection() {
         </div>
 
         {/* Day Navigation Tabs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 mb-6 sm:mb-8">
           {schedule.map((item, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedDay(idx)}
-              className={`p-4 rounded-2xl text-left transition-all duration-300 border ${
+              className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all duration-300 border touch-manipulation ${
                 selectedDay === idx
                   ? 'bg-emerald-950 text-white border-jubilee-gold/50 shadow-luxury scale-[1.02]'
                   : 'bg-white text-stone-700 border-stone-200 hover:border-emerald-800/40 hover:bg-stone-50'
               }`}
             >
-              <span className="block text-[11px] font-sans uppercase tracking-wider font-semibold opacity-75">
+              <span className="block text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold opacity-75 truncate">
                 {item.date}
               </span>
-              <span className="block text-base sm:text-lg font-retro font-bold mt-0.5 leading-snug">
+              <span className="block text-sm sm:text-lg font-retro font-bold mt-0.5 leading-snug truncate">
                 {item.day}
               </span>
             </button>
@@ -174,13 +174,13 @@ export default function ScheduleSection() {
         </div>
 
         {/* Selected Day Program Detail */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-stone-200/90 shadow-luxury">
-          <div className="border-b border-stone-100 pb-5 mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-stone-200/90 shadow-luxury">
+          <div className="border-b border-stone-100 pb-5 mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
             <div>
               <span className="inline-block px-3 py-1 rounded-full bg-emerald-900/10 text-emerald-900 text-xs font-bold uppercase tracking-wider mb-2">
                 {schedule[selectedDay].badge} • {schedule[selectedDay].date} ({tzOffsets[timezone]})
               </span>
-              <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
+              <h3 className="text-xl sm:text-3xl font-retro font-bold text-emerald-950">
                 {schedule[selectedDay].title}
               </h3>
               <p className="text-xs sm:text-sm text-stone-500 font-editorial italic mt-0.5">
@@ -190,7 +190,7 @@ export default function ScheduleSection() {
             
             <a
               href="#census-rsvp"
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-bold bg-emerald-950 text-white hover:bg-emerald-900 transition-all shadow-sm shrink-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-full text-xs font-bold bg-emerald-950 text-white hover:bg-emerald-900 transition-all shadow-sm shrink-0 touch-manipulation"
             >
               <span>RSVP For This Day</span>
             </a>

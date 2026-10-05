@@ -6,19 +6,19 @@ export default function MediaSection() {
   const [showVideoModal, setShowVideoModal] = useState(false);
 
   return (
-    <section id="media-hub" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture">
+    <section id="media-hub" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture">
       <div className="max-w-6xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/[0.04] text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-widest mb-3">
             <Radio className="w-3.5 h-3.5 text-jubilee-gold animate-pulse" />
-            <span>Broadcast & Archival Feeds</span>
+            <span>Broadcast &amp; Archival Feeds</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-white tracking-tight mb-3">
-            Live Stream & Documentary
+            Live Stream &amp; Documentary
           </h2>
-          <p className="text-emerald-100/75 text-sm sm:text-base font-light leading-relaxed">
+          <p className="text-emerald-100/75 text-sm sm:text-base font-light leading-relaxed px-2">
             Connecting our worldwide alumni family in high-definition across four continents.
           </p>
         </div>
@@ -153,11 +153,11 @@ export default function MediaSection() {
 
       {/* Official Media & Broadcast Modal */}
       {showVideoModal && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[#051A0F] border-2 border-jubilee-gold/50 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative text-white text-center space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in overflow-y-auto">
+          <div className="bg-[#051A0F] border-2 border-jubilee-gold/50 rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-8 shadow-2xl relative text-white text-center space-y-4 max-h-[92vh] overflow-y-auto my-auto">
             <button
               onClick={() => setShowVideoModal(false)}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-stone-400 hover:text-white"
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-stone-400 hover:text-white touch-manipulation"
             >
               <X className="w-5 h-5" />
             </button>

@@ -161,34 +161,34 @@ export default function QrShareModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-lg bg-[#051A0F] text-white rounded-3xl border-2 border-jubilee-gold/60 shadow-2xl overflow-hidden p-6 sm:p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-[#051A0F] text-white rounded-2xl sm:rounded-3xl border-2 border-jubilee-gold/60 shadow-2xl overflow-y-auto max-h-[92vh] p-5 sm:p-8 my-auto">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors touch-manipulation"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-5 sm:mb-6">
           <img
             src="/official-logo.png"
             alt="ASF 45th Logo"
-            className="h-16 w-auto mx-auto mb-3 object-contain"
+            className="h-12 sm:h-16 w-auto mx-auto mb-2.5 sm:mb-3 object-contain"
           />
-          <h3 className="font-retro text-2xl font-bold text-white">
+          <h3 className="font-retro text-xl sm:text-2xl font-bold text-white">
             Official 45th Jubilee QR Code
           </h3>
           <p className="text-xs text-emerald-200/80 font-light mt-1">
-            Scan to instantly access the Alumni Census, DP Generator & Event Program.
+            Scan to instantly access the Alumni Census, DP Generator &amp; Event Program.
           </p>
         </div>
 
         {/* QR Code Canvas Box */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 mx-auto max-w-[280px] shadow-2xl border-4 border-jubilee-gold/40 flex flex-col items-center justify-center mb-6">
+        <div className="bg-white rounded-2xl p-3.5 sm:p-5 mx-auto max-w-[240px] sm:max-w-[280px] shadow-2xl border-4 border-jubilee-gold/40 flex flex-col items-center justify-center mb-5 sm:mb-6">
           {qrDataUrl ? (
             <img
               src={qrDataUrl}
@@ -196,40 +196,40 @@ export default function QrShareModal({ isOpen, onClose }) {
               className="w-full h-auto object-contain"
             />
           ) : (
-            <div className="w-56 h-56 flex items-center justify-center text-stone-400 text-xs">
+            <div className="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center text-stone-400 text-xs">
               Generating QR Code...
             </div>
           )}
-          <span className="text-[10px] text-stone-500 font-mono mt-2 text-center block">
+          <span className="text-[10px] text-stone-500 font-mono mt-2 text-center block truncate max-w-full">
             {siteUrl}
           </span>
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3 font-sans">
+        <div className="space-y-2.5 sm:space-y-3 font-sans">
           <button
             onClick={handleDownloadBrandedQr}
             disabled={downloading}
-            className="w-full flex items-center justify-center space-x-2 py-3.5 px-4 rounded-xl text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-[1.01] transition-all"
+            className="w-full flex items-center justify-center space-x-2 py-3 sm:py-3.5 px-4 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-[1.01] active:scale-95 transition-all touch-manipulation"
           >
-            <Download className="w-4 h-4 text-emerald-950" />
+            <Download className="w-4 h-4 text-emerald-950 shrink-0" />
             <span>{downloading ? 'Preparing Poster...' : 'Download Printable QR Flyer (PNG)'}</span>
           </button>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <button
               onClick={handleCopyLink}
-              className="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-semibold transition-all"
+              className="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-semibold transition-all active:scale-95 touch-manipulation"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-jubilee-gold" />}
+              {copied ? <Check className="w-4 h-4 text-emerald-400 shrink-0" /> : <Copy className="w-4 h-4 text-jubilee-gold shrink-0" />}
               <span>{copied ? 'Link Copied!' : 'Copy Site Link'}</span>
             </button>
 
             <button
               onClick={handleShareWhatsApp}
-              className="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 border border-emerald-600 text-white text-xs font-semibold transition-all"
+              className="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 border border-emerald-600 text-white text-xs font-semibold transition-all active:scale-95 touch-manipulation"
             >
-              <Share2 className="w-4 h-4 text-emerald-300" />
+              <Share2 className="w-4 h-4 text-emerald-300 shrink-0" />
               <span>Share on WhatsApp</span>
             </button>
           </div>
