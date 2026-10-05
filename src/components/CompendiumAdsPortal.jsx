@@ -389,38 +389,41 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
     <div className="min-h-screen bg-[#FAF7EE] text-[#141E18] font-sans antialiased selection:bg-emerald-900 selection:text-amber-200">
       
       {/* Top Banner Navigation */}
-      <header className="sticky top-0 z-40 bg-[#051A0F]/95 backdrop-blur-md border-b border-jubilee-gold/30 text-white py-2.5 sm:py-4 px-3 sm:px-6 shadow-luxury">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      <header className="sticky top-0 z-40 bg-[#051A0F]/95 backdrop-blur-md border-b border-jubilee-gold/30 text-white py-2.5 sm:py-3.5 px-3 sm:px-6 shadow-luxury">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          {/* Left: Back to Home Portal */}
           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
             <button
               onClick={onBackToSite}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-jubilee-lightgold text-xs font-semibold transition-all shrink-0 touch-manipulation active:scale-95"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-jubilee-lightgold text-xs sm:text-sm font-semibold transition-all shrink-0 touch-manipulation active:scale-95"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-jubilee-gold" />
               <span className="hidden xs:inline">Back to Jubilee Portal</span>
               <span className="xs:hidden">Back</span>
             </button>
-            <span className="hidden md:inline-block text-xs text-stone-400">|</span>
-            <span className="hidden md:inline-block text-xs font-retro text-stone-300 truncate">
-              ASF RSU 45th Anniversary &amp; Alumni Homecoming (1981–2026)
-            </span>
+            <span className="hidden lg:inline-block text-xs text-stone-500">|</span>
+            <div className="hidden lg:flex items-center space-x-2 truncate">
+              <img src="/official-logo.png" alt="ASF Logo" className="w-5 h-5 object-contain shrink-0" />
+              <span className="text-xs font-retro text-stone-300 truncate">
+                ASF RSU 45th Anniversary Homecoming
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2 shrink-0">
-            {onOpenDonate && (
+          {/* Right: Switch to Donate & Support */}
+          {onOpenDonate && (
+            <div className="flex items-center shrink-0">
               <button
                 onClick={onOpenDonate}
-                className="inline-flex items-center space-x-1 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/40 hover:bg-white/10 transition-all touch-manipulation active:scale-95"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold text-emerald-100 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 shadow-sm transition-all touch-manipulation active:scale-95"
               >
-                <HeartHandshake className="w-3.5 h-3.5 text-jubilee-gold" />
-                <span className="hidden xs:inline">Donate / Support &rarr;</span>
-                <span className="xs:hidden">Donate &rarr;</span>
+                <HeartHandshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-400 shrink-0" />
+                <span className="hidden sm:inline">Donate &amp; Support</span>
+                <span className="sm:hidden">Donate</span>
+                <span className="text-jubilee-gold font-bold">&rarr;</span>
               </button>
-            )}
-            <span className="hidden xs:inline-block text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-jubilee-lightgold px-2.5 sm:px-3 py-1 rounded-full bg-jubilee-gold/10 border border-jubilee-gold/30">
-              Audited CPC Account
-            </span>
-          </div>
+            </div>
+          )}
         </div>
       </header>
 
