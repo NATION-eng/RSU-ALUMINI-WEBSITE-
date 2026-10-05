@@ -16,6 +16,16 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
 
+  // Check whether live/valid Paystack key is configured
+  const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '';
+  const isPaystackConfigured =
+    Boolean(paystackKey) &&
+    (paystackKey.startsWith('pk_live_') || paystackKey.startsWith('pk_test_')) &&
+    paystackKey.length >= 30 &&
+    !paystackKey.includes('sample_key') &&
+    !paystackKey.includes('ready_for_live') &&
+    !paystackKey.includes('placeholder');
+
   // Form State
   const [formData, setFormData] = useState({
     fullName: '',
@@ -25,7 +35,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
     alumniSet: '',
     isAnonymous: false,
     messageNote: '',
-    paymentMethod: 'PAYSTACK' // 'PAYSTACK' | 'TRANSFER'
+    paymentMethod: isPaystackConfigured ? 'PAYSTACK' : 'TRANSFER'
   });
 
   const [formError, setFormError] = useState('');
@@ -46,9 +56,8 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
     setTimeout(() => setCopiedAccount(false), 2500);
   };
 
-  // Paystack Integration Runner
+  // Paystack Integration Runner (Only runs if genuine live key is present; NEVER simulates)
   const handlePaystackPayment = () => {
-    const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_sample_key';
     const cleanStr = String(customAmount).replace(/[^0-9.]/g, '');
     const numAmount = Math.round(parseFloat(cleanStr) || 0);
 
@@ -62,55 +71,65 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       return;
     }
 
+    if (!isPaystackConfigured) {
+      setIsProcessing(false);
+      setFormError(
+        "Paystack Online Payment gateway is currently awaiting live API key activation by the Alumni Secretariat. No deduction was made. Please select 'Direct Bank Transfer' below to transfer directly to the official Ecobank account (0570076237), or contact the Secretariat."
+      );
+      return;
+    }
+
     setIsProcessing(true);
     setFormError('');
 
     const reference = `ASF45TH-AD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    const isValidPaystackKey =
-      Boolean(paystackKey) &&
-      (paystackKey.startsWith('pk_live_') || paystackKey.startsWith('pk_test_')) &&
-      paystackKey.length > 25 &&
-      !paystackKey.includes('sample_key');
-
     const executePaystack = () => {
-      if (isValidPaystackKey && typeof window.PaystackPop !== 'undefined') {
-        try {
-          const handler = window.PaystackPop.setup({
-            key: paystackKey,
-            email: formData.email.trim(),
-            amount: Math.round(numAmount * 100), // integer in kobo
-            currency: 'NGN',
-            ref: reference,
-            metadata: {
-              custom_fields: [
-                { display_name: "Customer Name", variable_name: "customer_name", value: formData.fullName },
-                { display_name: "Email Address", variable_name: "email", value: formData.email.trim() },
-                { display_name: "Phone Number", variable_name: "phone", value: formData.phone },
-                { display_name: "Selected Category", variable_name: "selected_category", value: TIER_DETAILS[selectedTier]?.name || selectedTier },
-                { display_name: "Engagement Type", variable_name: "engagement_type", value: 'Compendium Ad Booking' },
-                { display_name: "Company / Alumni Set", variable_name: "organization", value: formData.organization || formData.alumniSet || "Individual Contributor" },
-                { display_name: "Amount (₦)", variable_name: "amount_naira", value: numAmount }
-              ]
-            },
-            callback: function (response) {
-              handleSuccessfulPayment(response.reference || reference, numAmount, 'Paystack Online Gateway');
-            },
-            onClose: function () {
-              setIsProcessing(false);
-            }
-          });
-          handler.openIframe();
-        } catch (err) {
-          console.warn('Paystack popup setup fallback:', err);
-          setTimeout(() => {
-            handleSuccessfulPayment(reference, numAmount, 'Paystack Online Gateway (Verified)');
-          }, 1200);
+      try {
+        if (typeof window.PaystackPop === 'undefined') {
+          throw new Error('Paystack inline SDK not loaded.');
         }
-      } else {
-        setTimeout(() => {
-          handleSuccessfulPayment(reference, numAmount, isValidPaystackKey ? 'Paystack Online Gateway' : 'Paystack Verified (Sample/Test Gateway)');
-        }, 1200);
+
+        const handler = window.PaystackPop.setup({
+          key: paystackKey,
+          email: formData.email.trim(),
+          amount: Math.round(numAmount * 100), // integer in kobo
+          currency: 'NGN',
+          ref: reference,
+          metadata: {
+            custom_fields: [
+              { display_name: "Customer Name", variable_name: "customer_name", value: formData.fullName },
+              { display_name: "Email Address", variable_name: "email", value: formData.email.trim() },
+              { display_name: "Phone Number", variable_name: "phone", value: formData.phone },
+              { display_name: "Selected Category", variable_name: "selected_category", value: TIER_DETAILS[selectedTier]?.name || selectedTier },
+              { display_name: "Engagement Type", variable_name: "engagement_type", value: 'Compendium Ad Booking' },
+              { display_name: "Company / Alumni Set", variable_name: "organization", value: formData.organization || formData.alumniSet || "Individual Contributor" },
+              { display_name: "Amount (₦)", variable_name: "amount_naira", value: numAmount }
+            ]
+          },
+          callback: function (response) {
+            if (response && (response.status === 'success' || response.reference || response.trxref)) {
+              handleSuccessfulPayment(
+                response.reference || response.trxref || reference,
+                numAmount,
+                'Paystack Online Gateway',
+                'VERIFIED'
+              );
+            } else {
+              setIsProcessing(false);
+              setFormError('Payment was not completed or could not be verified by Paystack.');
+            }
+          },
+          onClose: function () {
+            setIsProcessing(false);
+            setFormError('Payment was cancelled or closed before completion. No deduction was made.');
+          }
+        });
+        handler.openIframe();
+      } catch (err) {
+        console.error('Paystack initialization error:', err);
+        setIsProcessing(false);
+        setFormError('Could not initialize Paystack: ' + (err.message || 'Please use Direct Bank Transfer.'));
       }
     };
 
@@ -120,7 +139,8 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       script.async = true;
       script.onload = executePaystack;
       script.onerror = () => {
-        executePaystack();
+        setIsProcessing(false);
+        setFormError('Failed to load Paystack payment gateway. Please check your internet connection or use Direct Bank Transfer.');
       };
       document.body.appendChild(script);
     } else {
@@ -129,7 +149,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
   };
 
   const handleBankTransferNotice = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     const cleanStr = String(customAmount).replace(/[^0-9.]/g, '');
     const numAmount = Math.round(parseFloat(cleanStr) || 0);
     if (isNaN(numAmount) || numAmount < 100) {
@@ -142,11 +162,12 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
     }
 
     setIsProcessing(true);
+    setFormError('');
     const reference = `ECO-AD-TRF-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    handleSuccessfulPayment(reference, numAmount, 'Direct Bank Transfer (ECOBANK Pending Reconcile)');
+    handleSuccessfulPayment(reference, numAmount, 'Direct Bank Transfer (Ecobank)', 'PENDING_BANK_RECONCILIATION');
   };
 
-  const handleSuccessfulPayment = async (reference, amount, paymentMethod) => {
+  const handleSuccessfulPayment = async (reference, amount, paymentMethod, status = 'VERIFIED') => {
     setIsProcessing(false);
     
     const paymentRecord = {
@@ -163,7 +184,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       is_anonymous: Boolean(formData.isAnonymous),
       message_note: formData.messageNote.trim() || null,
       payment_method: paymentMethod,
-      status: 'VERIFIED',
+      status: status,
       created_at: new Date().toISOString()
     };
 
@@ -172,9 +193,9 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       const { error } = await supabase
         .from('sponsorship_payments')
         .insert([paymentRecord]);
-      if (error) console.warn('Supabase ad booking write note:', error.message);
+      if (error) console.info('Supabase ad booking write note:', error.message);
     } catch (dbErr) {
-      console.error('Supabase write error:', dbErr);
+      console.warn('Supabase write error:', dbErr);
     }
 
     // 2. Offline LocalStorage Backup
@@ -183,11 +204,11 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       existing.unshift(paymentRecord);
       localStorage.setItem('asf_sponsorship_payments', JSON.stringify(existing));
     } catch (lsErr) {
-      console.error('LocalStorage write error:', lsErr);
+      console.warn('LocalStorage write error:', lsErr);
     }
 
-    // 3. Email acknowledgment
-    let emailResult = { status: 'DISPATCHED' };
+    // 3. Email acknowledgment dispatch
+    let emailResult = { success: false, status: 'QUEUED' };
     try {
       emailResult = await sendSponsorAcknowledgmentEmail({
         donorName: formData.fullName.trim(),
@@ -205,15 +226,19 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
 
     setReceiptData({
       ...paymentRecord,
-      email_dispatched: true,
-      email_status: emailResult?.status || 'SENT'
+      email_dispatched: emailResult?.success || false,
+      email_status: emailResult?.status || 'QUEUED',
+      email_reason: emailResult?.reason || '',
+      mailto_link: emailResult?.mailtoLink || ''
     });
 
-    confetti({
-      particleCount: 120,
-      spread: 90,
-      origin: { y: 0.55 }
-    });
+    if (status === 'VERIFIED') {
+      confetti({
+        particleCount: 120,
+        spread: 90,
+        origin: { y: 0.55 }
+      });
+    }
   };
 
   return (
@@ -833,9 +858,16 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                       <div className="flex items-center space-x-1.5 font-bold text-xs text-stone-900">
                         <CreditCard className="w-4 h-4 text-emerald-800 shrink-0" />
                         <span>Pay Online via Paystack</span>
+                        {!isPaystackConfigured && (
+                          <span className="text-[10px] text-amber-800 bg-amber-100 font-bold px-2 py-0.5 rounded-full border border-amber-300">
+                            Awaiting Live Key
+                          </span>
+                        )}
                       </div>
                       <p className="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
-                        Instant automated confirmation via Debit Card, Apple Pay, USSD, or Bank Transfer.
+                        {isPaystackConfigured
+                          ? 'Instant automated confirmation via Debit Card, Apple Pay, USSD, or Bank Transfer.'
+                          : 'Gateway is currently awaiting Secretariat live key activation. Please use Direct Bank Transfer below.'}
                       </p>
                     </div>
                   </label>
@@ -857,7 +889,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                     <div>
                       <div className="flex items-center space-x-1.5 font-bold text-xs text-stone-900">
                         <Building2 className="w-4 h-4 text-amber-700 shrink-0" />
-                        <span>Direct Bank Transfer (Manual Reconciliation)</span>
+                        <span>Direct Bank Transfer (Ecobank Nigeria)</span>
                       </div>
                       <p className="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
                         Pay straight into audited Ecobank <strong>0570076237</strong> and log your payment record.
@@ -895,25 +927,70 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
 
       </main>
 
-      {/* SUCCESSFUL PAYMENT & ELECTRONIC RECEIPT MODAL */}
+      {/* SUCCESSFUL PAYMENT & ELECTRONIC RECEIPT / TRANSFER NOTICE MODAL */}
       {receiptData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-jubilee-gold/50 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-jubilee-gold/50 shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
             
             <div className="text-center space-y-2 mb-6">
-              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-2 shadow-inner">
-                <Check className="w-8 h-8" />
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner ${
+                receiptData.status === 'VERIFIED'
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : 'bg-amber-100 text-amber-800'
+              }`}>
+                {receiptData.status === 'VERIFIED' ? (
+                  <Check className="w-8 h-8" />
+                ) : (
+                  <Building2 className="w-7 h-7 text-amber-700" />
+                )}
               </div>
-              <span className="text-[11px] uppercase tracking-widest font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
-                Official Booking Receipt
+
+              <span className={`text-[11px] uppercase tracking-widest font-black px-3 py-1 rounded-full border ${
+                receiptData.status === 'VERIFIED'
+                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                  : 'text-amber-800 bg-amber-50 border-amber-300'
+              }`}>
+                {receiptData.status === 'VERIFIED'
+                  ? 'Booking Cleared & Confirmed'
+                  : 'Booking Notification Logged'}
               </span>
+
               <h3 className="text-2xl font-retro font-bold text-emerald-950">
-                Compendium Ad Reserved!
+                {receiptData.status === 'VERIFIED'
+                  ? 'Compendium Ad Confirmed!'
+                  : 'Ad Booking Notification Received!'}
               </h3>
               <p className="text-xs text-stone-600">
-                Thank you for featuring in the 45th Anniversary Jubilee Historical Compendium.
+                {receiptData.status === 'VERIFIED'
+                  ? 'Thank you for featuring in the 45th Anniversary Jubilee Historical Compendium. Your reservation has been confirmed.'
+                  : 'Thank you! Your advert booking has been registered. Please complete your transfer to Ecobank account 0570076237.'}
               </p>
             </div>
+
+            {/* If Direct Bank Transfer, show Ecobank card */}
+            {receiptData.status !== 'VERIFIED' && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-xs space-y-2 mb-6">
+                <div className="font-bold text-amber-950 flex items-center justify-between">
+                  <span>Official Designated Bank Account:</span>
+                  <button
+                    onClick={handleCopyAccount}
+                    className="px-2.5 py-1 rounded-lg bg-amber-200 hover:bg-amber-300 text-amber-950 text-[10px] font-bold flex items-center space-x-1 transition-all"
+                  >
+                    <Copy className="w-3 h-3" />
+                    <span>{copiedAccount ? 'Copied!' : 'Copy Account'}</span>
+                  </button>
+                </div>
+                <div className="font-mono text-stone-800 space-y-1 text-xs">
+                  <div>Bank: <strong className="text-emerald-950 font-bold">ECOBANK NIGERIA</strong></div>
+                  <div>Account Name: <strong className="text-emerald-950 font-bold">NAAS RSU ALUMNI PROJECT</strong></div>
+                  <div>Account Number: <strong className="text-emerald-950 font-bold text-sm tracking-wider">0570076237</strong></div>
+                  <div>Transfer Remark / Ref: <strong className="text-amber-800 font-bold">{receiptData.reference}</strong></div>
+                </div>
+                <p className="text-[10px] text-stone-500 italic pt-1">
+                  * Please quote your booking reference in your bank transfer narration/remark. The Secretariat will reconcile your payment against the Ecobank statement and confirm your placement.
+                </p>
+              </div>
+            )}
 
             <div className="p-4 rounded-2xl bg-[#F7F4EA] border border-stone-200 space-y-2.5 text-xs font-mono mb-6">
               <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
@@ -929,19 +1006,49 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 <span className="font-bold text-emerald-900">{receiptData.tier_name}</span>
               </div>
               <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                <span className="text-stone-500">Amount Paid:</span>
+                <span className="text-stone-500">Amount:</span>
                 <span className="font-bold text-amber-600 text-sm">₦{Number(receiptData.amount || 0).toLocaleString()}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
                 <span className="text-stone-500">Payment Channel:</span>
                 <span className="font-bold text-stone-700">{receiptData.payment_method}</span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-stone-500">Reconciliation Status:</span>
+                <span className={`font-bold ${receiptData.status === 'VERIFIED' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {receiptData.status === 'VERIFIED' ? 'Cleared & Verified' : 'Pending Bank Reconciliation'}
+                </span>
+              </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center space-x-2 mb-6">
-              <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
-              <span>An official receipt and artwork submission instructions have been sent to <strong>{receiptData.email}</strong>.</span>
-            </div>
+            {/* Email Dispatch Status Feedback */}
+            {receiptData.email_dispatched ? (
+              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center space-x-2 mb-6">
+                <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span>An official acknowledgment and submission guide have been sent to <strong>{receiptData.email}</strong>.</span>
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200 text-stone-800 text-xs space-y-2 mb-6">
+                <div className="flex items-start space-x-2 text-amber-900 font-semibold">
+                  <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                  <span>Automated Email Dispatch Notice</span>
+                </div>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Direct automated inbox delivery is awaiting Secretariat custom domain verification on Resend. You can immediately open or send the pre-composed confirmation letter in your email app:
+                </p>
+                {receiptData.mailto_link && (
+                  <a
+                    href={receiptData.mailto_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] active:scale-95 transition-all shadow-sm"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Open Pre-filled Acknowledgment in Mail App</span>
+                  </a>
+                )}
+              </div>
+            )}
 
             <div className="space-y-2.5">
               <button
@@ -949,7 +1056,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 className="w-full py-3 rounded-full bg-emerald-950 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center space-x-2 active:scale-95 transition-all"
               >
                 <Printer className="w-4 h-4" />
-                <span>Print Official Receipt</span>
+                <span>Print Official {receiptData.status === 'VERIFIED' ? 'Receipt' : 'Booking Voucher'}</span>
               </button>
               <button
                 onClick={() => { setReceiptData(null); onBackToSite(); }}

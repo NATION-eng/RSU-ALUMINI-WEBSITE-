@@ -24,12 +24,13 @@ export async function sendSponsorAcknowledgmentEmail({
   organization = '',
   phone = ''
 }) {
-  if (!email) {
-    return { success: false, error: 'Recipient email address is required.' };
+  if (!email || !email.includes('@')) {
+    return { success: false, status: 'FAILED', message: 'Recipient email address is required.' };
   }
 
   const tier = TIER_DETAILS[tierKey] || TIER_DETAILS.custom;
-  const subject = `Official Acknowledgment: 45th Jubilee Sponsorship - ${tier.name} (Ref: ${reference})`;
+  const isAd = Boolean(tierKey && tierKey.startsWith('ad_'));
+  const subject = `Official Acknowledgment: 45th Jubilee ${isAd ? 'Compendium Ad' : 'Sponsorship'} - ${tier.name} (Ref: ${reference})`;
   const htmlContent = generateSponsorEmailHtml({
     donorName,
     tierKey,
@@ -37,6 +38,15 @@ export async function sendSponsorAcknowledgmentEmail({
     reference,
     paymentMethod,
     organization
+  });
+
+  const mailtoFallback = getMailtoLink({
+    email,
+    donorName,
+    tierName: tier.name,
+    amount,
+    reference,
+    isAd
   });
 
   const emailPayload = {
@@ -56,6 +66,7 @@ export async function sendSponsorAcknowledgmentEmail({
   };
 
   let dispatchStatus = 'QUEUED';
+  let failureReason = '';
   let serviceResponse = null;
 
   // 1. Try Supabase Edge Function if available
@@ -64,12 +75,12 @@ export async function sendSponsorAcknowledgmentEmail({
       body: emailPayload
     });
 
-    if (!error && data) {
+    if (!error && data && data.success) {
       dispatchStatus = 'DELIVERED';
       serviceResponse = data;
       console.log('Sponsor email successfully dispatched via Supabase Edge Function to:', email);
     } else if (error) {
-      console.info('Edge function note (falling back to API/Database Queue):', error.message);
+      console.info('Edge function note:', error.message);
     }
   } catch (fnErr) {
     console.info('Supabase function invoke skipped or pending deployment:', fnErr.message);
@@ -79,7 +90,7 @@ export async function sendSponsorAcknowledgmentEmail({
   const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
   if (dispatchStatus !== 'DELIVERED' && resendApiKey) {
     try {
-      // First attempt sending directly from Asfrsu@gmail.com
+      // First attempt sending from verified / default onboarding sender
       let res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -87,7 +98,7 @@ export async function sendSponsorAcknowledgmentEmail({
           'Authorization': `Bearer ${resendApiKey}`
         },
         body: JSON.stringify({
-          from: 'NAAS RSU 45th Jubilee <Asfrsu@gmail.com>',
+          from: 'NAAS RSU 45th Jubilee <onboarding@resend.dev>',
           reply_to: 'Asfrsu@gmail.com',
           to: [email.trim()],
           subject,
@@ -95,33 +106,26 @@ export async function sendSponsorAcknowledgmentEmail({
         })
       });
 
-      // If domain verification restricts direct @gmail.com on Resend, fallback to certified relay with reply_to
-      if (!res.ok) {
-        const errNotice = await res.json().catch(() => ({}));
-        console.info('Resend direct sender note (delivering with reply_to Asfrsu@gmail.com):', errNotice);
-        res = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${resendApiKey}`
-          },
-          body: JSON.stringify({
-            from: 'NAAS RSU 45th Jubilee <onboarding@resend.dev>',
-            reply_to: 'Asfrsu@gmail.com',
-            to: [email.trim()],
-            subject,
-            html: htmlContent
-          })
-        });
-      }
-
-      if (res.ok) {
-        const resData = await res.json();
+      const resData = await res.json().catch(() => ({}));
+      if (res.ok && resData.id) {
         dispatchStatus = 'DELIVERED';
         serviceResponse = resData;
         console.log('Sponsor email successfully sent via Resend API to:', email);
+      } else {
+        // Resend returned an error (e.g. 403 sandbox restriction: only sending to chiburoma51@gmail.com)
+        if (res.status === 403 && resData.message && resData.message.includes('only send testing emails')) {
+          dispatchStatus = 'PENDING_DOMAIN_VERIFICATION';
+          failureReason = 'Resend account is in sandbox testing mode. Domain verification at resend.com/domains is required by the Secretariat to deliver to public email addresses.';
+          console.warn('Resend Sandbox restriction:', resData.message);
+        } else {
+          dispatchStatus = 'FAILED';
+          failureReason = resData.message || `Resend HTTP ${res.status}`;
+          console.warn('Resend API error:', failureReason);
+        }
       }
     } catch (resendErr) {
+      dispatchStatus = 'FAILED';
+      failureReason = resendErr.message;
       console.warn('Resend API dispatch error:', resendErr);
     }
   }
@@ -143,62 +147,68 @@ export async function sendSponsorAcknowledgmentEmail({
     }
   }
 
-  // 4. Log into Supabase `outbound_emails` table for auditing and tracking
+  // 4. Log into Supabase `outbound_emails` table and localStorage for auditing
+  const logRecord = {
+    recipient_email: email.trim(),
+    recipient_name: donorName.trim(),
+    subject,
+    tier_name: tier.name,
+    amount: Number(amount),
+    reference,
+    status: dispatchStatus,
+    reason: failureReason || null,
+    sent_at: new Date().toISOString()
+  };
+
   try {
-    const logRecord = {
-      recipient_email: email.trim(),
-      recipient_name: donorName.trim(),
-      subject,
-      tier_name: tier.name,
-      amount: Number(amount),
-      reference,
-      status: dispatchStatus,
-      sent_at: new Date().toISOString()
-    };
-
     await supabase.from('outbound_emails').insert([logRecord]);
+  } catch (logErr) {
+    // Schema table may not be created yet in public
+  }
 
-    // Also backup in localStorage
+  try {
     const localLogs = JSON.parse(localStorage.getItem('asf_dispatched_emails') || '[]');
     localLogs.unshift(logRecord);
     localStorage.setItem('asf_dispatched_emails', JSON.stringify(localLogs));
-  } catch (logErr) {
-    console.warn('Email logging note:', logErr);
-  }
+  } catch (lsErr) {}
 
   return {
-    success: true,
+    success: dispatchStatus === 'DELIVERED',
     status: dispatchStatus,
+    reason: failureReason,
     recipient: email,
     subject,
+    mailtoLink: mailtoFallback,
     response: serviceResponse
   };
 }
 
 /**
- * Creates a pre-populated mailto link for direct admin fallback emailing
+ * Creates a pre-populated mailto link for direct admin / donor fallback emailing
  */
-export function getMailtoLink({ email, donorName, tierName, amount, reference }) {
-  const subject = encodeURIComponent(`Official Acknowledgment: 45th Jubilee Sponsorship - ${tierName} (Ref: ${reference})`);
+export function getMailtoLink({ email, donorName, tierName, amount, reference, isAd = false }) {
+  const subject = encodeURIComponent(`Official Acknowledgment: 45th Jubilee ${isAd ? 'Compendium Ad' : 'Sponsorship'} - ${tierName} (Ref: ${reference})`);
   const body = encodeURIComponent(
-`Dear ${donorName},
+`Dear ${donorName || 'Valued Partner'},
 
 On behalf of the NAAS RSU Central Planning Committee (CPC) and the Adventist Students' Fellowship (RSU), we convey our heartfelt appreciation for your generous partnership towards our 45th Anniversary & Alumni Homecoming (1981–2026).
 
 Contribution Details:
 • Category: ${tierName}
-• Amount: ₦${Number(amount).toLocaleString()}
+• Amount: ₦${Number(amount || 0).toLocaleString()}
 • Reference: ${reference}
-• Bank Account: ECOBANK | 0570076237 | NAAS RSU ALUMNI PROJECT
+• Designated Bank Account: ECOBANK NIGERIA | 0570076237 | NAAS RSU ALUMNI PROJECT
 
-Next Steps for Advert & Media Submission:
+${isAd ? `Next Steps for Advert & Media Submission:
 Please send your print-ready artwork, tribute, or ad copy (PDF, TIFF, or 300 DPI JPEG with 3mm bleed) to:
 • Ekpor Jephta: ekporjephta@gmail.com
-• Secretariat: Asfrsu@gmail.com
+• Secretariat: Asfrsu@gmail.com` : `Contribution Purpose:
+Your partnership actively empowers the student scholarship endowment, chapel modernization, and 45th Jubilee homecoming logistics.`}
 
 Warm regards in Christ,
 Central Planning Committee (CPC)
-NAAS RSU 45th Jubilee Secretariat`
+NAAS RSU 45th Jubilee Secretariat
+Email: Asfrsu@gmail.com`
   );
 
   return `mailto:${email}?subject=${subject}&body=${body}`;
