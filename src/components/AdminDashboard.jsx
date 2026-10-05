@@ -4,9 +4,11 @@ import {
   Shield, Lock, Search, Filter, Download, CheckCircle, XCircle, 
   Users, UserCheck, HeartHandshake, RefreshCw, Eye, ArrowLeft,
   Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2,
-  Video, Play, Sparkles, Building2, ExternalLink, AlertTriangle, X
+  Video, Play, Sparkles, Building2, ExternalLink, AlertTriangle, X,
+  BookOpen, FileText, Palette, UploadCloud, Layers
 } from 'lucide-react';
 import { getMailtoLink } from '../lib/emailService';
+import { COMPENDIUM_AD_TIERS, AD_EDITORIAL_STATUSES } from '../lib/adSpecs';
 
 export default function AdminDashboard({ onBackToSite }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -70,16 +72,24 @@ export default function AdminDashboard({ onBackToSite }) {
     setConfirmModal(prev => ({ ...prev, isOpen: false, onConfirm: null, isLoading: false }));
   };
 
-  // New admin tabs: 'REGISTRATIONS' | 'SPONSORSHIPS' | 'VIDEOS'
+  // Admin tabs: 'REGISTRATIONS' | 'SPONSORSHIPS' | 'ADS' | 'VIDEOS'
   const [activeAdminTab, setActiveAdminTab] = useState('REGISTRATIONS');
   const [sponsorships, setSponsorships] = useState([]);
+  const [adBookings, setAdBookings] = useState([]);
+  const [selectedAdBooking, setSelectedAdBooking] = useState(null);
   const [videoSubmissions, setVideoSubmissions] = useState([]);
   const [playingVideoUrl, setPlayingVideoUrl] = useState(null);
 
-  // Search & Filter for Sponsorships & Compendium Ads
+  // Search & Filter for Sponsorships
   const [sponsorshipSearch, setSponsorshipSearch] = useState('');
   const [sponsorshipFilterType, setSponsorshipFilterType] = useState('ALL'); // 'ALL' | 'DONATION' | 'AD'
   const [sponsorshipFilterChannel, setSponsorshipFilterChannel] = useState('ALL'); // 'ALL' | 'PAYSTACK' | 'TRANSFER'
+
+  // Search & Filter for Compendium Ads
+  const [adSearch, setAdSearch] = useState('');
+  const [adFilterTier, setAdFilterTier] = useState('ALL');
+  const [adFilterStatus, setAdFilterStatus] = useState('ALL');
+  const [adFilterPayment, setAdFilterPayment] = useState('ALL');
 
   // Check if admin is already logged in for this session
   useEffect(() => {
@@ -112,7 +122,61 @@ export default function AdminDashboard({ onBackToSite }) {
   const fetchAllData = () => {
     fetchRegistrations();
     fetchSponsorships();
+    fetchAdBookings();
     fetchVideoSubmissions();
+  };
+
+  const fetchAdBookings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('compendium_ad_bookings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+      const combined = [...(data || [])];
+      local.forEach(item => {
+        if (!combined.some(c => c.booking_reference === item.booking_reference || (c.id && c.id === item.id))) {
+          combined.push(item);
+        }
+      });
+
+      // Also backfill from sponsorship records if any were previously booked under sponsorship_payments
+      const sponsorshipRecords = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      sponsorshipRecords.forEach(s => {
+        const isAd = Boolean(s.tier_key?.startsWith('ad_') || s.reference?.includes('-AD-'));
+        if (isAd && !combined.some(c => c.booking_reference === s.reference || c.reference === s.reference)) {
+          combined.push({
+            booking_reference: s.reference,
+            advertiser_name: s.donor_name || s.organization || 'Advertiser',
+            company_name: s.organization || null,
+            brand_headline: null,
+            ad_tier_key: s.tier_key || 'ad_full',
+            ad_tier_name: s.tier_name || 'Compendium Advert',
+            ad_dimensions: COMPENDIUM_AD_TIERS[s.tier_key]?.dimensions || 'A4 Standard',
+            amount: s.amount,
+            currency: s.currency || 'NGN',
+            email: s.email,
+            phone: s.phone,
+            alumni_set: s.alumni_set,
+            artwork_option: 'UPLOAD_READY',
+            artwork_url: null,
+            artwork_file_name: null,
+            message_note: s.message_note,
+            payment_method: s.payment_method || 'PAYSTACK',
+            payment_status: s.status || 'VERIFIED',
+            editorial_status: 'RECEIVED',
+            assigned_page_number: null,
+            created_at: s.created_at
+          });
+        }
+      });
+
+      setAdBookings(combined);
+    } catch (e) {
+      const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+      setAdBookings(local);
+    }
   };
 
   const fetchSponsorships = async () => {
@@ -524,6 +588,290 @@ export default function AdminDashboard({ onBackToSite }) {
     });
   };
 
+  // Update Compendium Ad Editorial Status
+  const updateAdEditorialStatus = async (ad, newStatus) => {
+    const targetRef = ad.booking_reference || ad.reference;
+    setUpdatingId(targetRef);
+    try {
+      if (ad.id) {
+        try {
+          await supabase
+            .from('compendium_ad_bookings')
+            .update({ editorial_status: newStatus })
+            .eq('id', ad.id);
+        } catch (e) {}
+      } else if (targetRef) {
+        try {
+          await supabase
+            .from('compendium_ad_bookings')
+            .update({ editorial_status: newStatus })
+            .eq('booking_reference', targetRef);
+        } catch (e) {}
+      }
+
+      try {
+        const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+        const updated = local.map(a =>
+          (a.booking_reference === targetRef || (ad.id && a.id === ad.id))
+            ? { ...a, editorial_status: newStatus }
+            : a
+        );
+        localStorage.setItem('asf_compendium_ad_bookings', JSON.stringify(updated));
+      } catch (e) {}
+
+      startTransition(() => {
+        setAdBookings(prev => prev.map(a =>
+          (a.booking_reference === targetRef || (ad.id && a.id === ad.id))
+            ? { ...a, editorial_status: newStatus }
+            : a
+        ));
+      });
+      showToast(`Ad status updated to: ${newStatus}`, 'success');
+    } catch (err) {
+      showToast('Error updating status: ' + err.message, 'error');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Update Compendium Ad Assigned Magazine Page
+  const updateAdAssignedPage = async (ad, pageNum) => {
+    const targetRef = ad.booking_reference || ad.reference;
+    try {
+      if (ad.id) {
+        try {
+          await supabase
+            .from('compendium_ad_bookings')
+            .update({ assigned_page_number: pageNum })
+            .eq('id', ad.id);
+        } catch (e) {}
+      } else if (targetRef) {
+        try {
+          await supabase
+            .from('compendium_ad_bookings')
+            .update({ assigned_page_number: pageNum })
+            .eq('booking_reference', targetRef);
+        } catch (e) {}
+      }
+
+      try {
+        const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+        const updated = local.map(a =>
+          (a.booking_reference === targetRef || (ad.id && a.id === ad.id))
+            ? { ...a, assigned_page_number: pageNum }
+            : a
+        );
+        localStorage.setItem('asf_compendium_ad_bookings', JSON.stringify(updated));
+      } catch (e) {}
+
+      startTransition(() => {
+        setAdBookings(prev => prev.map(a =>
+          (a.booking_reference === targetRef || (ad.id && a.id === ad.id))
+            ? { ...a, assigned_page_number: pageNum }
+            : a
+        ));
+      });
+      showToast(`Assigned page set to ${pageNum || 'Unassigned'}`, 'success');
+    } catch (err) {
+      console.warn('Page assignment update note:', err);
+    }
+  };
+
+  // Delete individual compendium ad booking
+  const deleteAdBooking = (ad) => {
+    const advName = ad.advertiser_name || ad.donor_name || ad.company_name || 'Advertiser';
+    const amountStr = Number(ad.amount || 0).toLocaleString();
+    const targetRef = ad.booking_reference || ad.reference;
+
+    openConfirmModal({
+      title: 'Delete Compendium Ad Booking',
+      message: `Are you sure you want to delete this compendium ad booking? This will remove the reservation from the magazine ledger and production manifest.`,
+      details: [
+        { label: 'Advertiser', value: advName },
+        { label: 'Slot / Tier', value: ad.ad_tier_name || ad.tier_name || 'Ad Slot' },
+        { label: 'Amount', value: `₦${amountStr}` },
+        { label: 'Reference', value: targetRef || 'N/A' },
+      ],
+      confirmText: 'Delete Ad Booking',
+      isDanger: true,
+      onConfirm: async () => {
+        setUpdatingId(targetRef);
+        try {
+          // 1. Delete from compendium_ad_bookings in Supabase
+          if (ad.id) {
+            try {
+              await supabase.from('compendium_ad_bookings').delete().eq('id', ad.id);
+            } catch (e) {}
+          } else if (targetRef) {
+            try {
+              await supabase.from('compendium_ad_bookings').delete().eq('booking_reference', targetRef);
+            } catch (e) {}
+          }
+
+          // 2. Also delete from sponsorship_payments
+          if (targetRef) {
+            try {
+              await supabase.from('sponsorship_payments').delete().eq('reference', targetRef);
+            } catch (e) {}
+          }
+
+          // 3. Delete from LocalStorage
+          try {
+            const localAds = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+            const updatedAds = localAds.filter(a => a.booking_reference !== targetRef && (!ad.id || a.id !== ad.id));
+            localStorage.setItem('asf_compendium_ad_bookings', JSON.stringify(updatedAds));
+          } catch (e) {}
+
+          try {
+            const localSp = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+            const updatedSp = localSp.filter(s => s.reference !== targetRef);
+            localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedSp));
+          } catch (e) {}
+
+          // 4. Update React state
+          startTransition(() => {
+            setAdBookings(prev => prev.filter(a => a.booking_reference !== targetRef && (!ad.id || a.id !== ad.id)));
+            setSponsorships(prev => prev.filter(s => s.reference !== targetRef));
+            if (selectedAdBooking?.booking_reference === targetRef) {
+              setSelectedAdBooking(null);
+            }
+          });
+          showToast(`Deleted ad booking for ${advName}`, 'success');
+        } catch (err) {
+          console.error('Delete ad booking error:', err);
+          showToast('Error deleting ad: ' + err.message, 'error');
+        } finally {
+          setUpdatingId(null);
+        }
+      }
+    });
+  };
+
+  // Bulk purge compendium test ads
+  const purgeAdBookings = (mode = 'TEST_ONLY') => {
+    if (adBookings.length === 0) {
+      showToast('No ad bookings to delete.', 'info');
+      return;
+    }
+
+    let toDelete = [];
+    if (mode === 'TEST_ONLY') {
+      toDelete = adBookings.filter(a =>
+        (a.booking_reference && (a.booking_reference.includes('TEST') || a.booking_reference.includes('SAMPLE') || a.booking_reference.startsWith('ECO-AD-TRF'))) ||
+        (a.advertiser_name && a.advertiser_name.toLowerCase().includes('test'))
+      );
+      if (toDelete.length === 0) {
+        showToast('No test ad bookings found.', 'info');
+        return;
+      }
+    } else {
+      toDelete = [...adBookings];
+    }
+
+    openConfirmModal({
+      title: mode === 'TEST_ONLY' ? 'Purge Test Ad Bookings' : 'WARNING: Purge ALL Ad Bookings',
+      message: mode === 'TEST_ONLY'
+        ? `This will remove ${toDelete.length} test compendium ad booking(s) from Supabase and local storage.`
+        : `CRITICAL WARNING: This will permanently remove ALL ${adBookings.length} ad bookings!`,
+      details: [
+        { label: 'Scope', value: mode === 'TEST_ONLY' ? 'Test Ads Only' : 'ALL AD BOOKINGS' },
+        { label: 'Total Records to Purge', value: `${toDelete.length} booking(s)` }
+      ],
+      confirmText: mode === 'TEST_ONLY' ? `Purge ${toDelete.length} Test Ads` : 'Permanently Delete ALL',
+      isDanger: true,
+      onConfirm: async () => {
+        const refsToDelete = new Set(toDelete.map(a => a.booking_reference || a.reference).filter(Boolean));
+        const idsToDelete = new Set(toDelete.map(a => a.id).filter(Boolean));
+
+        for (const ref of refsToDelete) {
+          try {
+            await supabase.from('compendium_ad_bookings').delete().eq('booking_reference', ref);
+            await supabase.from('sponsorship_payments').delete().eq('reference', ref);
+          } catch (e) {}
+        }
+        for (const id of idsToDelete) {
+          try {
+            await supabase.from('compendium_ad_bookings').delete().eq('id', id);
+          } catch (e) {}
+        }
+
+        try {
+          const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+          const updated = local.filter(a => !refsToDelete.has(a.booking_reference) && (!a.id || !idsToDelete.has(a.id)));
+          localStorage.setItem('asf_compendium_ad_bookings', JSON.stringify(updated));
+        } catch (e) {}
+
+        try {
+          const localSp = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+          const updatedSp = localSp.filter(s => !refsToDelete.has(s.reference));
+          localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedSp));
+        } catch (e) {}
+
+        startTransition(() => {
+          setAdBookings(prev => prev.filter(a => !refsToDelete.has(a.booking_reference) && (!a.id || !idsToDelete.has(a.id))));
+          setSponsorships(prev => prev.filter(s => !refsToDelete.has(s.reference)));
+        });
+        showToast(`Successfully deleted ${toDelete.length} ad booking(s).`, 'success');
+      }
+    });
+  };
+
+  // Export Compendium Ad Production Manifest to CSV
+  const exportAdManifestCSV = () => {
+    if (adBookings.length === 0) {
+      showToast('No ad bookings to export.', 'info');
+      return;
+    }
+
+    const headers = [
+      'Booking Reference',
+      'Advertiser Full Name',
+      'Company / Brand',
+      'Brand Headline',
+      'Ad Placement Slot',
+      'Dimensions & Bleed',
+      'Amount (NGN)',
+      'Payment Method',
+      'Payment Status',
+      'Editorial Production Status',
+      'Assigned Page',
+      'Contact Phone',
+      'Contact Email',
+      'Artwork File / URL',
+      'Instructions & Copy',
+      'Booking Date'
+    ];
+
+    const rows = filteredAdBookings.map(ad => [
+      `"${ad.booking_reference || ad.reference || ''}"`,
+      `"${ad.advertiser_name || ad.donor_name || ''}"`,
+      `"${ad.company_name || ad.organization || ''}"`,
+      `"${(ad.brand_headline || '').replace(/"/g, '""')}"`,
+      `"${ad.ad_tier_name || ad.tier_name || ''}"`,
+      `"${ad.ad_dimensions || ''}"`,
+      ad.amount || 0,
+      `"${ad.payment_method || ''}"`,
+      `"${ad.payment_status || 'VERIFIED'}"`,
+      `"${ad.editorial_status || 'RECEIVED'}"`,
+      `"${ad.assigned_page_number || 'Unassigned'}"`,
+      `"${ad.phone || ''}"`,
+      `"${ad.email || ''}"`,
+      `"${ad.artwork_url || ad.artwork_file_name || 'None'}"`,
+      `"${(ad.message_note || '').replace(/"/g, '""')}"`,
+      `"${ad.created_at || ''}"`
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ASF-RSU-45th-Compendium-Ad-Manifest-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Export to CSV
   const exportToCSV = () => {
     if (registrations.length === 0) return;
@@ -645,6 +993,47 @@ export default function AdminDashboard({ onBackToSite }) {
       return matchesSearch && matchesType && matchesChannel;
     });
   }, [sponsorships, sponsorshipSearch, sponsorshipFilterType, sponsorshipFilterChannel]);
+
+  // Filtered compendium ad bookings
+  const filteredAdBookings = useMemo(() => {
+    return adBookings.filter(ad => {
+      const q = adSearch.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        (ad.advertiser_name && ad.advertiser_name.toLowerCase().includes(q)) ||
+        (ad.company_name && ad.company_name.toLowerCase().includes(q)) ||
+        (ad.brand_headline && ad.brand_headline.toLowerCase().includes(q)) ||
+        (ad.email && ad.email.toLowerCase().includes(q)) ||
+        (ad.booking_reference && ad.booking_reference.toLowerCase().includes(q)) ||
+        (ad.ad_tier_name && ad.ad_tier_name.toLowerCase().includes(q)) ||
+        (ad.phone && ad.phone.toLowerCase().includes(q));
+
+      const matchesTier =
+        adFilterTier === 'ALL' || ad.ad_tier_key === adFilterTier;
+
+      const matchesStatus =
+        adFilterStatus === 'ALL' || (ad.editorial_status || 'RECEIVED') === adFilterStatus;
+
+      const isVerified = (ad.payment_status === 'VERIFIED');
+      const matchesPayment =
+        adFilterPayment === 'ALL' ||
+        (adFilterPayment === 'VERIFIED' && isVerified) ||
+        (adFilterPayment === 'PENDING' && !isVerified);
+
+      return matchesSearch && matchesTier && matchesStatus && matchesPayment;
+    });
+  }, [adBookings, adSearch, adFilterTier, adFilterStatus, adFilterPayment]);
+
+  // Compendium Ads Metrics
+  const adStats = useMemo(() => {
+    const total = adBookings.length;
+    const revenue = adBookings.reduce((sum, a) => sum + Number(a.amount || 0), 0);
+    const approved = adBookings.filter(a => a.editorial_status === 'APPROVED_FOR_PRINT' || a.editorial_status === 'PRINTED').length;
+    const inReview = adBookings.filter(a => a.editorial_status === 'IN_REVIEW' || a.editorial_status === 'RECEIVED').length;
+    const withArtwork = adBookings.filter(a => Boolean(a.artwork_url || a.artwork_file_name)).length;
+
+    return { total, revenue, approved, inReview, withArtwork };
+  }, [adBookings]);
 
   // Executive Metrics
   const stats = useMemo(() => {
@@ -833,6 +1222,27 @@ export default function AdminDashboard({ onBackToSite }) {
           </button>
 
           <button
+            type="button"
+            onClick={() => setActiveAdminTab('ADS')}
+            className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
+              activeAdminTab === 'ADS'
+                ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
+            }`}
+          >
+            <BookOpen className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'ADS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span>Compendium Ads</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+              activeAdminTab === 'ADS'
+                ? 'bg-emerald-950/20 text-emerald-950'
+                : 'bg-white/10 text-stone-300'
+            }`}>
+              {adBookings.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveAdminTab('VIDEOS')}
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'VIDEOS'
@@ -1636,7 +2046,502 @@ export default function AdminDashboard({ onBackToSite }) {
           </div>
         )}
 
-        {/* 3. GOODWILL VIDEO MESSAGES ARCHIVE TAB */}
+        {/* 3. COMPENDIUM ADS & MAGAZINE PRODUCTION TAB */}
+        {activeAdminTab === 'ADS' && (
+          <div className="space-y-6">
+            
+            {/* Ad Metrics */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              <div className="luxury-glass rounded-2xl p-4 border border-jubilee-gold/40 bg-jubilee-gold/10">
+                <span className="text-[11px] text-jubilee-lightgold font-bold uppercase tracking-wider block">
+                  Total Ad Revenue
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-jubilee-gold mt-1">
+                  ₦{adStats.revenue.toLocaleString()}
+                </div>
+                <div className="text-[10px] text-emerald-200 mt-0.5">Committed Ad Bookings</div>
+              </div>
+
+              <div className="luxury-glass rounded-2xl p-4 border border-white/10">
+                <span className="text-[11px] text-stone-400 font-semibold uppercase tracking-wider block">
+                  Total Ad Placements
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-white mt-1">
+                  {adStats.total}
+                </div>
+                <div className="text-[10px] text-stone-400 mt-0.5">{adStats.withArtwork} Artwork Files Attached</div>
+              </div>
+
+              <div className="luxury-glass rounded-2xl p-4 border border-white/10">
+                <span className="text-[11px] text-sky-400 font-semibold uppercase tracking-wider block">
+                  In Design / Review
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-sky-300 mt-1">
+                  {adStats.inReview}
+                </div>
+                <div className="text-[10px] text-sky-400/80 mt-0.5">Proofing &amp; Editorial</div>
+              </div>
+
+              <div className="luxury-glass rounded-2xl p-4 border border-white/10">
+                <span className="text-[11px] text-emerald-400 font-semibold uppercase tracking-wider block">
+                  Approved For Print
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-emerald-300 mt-1">
+                  {adStats.approved}
+                </div>
+                <div className="text-[10px] text-emerald-400/80 mt-0.5">Ready for Press Run</div>
+              </div>
+            </div>
+
+            {/* Header, Export & Filter Actions */}
+            <div className="luxury-glass rounded-2xl p-4 sm:p-5 border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base sm:text-lg font-retro font-bold text-white flex items-center space-x-2">
+                  <BookOpen className="w-5 h-5 text-jubilee-gold" />
+                  <span>Commemorative Compendium Ad Manifest &amp; Production Ledger</span>
+                </h3>
+                <p className="text-xs text-stone-400 font-light mt-0.5">
+                  Track advert bookings, proof approvals, magazine page allocations, and high-res artwork files for print.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={exportAdManifestCSV}
+                  className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-jubilee-gold/20 hover:bg-jubilee-gold/30 text-jubilee-lightgold border border-jubilee-gold/40 text-xs font-bold transition-all touch-manipulation active:scale-95"
+                >
+                  <Download className="w-3.5 h-3.5 pointer-events-none" />
+                  <span>Export Production CSV</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={fetchAdBookings}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors touch-manipulation active:scale-95"
+                  title="Refresh Compendium Ads"
+                >
+                  <RefreshCw className="w-4 h-4 pointer-events-none" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => purgeAdBookings('TEST_ONLY')}
+                  className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold transition-all touch-manipulation active:scale-95"
+                  title="Purge Sample / Test Ad Bookings"
+                >
+                  <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
+                  <span>Purge Test Ads</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Search & Filters */}
+            <div className="luxury-glass rounded-2xl p-4 border border-white/10 space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                {/* Search */}
+                <div className="relative md:col-span-1">
+                  <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={adSearch}
+                    onChange={(e) => setAdSearch(e.target.value)}
+                    placeholder="Search advertiser, brand, phone..."
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white placeholder-stone-400 text-xs focus:outline-none focus:border-jubilee-gold transition-colors"
+                  />
+                  {adSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setAdSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5 pointer-events-none" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Filter Tier */}
+                <div className="relative">
+                  <select
+                    value={adFilterTier}
+                    onChange={(e) => setAdFilterTier(e.target.value)}
+                    aria-label="Filter by Ad Tier"
+                    className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="ALL" className="bg-[#051A0F]">All Ad Sizes ({adBookings.length})</option>
+                    {Object.values(COMPENDIUM_AD_TIERS).map(tier => (
+                      <option key={tier.key} value={tier.key} className="bg-[#051A0F]">
+                        {tier.name} (₦{tier.rate.toLocaleString()})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Filter Editorial Status */}
+                <div className="relative">
+                  <select
+                    value={adFilterStatus}
+                    onChange={(e) => setAdFilterStatus(e.target.value)}
+                    aria-label="Filter by Editorial Status"
+                    className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="ALL" className="bg-[#051A0F]">All Production Statuses</option>
+                    {AD_EDITORIAL_STATUSES.map(st => (
+                      <option key={st.key} value={st.key} className="bg-[#051A0F]">
+                        {st.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Filter Payment */}
+                <div className="relative">
+                  <select
+                    value={adFilterPayment}
+                    onChange={(e) => setAdFilterPayment(e.target.value)}
+                    aria-label="Filter by Payment Status"
+                    className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="ALL" className="bg-[#051A0F]">All Payment Statuses</option>
+                    <option value="VERIFIED" className="bg-[#051A0F]">Verified Paid</option>
+                    <option value="PENDING" className="bg-[#051A0F]">Pending Verification</option>
+                  </select>
+                </div>
+              </div>
+
+              {(adSearch || adFilterTier !== 'ALL' || adFilterStatus !== 'ALL' || adFilterPayment !== 'ALL') && (
+                <div className="flex items-center justify-between text-xs text-stone-400 pt-1">
+                  <span>Showing {filteredAdBookings.length} of {adBookings.length} bookings matching filter criteria</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAdSearch('');
+                      setAdFilterTier('ALL');
+                      setAdFilterStatus('ALL');
+                      setAdFilterPayment('ALL');
+                    }}
+                    className="text-jubilee-lightgold hover:underline"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Ad Bookings Ledger Content */}
+            <div className="luxury-glass rounded-2xl border border-white/10 overflow-hidden">
+              {filteredAdBookings.length === 0 ? (
+                <div className="p-12 text-center space-y-3">
+                  <BookOpen className="w-12 h-12 text-jubilee-gold/40 mx-auto" />
+                  <h4 className="text-base font-retro font-bold text-white">No Compendium Ad Bookings Found</h4>
+                  <p className="text-xs text-stone-400 max-w-md mx-auto font-light">
+                    {adBookings.length === 0
+                      ? 'No adverts have been booked yet. Bookings completed via the Compendium Ads Portal will appear here in real-time.'
+                      : 'No ad bookings match your selected search or filter criteria.'}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* Desktop Table View */}
+                  <div className="hidden lg:block overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-white/10 bg-white/[0.02] text-stone-400 uppercase tracking-wider font-semibold">
+                          <th className="py-3 px-4">Advertiser &amp; Brand</th>
+                          <th className="py-3 px-4">Slot &amp; Dimensions</th>
+                          <th className="py-3 px-4">Rate &amp; Payment</th>
+                          <th className="py-3 px-4">Artwork Asset</th>
+                          <th className="py-3 px-4">Page #</th>
+                          <th className="py-3 px-4">Editorial Status</th>
+                          <th className="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {filteredAdBookings.map((ad, idx) => {
+                          const advName = ad.advertiser_name || ad.donor_name || 'Advertiser';
+                          const org = ad.company_name || ad.organization || '';
+                          const isVerified = (ad.payment_status === 'VERIFIED');
+                          const stConfig = AD_EDITORIAL_STATUSES.find(s => s.key === ad.editorial_status) || AD_EDITORIAL_STATUSES[0];
+                          const tierSpec = COMPENDIUM_AD_TIERS[ad.ad_tier_key];
+
+                          return (
+                            <tr key={ad.booking_reference || ad.reference || idx} className="hover:bg-white/[0.02] transition-colors">
+                              <td className="py-3.5 px-4">
+                                <div className="font-semibold text-white">{advName}</div>
+                                {org && (
+                                  <div className="text-[11px] text-jubilee-lightgold font-medium flex items-center space-x-1 mt-0.5">
+                                    <Building2 className="w-3 h-3 shrink-0" />
+                                    <span>{org}</span>
+                                  </div>
+                                )}
+                                {ad.brand_headline && (
+                                  <div className="text-[11px] text-stone-300 italic mt-0.5 line-clamp-1 max-w-[200px]" title={ad.brand_headline}>
+                                    "{ad.brand_headline}"
+                                  </div>
+                                )}
+                                <div className="text-[10px] text-stone-500 font-mono mt-0.5">
+                                  Ref: {ad.booking_reference || ad.reference}
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4">
+                                <div className="font-medium text-white">{ad.ad_tier_name || ad.tier_name || 'Ad Slot'}</div>
+                                <div className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-white/10 text-stone-300 font-mono mt-1 border border-white/10">
+                                  {ad.ad_dimensions || tierSpec?.dimensions || 'A4 Format'}
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4">
+                                <div className="font-bold text-jubilee-gold font-mono text-sm">
+                                  ₦{Number(ad.amount || 0).toLocaleString()}
+                                </div>
+                                <div className="flex items-center space-x-1 mt-1">
+                                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                    isVerified 
+                                      ? 'bg-emerald-950/60 text-emerald-300 border-emerald-700/50' 
+                                      : 'bg-amber-950/60 text-amber-300 border-amber-700/50'
+                                  }`}>
+                                    {isVerified ? 'VERIFIED' : 'PENDING'}
+                                  </span>
+                                  <span className="text-[10px] text-stone-400">
+                                    {ad.payment_method?.includes('Paystack') ? 'Card' : 'Transfer'}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4">
+                                {ad.artwork_url ? (
+                                  <div className="flex items-center space-x-2">
+                                    <img 
+                                      src={ad.artwork_url} 
+                                      alt="Ad Artwork Thumbnail" 
+                                      className="w-10 h-10 object-cover rounded-lg border border-jubilee-gold/40 shadow cursor-pointer hover:opacity-80 transition-opacity"
+                                      onClick={() => setSelectedAdBooking(ad)}
+                                    />
+                                    <div>
+                                      <a
+                                        href={ad.artwork_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[11px] text-jubilee-lightgold hover:underline font-semibold flex items-center space-x-1"
+                                      >
+                                        <span>View</span>
+                                        <ExternalLink className="w-3 h-3" />
+                                      </a>
+                                      <div className="text-[10px] text-stone-400">Ready File</div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center space-x-1.5 text-stone-400 text-[11px]">
+                                    <Palette className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                    <span>Secretariat Design</span>
+                                  </div>
+                                )}
+                              </td>
+
+                              <td className="py-3.5 px-4">
+                                <input
+                                  type="text"
+                                  defaultValue={ad.assigned_page_number || ''}
+                                  placeholder="Pg #"
+                                  onBlur={(e) => updateAdAssignedPage(ad, e.target.value.trim())}
+                                  className="w-16 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-white font-mono text-center text-xs focus:outline-none focus:border-jubilee-gold"
+                                  title="Enter assigned page number in the printed magazine"
+                                />
+                              </td>
+
+                              <td className="py-3.5 px-4">
+                                <select
+                                  value={ad.editorial_status || 'RECEIVED'}
+                                  onChange={(e) => updateAdEditorialStatus(ad, e.target.value)}
+                                  aria-label="Update Editorial Status"
+                                  className={`px-2 py-1 rounded-lg text-xs font-semibold border cursor-pointer focus:outline-none ${stConfig.color}`}
+                                >
+                                  {AD_EDITORIAL_STATUSES.map(st => (
+                                    <option key={st.key} value={st.key} className="bg-[#051A0F] text-white">
+                                      {st.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+
+                              <td className="py-3.5 px-4 text-right">
+                                <div className="flex items-center justify-end space-x-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedAdBooking(ad)}
+                                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-jubilee-lightgold transition-colors touch-manipulation"
+                                    title="View Full Ad Booking Details"
+                                  >
+                                    <Eye className="w-3.5 h-3.5 pointer-events-none" />
+                                  </button>
+
+                                  {ad.phone && (
+                                    <a
+                                      href={`https://wa.me/${ad.phone.replace(/[^0-9]/g, '')}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="p-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/40 transition-colors touch-manipulation"
+                                      title="WhatsApp Contact"
+                                    >
+                                      <Phone className="w-3.5 h-3.5 pointer-events-none" />
+                                    </a>
+                                  )}
+
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteAdBooking(ad)}
+                                    className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 transition-colors touch-manipulation active:scale-95"
+                                    title="Delete Ad Booking"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile & Tablet Card View */}
+                  <div className="lg:hidden divide-y divide-white/10">
+                    {filteredAdBookings.map((ad, idx) => {
+                      const advName = ad.advertiser_name || ad.donor_name || 'Advertiser';
+                      const org = ad.company_name || ad.organization || '';
+                      const isVerified = (ad.payment_status === 'VERIFIED');
+                      const stConfig = AD_EDITORIAL_STATUSES.find(s => s.key === ad.editorial_status) || AD_EDITORIAL_STATUSES[0];
+                      const tierSpec = COMPENDIUM_AD_TIERS[ad.ad_tier_key];
+
+                      return (
+                        <div key={ad.booking_reference || ad.reference || idx} className="p-4 space-y-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="font-bold text-white text-sm">{advName}</h4>
+                              {org && (
+                                <div className="text-xs text-jubilee-lightgold font-medium flex items-center space-x-1 mt-0.5">
+                                  <Building2 className="w-3 h-3 shrink-0" />
+                                  <span>{org}</span>
+                                </div>
+                              )}
+                              <div className="text-[10px] text-stone-500 font-mono mt-0.5">
+                                Ref: {ad.booking_reference || ad.reference}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm font-bold text-jubilee-gold font-mono">
+                                ₦{Number(ad.amount || 0).toLocaleString()}
+                              </div>
+                              <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border mt-0.5 ${
+                                isVerified 
+                                  ? 'bg-emerald-950/60 text-emerald-300 border-emerald-700/50' 
+                                  : 'bg-amber-950/60 text-amber-300 border-amber-700/50'
+                              }`}>
+                                {isVerified ? 'VERIFIED' : 'PENDING'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5 text-xs">
+                            <div className="flex justify-between items-center">
+                              <span className="text-stone-400">Placement Slot:</span>
+                              <span className="font-semibold text-stone-200">{ad.ad_tier_name || ad.tier_name || 'Ad Slot'}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-stone-400">Dimensions:</span>
+                              <span className="font-mono text-stone-300 text-[11px]">{ad.ad_dimensions || tierSpec?.dimensions || 'A4 Format'}</span>
+                            </div>
+                            {ad.brand_headline && (
+                              <div className="pt-1 border-t border-white/5">
+                                <span className="text-stone-400 text-[11px] block">Headline:</span>
+                                <span className="text-stone-200 text-xs italic">"{ad.brand_headline}"</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {ad.artwork_url && (
+                            <div className="flex items-center space-x-3 p-2 rounded-xl bg-jubilee-gold/10 border border-jubilee-gold/30">
+                              <img 
+                                src={ad.artwork_url} 
+                                alt="Artwork Thumbnail" 
+                                className="w-12 h-12 object-cover rounded-lg border border-jubilee-gold/50 shadow" 
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-bold text-jubilee-lightgold truncate">
+                                  {ad.artwork_file_name || 'Ready Artwork File'}
+                                </div>
+                                <a 
+                                  href={ad.artwork_url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-[11px] text-stone-300 hover:text-white flex items-center space-x-1 mt-0.5"
+                                >
+                                  <span>Open full file</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="grid grid-cols-2 gap-2 pt-1">
+                            <div>
+                              <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">Assigned Page</label>
+                              <input
+                                type="text"
+                                defaultValue={ad.assigned_page_number || ''}
+                                placeholder="Pg #"
+                                onBlur={(e) => updateAdAssignedPage(ad, e.target.value.trim())}
+                                className="w-full px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-jubilee-gold"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">Production Status</label>
+                              <select
+                                value={ad.editorial_status || 'RECEIVED'}
+                                onChange={(e) => updateAdEditorialStatus(ad, e.target.value)}
+                                aria-label="Update Editorial Status"
+                                className={`w-full px-2 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer focus:outline-none ${stConfig.color}`}
+                              >
+                                {AD_EDITORIAL_STATUSES.map(st => (
+                                  <option key={st.key} value={st.key} className="bg-[#051A0F] text-white">
+                                    {st.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedAdBooking(ad)}
+                              className="text-xs text-jubilee-lightgold hover:underline font-semibold flex items-center space-x-1"
+                            >
+                              <Eye className="w-3.5 h-3.5 pointer-events-none" />
+                              <span>View Full Dossier</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => deleteAdBooking(ad)}
+                              className="p-1.5 rounded-lg bg-rose-950/40 text-rose-300 border border-rose-800/40 text-xs flex items-center space-x-1 touch-manipulation active:scale-95"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
+                              <span className="pointer-events-none">Delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 4. GOODWILL VIDEO MESSAGES ARCHIVE TAB */}
         {activeAdminTab === 'VIDEOS' && (
           <div className="space-y-6">
             
@@ -1913,6 +2818,225 @@ export default function AdminDashboard({ onBackToSite }) {
                 className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 text-stone-300 hover:text-white text-xs font-medium text-center touch-manipulation"
               >
                 Close
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 3B. COMPENDIUM AD BOOKING DETAIL & ARTWORK REVIEW MODAL */}
+      {selectedAdBooking && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setSelectedAdBooking(null)}
+        >
+          <div 
+            className="bg-[#0b1f14] border border-jubilee-gold/40 rounded-3xl p-5 sm:p-6 max-w-2xl w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-white/10 pb-4">
+              <div>
+                <div className="inline-flex items-center space-x-2 px-3 py-0.5 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 text-[10px] font-bold uppercase tracking-wider mb-1.5">
+                  <BookOpen className="w-3 h-3 text-jubilee-gold" />
+                  <span>Compendium Ad Dossier</span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-retro font-bold text-white">
+                  {selectedAdBooking.advertiser_name || selectedAdBooking.donor_name || 'Advertiser'}
+                </h3>
+                {selectedAdBooking.company_name && (
+                  <p className="text-xs text-jubilee-lightgold font-medium mt-0.5 flex items-center space-x-1">
+                    <Building2 className="w-3.5 h-3.5 shrink-0" />
+                    <span>{selectedAdBooking.company_name}</span>
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedAdBooking(null)}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4 pointer-events-none" />
+              </button>
+            </div>
+
+            {/* Headline Banner */}
+            {selectedAdBooking.brand_headline && (
+              <div className="p-3.5 rounded-2xl bg-jubilee-gold/10 border border-jubilee-gold/30">
+                <span className="text-[10px] text-jubilee-lightgold font-bold uppercase tracking-wider block">
+                  Advert Headline / Tribute Banner
+                </span>
+                <p className="text-sm font-serif font-bold text-white mt-1 italic">
+                  "{selectedAdBooking.brand_headline}"
+                </p>
+              </div>
+            )}
+
+            {/* Slot Specs & Rate Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-1.5">
+                <div className="text-stone-400 text-[10px] uppercase font-semibold">Placement Slot</div>
+                <div className="font-bold text-white text-sm">
+                  {selectedAdBooking.ad_tier_name || selectedAdBooking.tier_name || 'Ad Slot'}
+                </div>
+                <div className="text-[11px] font-mono text-jubilee-lightgold">
+                  {selectedAdBooking.ad_dimensions || COMPENDIUM_AD_TIERS[selectedAdBooking.ad_tier_key]?.dimensions || 'A4 Portrait'}
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-1.5">
+                <div className="text-stone-400 text-[10px] uppercase font-semibold">Payment Status &amp; Rate</div>
+                <div className="text-base font-bold text-jubilee-gold font-mono">
+                  ₦{Number(selectedAdBooking.amount || 0).toLocaleString()}
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                    selectedAdBooking.payment_status === 'VERIFIED'
+                      ? 'bg-emerald-950/60 text-emerald-300 border-emerald-700/50'
+                      : 'bg-amber-950/60 text-amber-300 border-amber-700/50'
+                  }`}>
+                    {selectedAdBooking.payment_status || 'VERIFIED'}
+                  </span>
+                  <span className="text-[10px] text-stone-400 font-mono">
+                    Ref: {selectedAdBooking.booking_reference || selectedAdBooking.reference}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Artwork Production Preview */}
+            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-bold text-white flex items-center space-x-2">
+                  <Palette className="w-4 h-4 text-jubilee-gold" />
+                  <span>Artwork Asset &amp; Production Mode</span>
+                </div>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-stone-300">
+                  {selectedAdBooking.artwork_option === 'SECRETARIAT_DESIGN' ? 'Secretariat Design Support' : 'Ready Artwork Provided'}
+                </span>
+              </div>
+
+              {selectedAdBooking.artwork_url ? (
+                <div className="space-y-3">
+                  <div className="max-h-64 overflow-hidden rounded-xl border border-white/10 bg-black/40 flex items-center justify-center p-2">
+                    <img 
+                      src={selectedAdBooking.artwork_url} 
+                      alt="Compendium Artwork" 
+                      className="max-h-60 max-w-full object-contain rounded-lg shadow-lg"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-400 font-mono text-[11px] truncate max-w-[250px]">
+                      {selectedAdBooking.artwork_file_name || 'compendium_artwork.png'}
+                    </span>
+                    <a
+                      href={selectedAdBooking.artwork_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="px-3 py-1.5 rounded-xl bg-jubilee-gold text-emerald-950 font-bold hover:bg-yellow-400 transition-colors flex items-center space-x-1.5 shadow"
+                    >
+                      <Download className="w-3.5 h-3.5 pointer-events-none" />
+                      <span>Download High-Res</span>
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-700/30 text-xs text-amber-200/90 leading-relaxed">
+                  <strong>Secretariat Design Request:</strong> The advertiser requested the anniversary editorial team to design their commemorative page layout using their provided brand headline and copy instructions below.
+                </div>
+              )}
+            </div>
+
+            {/* Copy / Message Note */}
+            {selectedAdBooking.message_note && (
+              <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs space-y-1">
+                <span className="text-stone-400 uppercase font-semibold text-[10px]">Advertiser Copy / Instructions</span>
+                <p className="text-stone-200 leading-relaxed whitespace-pre-wrap">{selectedAdBooking.message_note}</p>
+              </div>
+            )}
+
+            {/* Editorial Assignment Controls */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-2xl bg-white/[0.02] border border-white/10 text-xs">
+              <div>
+                <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">
+                  Assigned Magazine Page
+                </label>
+                <input
+                  type="text"
+                  defaultValue={selectedAdBooking.assigned_page_number || ''}
+                  placeholder="e.g. Page 24, Inside Cover"
+                  onBlur={(e) => updateAdAssignedPage(selectedAdBooking, e.target.value.trim())}
+                  className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-jubilee-gold"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-stone-400 uppercase font-semibold block mb-1">
+                  Production Editorial Status
+                </label>
+                <select
+                  value={selectedAdBooking.editorial_status || 'RECEIVED'}
+                  onChange={(e) => updateAdEditorialStatus(selectedAdBooking, e.target.value)}
+                  aria-label="Editorial Status Selection"
+                  className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-jubilee-gold cursor-pointer"
+                >
+                  {AD_EDITORIAL_STATUSES.map(st => (
+                    <option key={st.key} value={st.key} className="bg-[#051A0F] text-white">
+                      {st.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Contact Advertiser Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10 text-xs">
+              <div className="flex items-center space-x-2">
+                {selectedAdBooking.phone && (
+                  <a
+                    href={`https://wa.me/${selectedAdBooking.phone.replace(/[^0-9]/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/40 font-semibold flex items-center space-x-1.5 transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 pointer-events-none" />
+                    <span>WhatsApp Advertiser</span>
+                  </a>
+                )}
+
+                {selectedAdBooking.email && (
+                  <a
+                    href={`mailto:${selectedAdBooking.email}?subject=ASF RSU 45th Anniversary Compendium Ad Proof`}
+                    className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 font-semibold flex items-center space-x-1.5 transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5 pointer-events-none" />
+                    <span>Email Proof</span>
+                  </a>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = selectedAdBooking;
+                    setSelectedAdBooking(null);
+                    deleteAdBooking(current);
+                  }}
+                  className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 transition-colors"
+                  title="Delete Record"
+                >
+                  <Trash2 className="w-4 h-4 pointer-events-none" />
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedAdBooking(null)}
+                className="px-4 py-2 rounded-xl bg-white/10 text-stone-300 hover:text-white font-medium transition-colors"
+              >
+                Close Dossier
               </button>
             </div>
 

@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { 
   ArrowLeft, Award, CheckCircle2, ShieldCheck, CreditCard, Building2, 
   Copy, Check, Sparkles, HeartHandshake, Download, Printer, ExternalLink,
-  Info, MessageSquare, ChevronRight, Share2, Mail, BookOpen, Lock
+  Info, MessageSquare, ChevronRight, Share2, Mail, BookOpen, Lock,
+  UploadCloud, FileText, Image as ImageIcon, Trash2, Palette, Eye
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 import { TIER_DETAILS } from '../lib/emailTemplates';
 import { sendSponsorAcknowledgmentEmail } from '../lib/emailService';
+import { COMPENDIUM_AD_TIERS } from '../lib/adSpecs';
 
 export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
   const [selectedTier, setSelectedTier] = useState('ad_back_cover');
@@ -38,7 +40,89 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
     paymentMethod: isPaystackConfigured ? 'PAYSTACK' : 'TRANSFER'
   });
 
+  // Dedicated Ad Artwork & Production State
+  const [brandHeadline, setBrandHeadline] = useState('');
+  const [artworkOption, setArtworkOption] = useState('UPLOAD_READY'); // 'UPLOAD_READY' | 'DESIGN_ASSIST'
+  const [artworkFile, setArtworkFile] = useState(null);
+  const [artworkPreview, setArtworkPreview] = useState(null);
+
   const [formError, setFormError] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size limit: 25MB
+    if (file.size > 25 * 1024 * 1024) {
+      setFormError('Artwork file exceeds the 25MB maximum limit. Please compress or optimize the file.');
+      return;
+    }
+
+    setArtworkFile(file);
+    setFormError('');
+
+    if (file.type.startsWith('image/')) {
+      const url = URL.createObjectURL(file);
+      setArtworkPreview(url);
+    } else {
+      setArtworkPreview(null);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setArtworkFile(null);
+    if (artworkPreview) {
+      URL.revokeObjectURL(artworkPreview);
+      setArtworkPreview(null);
+    }
+  };
+
+  const uploadArtworkFile = async () => {
+    if (!artworkFile) return null;
+    const fileExt = artworkFile.name.split('.').pop() || 'bin';
+    const cleanFileName = `ad_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}.${fileExt}`;
+    const filePath = `artwork/${cleanFileName}`;
+
+    try {
+      const { data, error } = await supabase.storage
+        .from('compendium-ads')
+        .upload(filePath, artworkFile, { upsert: true });
+
+      if (!error && data) {
+        const { data: pubData } = supabase.storage
+          .from('compendium-ads')
+          .getPublicUrl(filePath);
+        return pubData?.publicUrl || null;
+      }
+    } catch (e) {}
+
+    // Fallback bucket
+    try {
+      const { data, error } = await supabase.storage
+        .from('goodwill-videos')
+        .upload(filePath, artworkFile, { upsert: true });
+      if (!error && data) {
+        const { data: pubData } = supabase.storage
+          .from('goodwill-videos')
+          .getPublicUrl(filePath);
+        return pubData?.publicUrl || null;
+      }
+    } catch (e) {}
+
+    // Fallback: If image under 2MB, store base64 data URL
+    if (artworkFile.size < 2 * 1024 * 1024 && artworkFile.type.startsWith('image/')) {
+      try {
+        return await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(artworkFile);
+        });
+      } catch (e) {}
+    }
+
+    return `pending_upload:${artworkFile.name} (${(artworkFile.size / (1024 * 1024)).toFixed(2)} MB)`;
+  };
 
   // Handle slot selection
   const handleSelectSlot = (slotKey, minAmount) => {
@@ -168,14 +252,53 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
   };
 
   const handleSuccessfulPayment = async (reference, amount, paymentMethod, status = 'VERIFIED') => {
+    setIsProcessing(true);
+
+    let uploadedArtworkUrl = null;
+    try {
+      uploadedArtworkUrl = await uploadArtworkFile();
+    } catch (uploadErr) {
+      console.warn('Artwork upload note:', uploadErr);
+    }
+
     setIsProcessing(false);
     
+    const adTierInfo = COMPENDIUM_AD_TIERS[selectedTier] || TIER_DETAILS[selectedTier] || {};
+    const adTierName = adTierInfo.name || selectedTier;
+    const adDimensions = adTierInfo.dimensions || '210mm × 297mm (+3mm bleed)';
+
+    const adBookingRecord = {
+      booking_reference: reference,
+      advertiser_name: formData.fullName.trim(),
+      company_name: formData.organization.trim() || null,
+      brand_headline: brandHeadline.trim() || null,
+      ad_tier_key: selectedTier,
+      ad_tier_name: adTierName,
+      ad_dimensions: adDimensions,
+      amount,
+      currency: 'NGN',
+      email: formData.email.trim(),
+      phone: formData.phone.trim() || null,
+      alumni_set: formData.alumniSet.trim() || null,
+      is_anonymous: Boolean(formData.isAnonymous),
+      artwork_option: artworkOption,
+      artwork_url: uploadedArtworkUrl,
+      artwork_file_name: artworkFile?.name || null,
+      artwork_file_size: artworkFile?.size || null,
+      message_note: formData.messageNote.trim() || null,
+      payment_method: paymentMethod,
+      payment_status: status,
+      editorial_status: 'RECEIVED',
+      assigned_page_number: null,
+      created_at: new Date().toISOString()
+    };
+
     const paymentRecord = {
       reference,
       amount,
       currency: 'NGN',
       tier_key: selectedTier,
-      tier_name: TIER_DETAILS[selectedTier]?.name || selectedTier,
+      tier_name: adTierName,
       donor_name: formData.fullName.trim(),
       organization: formData.organization.trim() || null,
       email: formData.email.trim(),
@@ -188,26 +311,45 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       created_at: new Date().toISOString()
     };
 
-    // 1. Supabase write
+    // 1. Supabase write: compendium_ad_bookings
     try {
-      const { error } = await supabase
-        .from('sponsorship_payments')
-        .insert([paymentRecord]);
-      if (error) console.info('Supabase ad booking write note:', error.message);
+      const { error: adDbErr } = await supabase
+        .from('compendium_ad_bookings')
+        .insert([adBookingRecord]);
+      if (adDbErr) console.info('Supabase compendium_ad_bookings write note:', adDbErr.message);
     } catch (dbErr) {
-      console.warn('Supabase write error:', dbErr);
+      console.warn('Supabase compendium_ad_bookings error:', dbErr);
     }
 
-    // 2. Offline LocalStorage Backup
+    // 2. Supabase write: sponsorship_payments (for general financial reconciliation)
+    try {
+      const { error: spErr } = await supabase
+        .from('sponsorship_payments')
+        .insert([paymentRecord]);
+      if (spErr) console.info('Supabase sponsorship_payments write note:', spErr.message);
+    } catch (dbErr) {
+      console.warn('Supabase sponsorship_payments write error:', dbErr);
+    }
+
+    // 3. Offline LocalStorage: asf_compendium_ad_bookings
+    try {
+      const existingAds = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+      existingAds.unshift(adBookingRecord);
+      localStorage.setItem('asf_compendium_ad_bookings', JSON.stringify(existingAds));
+    } catch (lsErr) {
+      console.warn('LocalStorage ad booking error:', lsErr);
+    }
+
+    // 4. Offline LocalStorage: asf_sponsorship_payments
     try {
       const existing = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
       existing.unshift(paymentRecord);
       localStorage.setItem('asf_sponsorship_payments', JSON.stringify(existing));
     } catch (lsErr) {
-      console.warn('LocalStorage write error:', lsErr);
+      console.warn('LocalStorage payment write error:', lsErr);
     }
 
-    // 3. Email acknowledgment dispatch
+    // 5. Email acknowledgment dispatch
     let emailResult = { success: false, status: 'QUEUED' };
     try {
       emailResult = await sendSponsorAcknowledgmentEmail({
@@ -225,7 +367,9 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
     }
 
     setReceiptData({
-      ...paymentRecord,
+      ...adBookingRecord,
+      reference,
+      donor_name: formData.fullName.trim(),
       email_dispatched: emailResult?.success || false,
       email_status: emailResult?.status || 'QUEUED',
       email_reason: emailResult?.reason || '',
@@ -819,6 +963,128 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 </label>
               </div>
 
+              {/* Brand Headline / Advert Title */}
+              <div className="mb-6">
+                <label className="block font-semibold text-stone-700 mb-1 text-xs">
+                  Advert Headline / Congratulatory Banner Title <span className="text-stone-400 font-normal">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Hearty Felicitations to ASF RSU at 45 Years from Apex Group"
+                  value={brandHeadline}
+                  onChange={(e) => setBrandHeadline(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 outline-none text-sm"
+                />
+              </div>
+
+              {/* Artwork Submission Mode & File Upload */}
+              <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-amber-50/40 border border-amber-300/60">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <label className="text-xs font-bold text-emerald-950 uppercase tracking-wider flex items-center space-x-1.5">
+                    <Palette className="w-4 h-4 text-amber-700" />
+                    <span>Ad Artwork &amp; Production Method:</span>
+                  </label>
+                  <span className="text-[11px] font-mono font-semibold text-emerald-900 bg-white px-2.5 py-0.5 rounded-full border border-amber-300/50">
+                    Slot Specs: {COMPENDIUM_AD_TIERS[selectedTier]?.dimensions || 'A4 Standard'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setArtworkOption('UPLOAD_READY')}
+                    className={`p-3 rounded-xl border-2 text-left transition-all ${
+                      artworkOption === 'UPLOAD_READY'
+                        ? 'border-emerald-800 bg-emerald-900/10 text-emerald-950 font-bold shadow-sm'
+                        : 'border-stone-200 bg-white hover:border-stone-300 text-stone-600'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2 text-xs">
+                      <FileText className="w-4 h-4 text-emerald-800 shrink-0" />
+                      <span>I Have Print-Ready Artwork</span>
+                    </div>
+                    <p className="text-[10px] text-stone-500 mt-1 font-normal leading-relaxed">
+                      Upload completed PDF, PNG, or JPG (300 DPI CMYK format).
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setArtworkOption('DESIGN_ASSIST')}
+                    className={`p-3 rounded-xl border-2 text-left transition-all ${
+                      artworkOption === 'DESIGN_ASSIST'
+                        ? 'border-emerald-800 bg-emerald-900/10 text-emerald-950 font-bold shadow-sm'
+                        : 'border-stone-200 bg-white hover:border-stone-300 text-stone-600'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2 text-xs">
+                      <Palette className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>Request Editorial Design Support</span>
+                    </div>
+                    <p className="text-[10px] text-stone-500 mt-1 font-normal leading-relaxed">
+                      Our editorial team will layout your photo/logo &amp; tribute text for print.
+                    </p>
+                  </button>
+                </div>
+
+                {/* Upload Dropzone */}
+                <div>
+                  {!artworkFile ? (
+                    <label className="border-2 border-dashed border-amber-300 hover:border-emerald-700 rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center cursor-pointer bg-white transition-all text-center group">
+                      <UploadCloud className="w-8 h-8 text-amber-600 group-hover:text-emerald-800 transition-colors mb-1.5" />
+                      <span className="text-xs font-bold text-stone-800 group-hover:text-emerald-900">
+                        {artworkOption === 'UPLOAD_READY'
+                          ? 'Click to Browse or Drag & Drop Finished Artwork'
+                          : 'Upload Logo or High-Res Photos for Editorial Layout'}
+                      </span>
+                      <span className="text-[10px] text-stone-400 mt-0.5">
+                        Accepts PDF, JPG, PNG up to 25MB • High-Resolution 300 DPI Preferred
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  ) : (
+                    <div className="p-3 bg-white rounded-xl border border-emerald-300 flex items-center justify-between gap-3 shadow-sm">
+                      <div className="flex items-center space-x-3 min-w-0">
+                        {artworkPreview ? (
+                          <img
+                            src={artworkPreview}
+                            alt="Ad Preview"
+                            className="w-12 h-12 rounded-lg object-cover border border-stone-200 shrink-0"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center font-bold text-xs shrink-0 border border-emerald-200">
+                            PDF
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-stone-900 truncate">{artworkFile.name}</p>
+                          <p className="text-[10px] text-stone-500">
+                            {(artworkFile.size / (1024 * 1024)).toFixed(2)} MB • {artworkFile.type || 'Document'}
+                          </p>
+                          <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-900">
+                            Ready for Editorial Verification
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleRemoveFile}
+                        className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs shrink-0 transition-colors"
+                        title="Remove file"
+                      >
+                        <Trash2 className="w-4 h-4 pointer-events-none" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Message Note */}
               <div className="mb-8">
                 <label className="block font-semibold text-stone-700 mb-1 text-xs">
@@ -1005,6 +1271,18 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 <span className="text-stone-500">Ad Placement:</span>
                 <span className="font-bold text-emerald-900">{receiptData.tier_name}</span>
               </div>
+              {receiptData.ad_dimensions && (
+                <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
+                  <span className="text-stone-500">Specs / Format:</span>
+                  <span className="font-bold text-stone-700">{receiptData.ad_dimensions}</span>
+                </div>
+              )}
+              {receiptData.artwork_file_name && (
+                <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
+                  <span className="text-stone-500">Artwork Attached:</span>
+                  <span className="font-bold text-emerald-800 truncate max-w-[200px]">{receiptData.artwork_file_name}</span>
+                </div>
+              )}
               <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
                 <span className="text-stone-500">Amount:</span>
                 <span className="font-bold text-amber-600 text-sm">₦{Number(receiptData.amount || 0).toLocaleString()}</span>
