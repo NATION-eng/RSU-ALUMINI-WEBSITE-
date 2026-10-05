@@ -1,8 +1,22 @@
 import React, { useState } from 'react';
-import { ChevronRight, Compass, Music, Shield, Flame } from 'lucide-react';
+import { ChevronRight, Compass, Music, Shield, Flame, X, Camera, ZoomIn } from 'lucide-react';
+
+const ARCHIVAL_GALLERY = [
+  { id: 1, src: '/heritage/heritage_01.jpg', title: 'Pioneer Altar Handshake & Presentation', era: 'PIONEER ERA' },
+  { id: 2, src: '/heritage/heritage_02.jpg', title: 'Fellowship Award Presentation', era: 'RECOGNITION' },
+  { id: 3, src: '/heritage/heritage_03.jpg', title: 'ASF Sacred Mass Choir in Formal Navy & Hats', era: 'CHOIR CANTATA' },
+  { id: 4, src: '/heritage/heritage_04.jpg', title: 'Sisterhood Token Presentation', era: 'HONOR CEREMONY' },
+  { id: 5, src: '/heritage/heritage_05.jpg', title: 'Fellowship Commendation Smiles', era: 'FELLOWSHIP TOKEN' },
+  { id: 6, src: '/heritage/heritage_06.jpg', title: 'Campus Prayer & Unity in Fellowship', era: 'CAMPUS RETREAT' },
+  { id: 7, src: '/heritage/heritage_07.jpg', title: 'Celebratory Headwraps & Fellowship Attire', era: 'SABBATH BEST' },
+  { id: 8, src: '/heritage/heritage_08.jpg', title: 'Grand Staircase Native Attire Gathering', era: 'ROYAL SISTERHOOD' },
+  { id: 9, src: '/heritage/heritage_09.jpg', title: 'NAAS UST Chapter 1998/99 Historic Congregation', era: '1998/99 CONGREGATION' },
+  { id: 10, src: '/heritage/heritage_10.jpg', title: 'Hilltop Outreach & Nature Mission Retreat', era: 'MISSION OUTREACH' }
+];
 
 export default function TimelineSection() {
   const [activeEra, setActiveEra] = useState(0);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const eras = [
     {
@@ -179,7 +193,95 @@ export default function TimelineSection() {
           </div>
         </div>
 
+        {/* Archival Photography Gallery: 10 Historic Square Moments */}
+        <div className="mt-14 sm:mt-20 pt-10 sm:pt-14 border-t border-stone-200">
+          <div className="text-center max-w-xl mx-auto mb-8 sm:mb-10">
+            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-wider mb-2">
+              <Camera className="w-3.5 h-3.5 text-jubilee-gold" />
+              <span>Historical Fellowship Archives</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
+              Photographic Memories of Our Journey
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-600 mt-1">
+              From sacred altars and choir cantatas to youth retreats and chapter congregations. Click any square photo to view in high resolution.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+            {ARCHIVAL_GALLERY.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => setSelectedPhoto(item)}
+                className="group relative aspect-square rounded-2xl overflow-hidden border border-stone-300/80 hover:border-jubilee-gold shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-stone-900 touch-manipulation"
+              >
+                <img
+                  src={item.src}
+                  alt={item.title}
+                  className="w-full h-full object-cover object-center filter contrast-110 saturate-105 group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-85 group-hover:opacity-95 transition-opacity" />
+                <div className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ZoomIn className="w-3.5 h-3.5" />
+                </div>
+                <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
+                  <span className="text-[9px] font-mono text-jubilee-gold block leading-tight font-bold tracking-wider">
+                    {item.era}
+                  </span>
+                  <span className="text-[11px] font-bold line-clamp-1 leading-snug text-stone-100">
+                    {item.title}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
+
+      {/* Lightbox Modal for Full View */}
+      {selectedPhoto && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setSelectedPhoto(null)}
+        >
+          <div 
+            className="bg-[#051A0F] border border-jubilee-gold/40 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <span className="text-[10px] font-mono font-bold text-jubilee-gold uppercase tracking-wider">
+                  {selectedPhoto.era}
+                </span>
+                <h4 className="text-base sm:text-lg font-retro font-bold text-white">
+                  {selectedPhoto.title}
+                </h4>
+              </div>
+              <button
+                onClick={() => setSelectedPhoto(null)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="relative aspect-square max-h-[65vh] w-full rounded-2xl overflow-hidden border border-white/15 bg-black shadow-inner">
+              <img
+                src={selectedPhoto.src}
+                alt={selectedPhoto.title}
+                className="w-full h-full object-cover object-center filter contrast-115 saturate-110"
+              />
+            </div>
+
+            <div className="text-center text-xs text-stone-400 font-sans font-light">
+              ASF Rivers State University 45th Anniversary Historical Archive (1981–2026)
+            </div>
+          </div>
+        </div>
+      )}
+
     </section>
   );
 }
