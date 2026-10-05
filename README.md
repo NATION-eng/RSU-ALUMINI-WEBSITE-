@@ -4,7 +4,7 @@
 > **Celebration Dates:** November 13th – 15th, 2026  
 > **Grand Jubilee Sabbath:** Saturday, November 14th, 2026  
 > **Venue:** Rivers State University (RSU), Port Harcourt, Nigeria  
-> **Technical Partner:** Adventists in Tech Organization  
+> **Technical Partner:** Developed by M-CEL TECH HUB with direct engineering support from the Adventists in Tech Organization  
 
 ---
 
@@ -78,4 +78,4 @@ npm run build
 ## 🏛️ Governance
 * **Media, Publicity & Digital Strategy Sub-Committee**
 * **Central Planning Committee (CPC) — ASF RSU 45th Jubilee**
-* **Technical Partner:** Adventists in Tech Organization
+* **Technical Partner:** Developed by M-CEL TECH HUB with direct engineering support from the Adventists in Tech Organization

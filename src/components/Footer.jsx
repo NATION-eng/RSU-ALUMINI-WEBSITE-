@@ -80,7 +80,7 @@ export default function Footer() {
                 <Code className="w-3.5 h-3.5 text-jubilee-gold" />
                 <span>Technical Partner</span>
               </div>
-              <p>Developed with direct engineering support from the <strong>Adventists in Tech Organization</strong>.</p>
+              <p>Developed by <strong>M-CEL TECH HUB</strong> with direct engineering support from the <strong>Adventists in Tech Organization</strong>.</p>
             </div>
           </div>
 
