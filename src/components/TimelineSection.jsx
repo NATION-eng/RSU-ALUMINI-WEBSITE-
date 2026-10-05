@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Compass, Music, Shield, Flame, X, Camera, ZoomIn } from 'lucide-react';
+import { ChevronRight, Compass, Music, Shield, Flame, X, ZoomIn } from 'lucide-react';
 
 const ARCHIVAL_GALLERY = [
   { id: 1, src: '/heritage/heritage_01.jpg', title: 'Pioneer Altar Handshake & Presentation', era: 'PIONEER ERA' },
@@ -196,10 +196,6 @@ export default function TimelineSection() {
         {/* Archival Photography Gallery: 10 Historic Square Moments */}
         <div className="mt-14 sm:mt-20 pt-10 sm:pt-14 border-t border-stone-200">
           <div className="text-center max-w-xl mx-auto mb-8 sm:mb-10">
-            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-wider mb-2">
-              <Camera className="w-3.5 h-3.5 text-jubilee-gold" />
-              <span>Historical Fellowship Archives</span>
-            </div>
             <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
               Photographic Memories of Our Journey
             </h3>

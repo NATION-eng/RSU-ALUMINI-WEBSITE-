@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Camera } from 'lucide-react';
+import { Calendar, Image as ImageIcon, UserCheck, ArrowRight } from 'lucide-react';
 
 export default function Hero() {
   // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
@@ -150,12 +150,6 @@ export default function Hero() {
             <ImageIcon className="w-4 h-4 text-jubilee-gold shrink-0" />
             <span className="tracking-wide">Create "I Will Be There" DP</span>
           </a>
-        </div>
-
-        {/* Subtle Archival Photography Attribution Badge (Mobile Responsive) */}
-        <div className="mt-7 sm:mt-10 flex items-center justify-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-xs text-jubilee-lightgold/75 font-sans tracking-wide px-3 text-center leading-normal">
-          <Camera className="w-3.5 h-3.5 text-jubilee-gold/90 shrink-0" />
-          <span>Featuring Authentic 1981–2026 Historical Archive Photography</span>
         </div>
 
       </div>
