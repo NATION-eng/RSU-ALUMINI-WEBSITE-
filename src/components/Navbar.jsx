@@ -75,7 +75,7 @@ export default function Navbar({ onOpenSponsors }) {
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center justify-center space-x-1 xl:space-x-2 font-sans">
+          <div className="hidden lg:flex items-center justify-center space-x-1 xl:space-x-1.5 font-sans">
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -86,7 +86,7 @@ export default function Navbar({ onOpenSponsors }) {
                     onOpenSponsors('ads');
                   }
                 }}
-                className="px-3 py-2 text-xs xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
+                className="px-2 xl:px-3 py-1.5 xl:py-2 text-xs xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
               >
                 {link.name}
               </a>
@@ -171,7 +171,13 @@ export default function Navbar({ onOpenSponsors }) {
               <a
                 key={link.name}
                 href={link.href}
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => {
+                  setIsOpen(false);
+                  if (link.href === '#compendium-ads' && onOpenSponsors) {
+                    e.preventDefault();
+                    onOpenSponsors('ads');
+                  }
+                }}
                 className="flex items-center space-x-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:bg-white/10 hover:text-white font-sans active:bg-emerald-900/50 transition-colors"
               >
                 <Icon className="w-4 h-4 text-jubilee-gold shrink-0" />

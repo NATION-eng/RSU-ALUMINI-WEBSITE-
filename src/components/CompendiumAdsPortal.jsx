@@ -3,7 +3,7 @@ import {
   ArrowLeft, Award, CheckCircle2, ShieldCheck, CreditCard, Building2, 
   Copy, Check, Sparkles, HeartHandshake, Download, Printer, ExternalLink,
   Info, MessageSquare, ChevronRight, Share2, Mail, BookOpen, Lock,
-  UploadCloud, FileText, Image as ImageIcon, Trash2, Palette, Eye
+  UploadCloud, FileText, Image as ImageIcon, Trash2, Palette, Eye, Layers
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
@@ -644,7 +644,48 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
               </button>
             </div>
 
-            {/* 4. Full Page */}
+            {/* 4. Center Spread (Double Page Feature) */}
+            <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+              selectedTier === 'ad_center_spread'
+                ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                : 'border-stone-200 bg-white hover:border-amber-500/50 text-stone-900 shadow-md'
+            }`}>
+              <div className="absolute top-0 right-0 px-3 py-1 bg-amber-100 text-amber-950 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl">
+                Panoramic Spread
+              </div>
+              <div>
+                <div className="flex items-center space-x-2 text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-2">
+                  <Layers className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Two-Page Centerfold</span>
+                </div>
+                <h3 className={`text-xl font-retro font-extrabold mb-1 ${selectedTier === 'ad_center_spread' ? 'text-white' : 'text-emerald-950'}`}>
+                  Center Spread (Double Page)
+                </h3>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-amber-600 mb-3">
+                  ₦400,000
+                </div>
+                <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_center_spread' ? 'text-stone-300' : 'text-stone-600'}`}>
+                  Panoramic two-page horizontal layout for major corporate partners, institutions, and large alumni cohorts.
+                </p>
+                <div className={`text-[11px] space-y-1 font-mono mb-6 border-t pt-3 ${selectedTier === 'ad_center_spread' ? 'border-white/10 text-emerald-200/80' : 'border-stone-200 text-stone-500'}`}>
+                  <div>• Placement: Center Fold Panoramic Spread</div>
+                  <div>• Format: 420mm × 297mm (+3mm bleed)</div>
+                  <div>• Resolution: 300 DPI CMYK Archival Layout</div>
+                </div>
+              </div>
+              <button
+                onClick={() => handleSelectSlot('ad_center_spread', 400000)}
+                className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
+                  selectedTier === 'ad_center_spread'
+                    ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                    : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                }`}
+              >
+                PAY ₦400,000
+              </button>
+            </div>
+
+            {/* 5. Full Page */}
             <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
               selectedTier === 'ad_full'
                 ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
@@ -1223,7 +1264,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       {/* SUCCESSFUL PAYMENT & ELECTRONIC RECEIPT / TRANSFER NOTICE MODAL */}
       {receiptData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-jubilee-gold/50 shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 border border-jubilee-gold/50 shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
             
             <div className="text-center space-y-2 mb-6">
               <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner ${

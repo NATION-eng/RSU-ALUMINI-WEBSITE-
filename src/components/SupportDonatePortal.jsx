@@ -972,7 +972,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
       {/* SUCCESSFUL PAYMENT & ELECTRONIC RECEIPT / TRANSFER NOTICE MODAL */}
       {receiptData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-jubilee-gold/50 shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 border border-jubilee-gold/50 shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
             
             <div className="text-center space-y-2 mb-6">
               <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner ${
