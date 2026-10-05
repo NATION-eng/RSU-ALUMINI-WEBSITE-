@@ -1087,11 +1087,11 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
 
                 <div>
                   <label className="block font-semibold text-stone-700 mb-1">
-                    Alumni Graduation Set / Chapter Affiliation
+                    Alumni Graduation Set / Chapter Affiliation <span className="text-stone-400 font-normal">(Optional)</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. 1998 Set / Rivers State Chapter / Corporate Partner"
+                    placeholder="e.g. 1998 Set / Rivers State Chapter / Corporate Partner (Optional)"
                     value={formData.alumniSet}
                     onChange={(e) => setFormData(prev => ({ ...prev, alumniSet: e.target.value }))}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 outline-none text-sm"
