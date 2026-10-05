@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, startTransition } from 'react';
 import { supabase } from '../lib/supabase';
 import { 
   Shield, Lock, Search, Filter, Download, CheckCircle, XCircle, 
   Users, UserCheck, HeartHandshake, RefreshCw, Eye, ArrowLeft,
   Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2,
-  Video, Play, Sparkles, Building2, ExternalLink
+  Video, Play, Sparkles, Building2, ExternalLink, AlertTriangle, X
 } from 'lucide-react';
 import { getMailtoLink } from '../lib/emailService';
 
@@ -21,6 +21,54 @@ export default function AdminDashboard({ onBackToSite }) {
   const [filterCheckin, setFilterCheckin] = useState('ALL'); // 'ALL' | 'CHECKED_IN' | 'PENDING'
   const [selectedAttendee, setSelectedAttendee] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
+
+  // In-App Confirm Modal State (Eliminates INP-blocking window.confirm)
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    details: null,
+    confirmText: 'Delete Permanently',
+    isDanger: true,
+    isLoading: false,
+    onConfirm: null,
+  });
+
+  // Non-blocking Toast Notification State (Eliminates blocking window.alert)
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const toastTimerRef = useRef(null);
+
+  const showToast = (message, type = 'success') => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ show: true, message, type });
+    toastTimerRef.current = setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 3800);
+  };
+
+  const openConfirmModal = ({
+    title,
+    message,
+    details = null,
+    confirmText = 'Delete Permanently',
+    isDanger = true,
+    onConfirm
+  }) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      details,
+      confirmText,
+      isDanger,
+      isLoading: false,
+      onConfirm
+    });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModal(prev => ({ ...prev, isOpen: false, onConfirm: null, isLoading: false }));
+  };
 
   // New admin tabs: 'REGISTRATIONS' | 'SPONSORSHIPS' | 'VIDEOS'
   const [activeAdminTab, setActiveAdminTab] = useState('REGISTRATIONS');
@@ -165,56 +213,70 @@ export default function AdminDashboard({ onBackToSite }) {
   };
 
   // Delete attendee (For purging test data or duplicates)
-  const deleteAttendee = async (attendee) => {
-    if (!window.confirm(`Are you sure you want to delete the registration for "${attendee.full_name}" (${attendee.registration_tag})?\n\nThis will remove the attendee record permanently.`)) {
-      return;
-    }
-    const targetKey = attendee.id || attendee.registration_tag;
-    setUpdatingId(targetKey);
-    try {
-      // 1. Supabase delete if id exists
-      if (attendee.id) {
+  const deleteAttendee = (attendee) => {
+    openConfirmModal({
+      title: 'Delete Registration Record',
+      message: `Are you sure you want to permanently delete this attendee record? This will remove them from the cloud directory and local storage.`,
+      details: [
+        { label: 'Full Name', value: attendee.full_name },
+        { label: 'Registration Tag', value: attendee.registration_tag },
+        { label: 'Email', value: attendee.email || 'None' },
+        { label: 'Grad Class', value: attendee.grad_year ? `Class of ${attendee.grad_year}` : 'N/A' },
+      ],
+      confirmText: 'Delete Record',
+      isDanger: true,
+      onConfirm: async () => {
+        const targetKey = attendee.id || attendee.registration_tag;
+        setUpdatingId(targetKey);
         try {
-          await supabase
-            .from('alumni_registrations')
-            .delete()
-            .eq('id', attendee.id);
-        } catch (sbErr) {
-          console.warn('Supabase delete attendee note:', sbErr);
+          // 1. Supabase delete if id exists
+          if (attendee.id) {
+            try {
+              await supabase
+                .from('alumni_registrations')
+                .delete()
+                .eq('id', attendee.id);
+            } catch (sbErr) {
+              console.warn('Supabase delete attendee note:', sbErr);
+            }
+          }
+
+          // 2. LocalStorage delete
+          try {
+            const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+            const updatedLocal = local.filter(r => 
+              (attendee.id ? r.id !== attendee.id : true) &&
+              (attendee.registration_tag ? r.registration_tag !== attendee.registration_tag : true) &&
+              (attendee.email ? r.email !== attendee.email : true)
+            );
+            localStorage.setItem('asf_census_submissions', JSON.stringify(updatedLocal));
+          } catch (lsErr) {}
+
+          // 3. State update with non-blocking transition
+          startTransition(() => {
+            setRegistrations(prev => prev.filter(r => 
+              (attendee.id ? r.id !== attendee.id : true) &&
+              (attendee.registration_tag ? r.registration_tag !== attendee.registration_tag : true)
+            ));
+            if (selectedAttendee?.id === attendee.id || selectedAttendee?.registration_tag === attendee.registration_tag) {
+              setSelectedAttendee(null);
+            }
+          });
+          showToast(`Deleted registration for ${attendee.full_name}`, 'success');
+        } catch (err) {
+          console.error('Delete attendee error:', err);
+          showToast('Error deleting registration: ' + err.message, 'error');
+        } finally {
+          setUpdatingId(null);
         }
       }
-
-      // 2. LocalStorage delete
-      try {
-        const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
-        const updatedLocal = local.filter(r => 
-          (attendee.id ? r.id !== attendee.id : true) &&
-          (attendee.registration_tag ? r.registration_tag !== attendee.registration_tag : true) &&
-          (attendee.email ? r.email !== attendee.email : true)
-        );
-        localStorage.setItem('asf_census_submissions', JSON.stringify(updatedLocal));
-      } catch (lsErr) {}
-
-      // 3. State update
-      setRegistrations(prev => prev.filter(r => 
-        (attendee.id ? r.id !== attendee.id : true) &&
-        (attendee.registration_tag ? r.registration_tag !== attendee.registration_tag : true)
-      ));
-      if (selectedAttendee?.id === attendee.id || selectedAttendee?.registration_tag === attendee.registration_tag) {
-        setSelectedAttendee(null);
-      }
-    } catch (err) {
-      console.error('Delete attendee error:', err);
-      alert('Error deleting registration: ' + err.message);
-    } finally {
-      setUpdatingId(null);
-    }
+    });
   };
 
   // Bulk purge registrations (test records or all)
-  const purgeRegistrations = async (mode = 'TEST_ONLY') => {
+  const purgeRegistrations = (mode = 'TEST_ONLY') => {
     if (registrations.length === 0) {
-      alert('No registrations to delete.');
+      showToast('No registrations to delete.', 'info');
       return;
     }
 
@@ -226,183 +288,240 @@ export default function AdminDashboard({ onBackToSite }) {
         (r.registration_tag && r.registration_tag.includes('TEST'))
       );
       if (toDelete.length === 0) {
-        alert('No test registrations found.');
+        showToast('No test registrations found.', 'info');
         return;
       }
-      if (!window.confirm(`Delete all ${toDelete.length} test registration(s)?`)) return;
     } else {
-      if (!window.confirm(`WARNING: Are you sure you want to delete ALL ${registrations.length} registrations? This action is irreversible.`)) return;
       toDelete = [...registrations];
     }
 
-    const idsToDelete = new Set(toDelete.map(r => r.id).filter(Boolean));
-    const tagsToDelete = new Set(toDelete.map(r => r.registration_tag).filter(Boolean));
+    const title = mode === 'TEST_ONLY' ? 'Purge Test Registrations' : 'WARNING: Purge ALL Registrations';
+    const message = mode === 'TEST_ONLY'
+      ? `This will permanently remove ${toDelete.length} test registration record(s) from Supabase and local storage.`
+      : `CRITICAL WARNING: This will permanently delete ALL ${registrations.length} registrations. This action cannot be reversed!`;
 
-    for (const id of idsToDelete) {
-      try {
-        await supabase.from('alumni_registrations').delete().eq('id', id);
-      } catch (e) {}
-    }
+    openConfirmModal({
+      title,
+      message,
+      details: [
+        { label: 'Scope', value: mode === 'TEST_ONLY' ? 'Test Submissions Only' : 'ALL REGISTRATIONS' },
+        { label: 'Total Records to Purge', value: `${toDelete.length} attendee(s)` }
+      ],
+      confirmText: mode === 'TEST_ONLY' ? `Purge ${toDelete.length} Test Record(s)` : 'Permanently Delete ALL',
+      isDanger: true,
+      onConfirm: async () => {
+        const idsToDelete = new Set(toDelete.map(r => r.id).filter(Boolean));
+        const tagsToDelete = new Set(toDelete.map(r => r.registration_tag).filter(Boolean));
 
-    try {
-      const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
-      const updatedLocal = local.filter(r => 
-        (!r.id || !idsToDelete.has(r.id)) &&
-        (!r.registration_tag || !tagsToDelete.has(r.registration_tag))
-      );
-      localStorage.setItem('asf_census_submissions', JSON.stringify(updatedLocal));
-    } catch (e) {}
+        for (const id of idsToDelete) {
+          try {
+            await supabase.from('alumni_registrations').delete().eq('id', id);
+          } catch (e) {}
+        }
 
-    setRegistrations(prev => prev.filter(r => 
-      (!r.id || !idsToDelete.has(r.id)) &&
-      (!r.registration_tag || !tagsToDelete.has(r.registration_tag))
-    ));
-    alert(`Deleted ${toDelete.length} registration(s).`);
+        try {
+          const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+          const updatedLocal = local.filter(r => 
+            (!r.id || !idsToDelete.has(r.id)) &&
+            (!r.registration_tag || !tagsToDelete.has(r.registration_tag))
+          );
+          localStorage.setItem('asf_census_submissions', JSON.stringify(updatedLocal));
+        } catch (e) {}
+
+        startTransition(() => {
+          setRegistrations(prev => prev.filter(r => 
+            (!r.id || !idsToDelete.has(r.id)) &&
+            (!r.registration_tag || !tagsToDelete.has(r.registration_tag))
+          ));
+        });
+        showToast(`Deleted ${toDelete.length} registration(s).`, 'success');
+      }
+    });
   };
 
   // Delete individual sponsorship / donation / ad booking record
-  const deleteSponsorship = async (record) => {
+  const deleteSponsorship = (record) => {
     const donorName = record.donor_name || record.organization || 'Anonymous';
     const amountStr = Number(record.amount || 0).toLocaleString();
-    if (!window.confirm(`Are you sure you want to delete this payment record?\n\nContributor: ${donorName}\nAmount: ₦${amountStr}\nReference: ${record.reference}\n\nThis will remove the record permanently from the ledger and local storage.`)) {
-      return;
-    }
+    const isAd = Boolean(record.tier_key?.startsWith('ad_') || record.reference?.includes('-AD-'));
 
-    setUpdatingId(record.reference);
-    try {
-      // 1. Supabase delete
-      try {
-        await supabase
-          .from('sponsorship_payments')
-          .delete()
-          .eq('reference', record.reference);
-      } catch (sbErr) {
-        console.warn('Supabase delete sponsorship note:', sbErr);
+    openConfirmModal({
+      title: isAd ? 'Delete Compendium Ad Record' : 'Delete Sponsorship / Donation',
+      message: `Are you sure you want to delete this payment record from the financial ledger? This action cannot be undone.`,
+      details: [
+        { label: 'Contributor', value: donorName },
+        { label: 'Amount', value: `₦${amountStr}` },
+        { label: 'Category / Tier', value: record.tier_name || 'Contribution' },
+        { label: 'Reference Code', value: record.reference || 'N/A' },
+        { label: 'Channel', value: record.channel || 'PAYSTACK' },
+      ],
+      confirmText: 'Delete Record',
+      isDanger: true,
+      onConfirm: async () => {
+        setUpdatingId(record.reference);
+        try {
+          // 1. Supabase delete
+          try {
+            await supabase
+              .from('sponsorship_payments')
+              .delete()
+              .eq('reference', record.reference);
+          } catch (sbErr) {
+            console.warn('Supabase delete sponsorship note:', sbErr);
+          }
+
+          // 2. LocalStorage delete
+          try {
+            const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+            const updatedLocal = local.filter(s => s.reference !== record.reference);
+            localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedLocal));
+          } catch (lsErr) {
+            console.warn('LocalStorage delete error:', lsErr);
+          }
+
+          // 3. State update with startTransition
+          startTransition(() => {
+            setSponsorships(prev => prev.filter(s => s.reference !== record.reference));
+          });
+          showToast(`Deleted payment record for ${donorName}`, 'success');
+        } catch (err) {
+          console.error('Delete sponsorship error:', err);
+          showToast('Error deleting record: ' + err.message, 'error');
+        } finally {
+          setUpdatingId(null);
+        }
       }
-
-      // 2. LocalStorage delete
-      try {
-        const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
-        const updatedLocal = local.filter(s => s.reference !== record.reference);
-        localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedLocal));
-      } catch (lsErr) {
-        console.warn('LocalStorage delete error:', lsErr);
-      }
-
-      // 3. State update
-      setSponsorships(prev => prev.filter(s => s.reference !== record.reference));
-    } catch (err) {
-      console.error('Delete sponsorship error:', err);
-      alert('Error deleting record: ' + err.message);
-    } finally {
-      setUpdatingId(null);
-    }
+    });
   };
 
   // Purge test / all sponsorship records
-  const purgeSponsorships = async (mode = 'TEST_ONLY') => {
+  const purgeSponsorships = (mode = 'TEST_ONLY') => {
     if (sponsorships.length === 0) {
-      alert('There are no records to delete.');
+      showToast('There are no records to delete.', 'info');
       return;
     }
 
     let recordsToDelete = [];
-    let promptMsg = '';
-
     if (mode === 'TEST_ONLY') {
       recordsToDelete = sponsorships.filter(s => 
         (s.reference && (s.reference.startsWith('ASF45TH') || s.reference.startsWith('ECO-') || s.reference.includes('TRF') || s.reference.includes('SAMPLE'))) ||
         (s.donor_name && s.donor_name.toLowerCase().includes('test'))
       );
       if (recordsToDelete.length === 0) {
-        alert('No test records found.');
+        showToast('No test records found.', 'info');
         return;
       }
-      promptMsg = `Are you sure you want to delete all ${recordsToDelete.length} test records?\n\nThis will remove test donations and compendium ad bookings.`;
     } else {
       recordsToDelete = [...sponsorships];
-      promptMsg = `WARNING: Are you sure you want to delete ALL ${recordsToDelete.length} records in the ledger? This action is irreversible.`;
     }
 
-    if (!window.confirm(promptMsg)) {
-      return;
-    }
+    const title = mode === 'TEST_ONLY' ? 'Purge Test Donations & Ad Bookings' : 'WARNING: Purge ENTIRE Ledger';
+    const message = mode === 'TEST_ONLY'
+      ? `This will remove ${recordsToDelete.length} test records (sample references and test transactions) from both Supabase and local storage.`
+      : `CRITICAL WARNING: This will permanently delete ALL ${recordsToDelete.length} entries in the sponsorship & ads ledger. This cannot be undone!`;
 
-    const refsToDelete = new Set(recordsToDelete.map(r => r.reference));
+    openConfirmModal({
+      title,
+      message,
+      details: [
+        { label: 'Scope', value: mode === 'TEST_ONLY' ? 'Test Transactions Only' : 'ENTIRE FINANCIAL LEDGER' },
+        { label: 'Total Records to Purge', value: `${recordsToDelete.length} transaction(s)` }
+      ],
+      confirmText: mode === 'TEST_ONLY' ? `Purge ${recordsToDelete.length} Test Record(s)` : 'Permanently Delete ALL',
+      isDanger: true,
+      onConfirm: async () => {
+        const refsToDelete = new Set(recordsToDelete.map(r => r.reference));
 
-    // 1. Delete from Supabase
-    try {
-      for (const ref of refsToDelete) {
-        await supabase
-          .from('sponsorship_payments')
-          .delete()
-          .eq('reference', ref);
+        // 1. Delete from Supabase
+        try {
+          for (const ref of refsToDelete) {
+            await supabase
+              .from('sponsorship_payments')
+              .delete()
+              .eq('reference', ref);
+          }
+        } catch (e) {
+          console.warn('Supabase batch delete note:', e);
+        }
+
+        // 2. Delete from LocalStorage
+        try {
+          const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+          const updatedLocal = local.filter(s => !refsToDelete.has(s.reference));
+          localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedLocal));
+        } catch (e) {}
+
+        startTransition(() => {
+          setSponsorships(prev => prev.filter(s => !refsToDelete.has(s.reference)));
+        });
+        showToast(`Successfully deleted ${recordsToDelete.length} record(s).`, 'success');
       }
-    } catch (e) {
-      console.warn('Supabase batch delete note:', e);
-    }
-
-    // 2. Delete from LocalStorage
-    try {
-      const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
-      const updatedLocal = local.filter(s => !refsToDelete.has(s.reference));
-      localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedLocal));
-    } catch (e) {}
-
-    // 3. Update state
-    setSponsorships(prev => prev.filter(s => !refsToDelete.has(s.reference)));
-    alert(`Successfully deleted ${recordsToDelete.length} record(s).`);
+    });
   };
 
   // Delete video submission
-  const deleteVideoSubmission = async (video) => {
+  const deleteVideoSubmission = (video) => {
     const name = video.full_name || 'Submissions';
-    if (!window.confirm(`Are you sure you want to delete the goodwill video submission from "${name}"?`)) {
-      return;
-    }
 
-    const vidId = video.id || video.submission_id || video.file_name;
-    setUpdatingId(vidId);
-    try {
-      // 1. Delete from Supabase
-      if (video.id) {
+    openConfirmModal({
+      title: 'Delete Goodwill Video Submission',
+      message: `Are you sure you want to delete the goodwill video submission from "${name}"?`,
+      details: [
+        { label: 'Submitter', value: name },
+        { label: 'Email', value: video.email || 'N/A' },
+        { label: 'Grad Class', value: video.grad_year ? `Class of ${video.grad_year}` : 'N/A' },
+        { label: 'File Name', value: video.file_name || 'goodwill-video.mp4' },
+      ],
+      confirmText: 'Delete Video',
+      isDanger: true,
+      onConfirm: async () => {
+        const vidId = video.id || video.submission_id || video.file_name;
+        setUpdatingId(vidId);
         try {
-          await supabase
-            .from('video_goodwill_submissions')
-            .delete()
-            .eq('id', video.id);
-        } catch (sbErr) {}
-      } else if (video.submission_id) {
-        try {
-          await supabase
-            .from('video_goodwill_submissions')
-            .delete()
-            .eq('submission_id', video.submission_id);
-        } catch (sbErr) {}
+          // 1. Delete from Supabase
+          if (video.id) {
+            try {
+              await supabase
+                .from('video_goodwill_submissions')
+                .delete()
+                .eq('id', video.id);
+            } catch (sbErr) {}
+          } else if (video.submission_id) {
+            try {
+              await supabase
+                .from('video_goodwill_submissions')
+                .delete()
+                .eq('submission_id', video.submission_id);
+            } catch (sbErr) {}
+          }
+
+          // 2. Delete from LocalStorage
+          try {
+            const local = JSON.parse(localStorage.getItem('asf_goodwill_videos') || '[]');
+            const updatedLocal = local.filter(v => 
+              (video.submission_id ? v.submission_id !== video.submission_id : true) &&
+              (video.id ? v.id !== video.id : true) &&
+              (video.file_name ? v.file_name !== video.file_name : true)
+            );
+            localStorage.setItem('asf_goodwill_videos', JSON.stringify(updatedLocal));
+          } catch (lsErr) {}
+
+          // 3. State update
+          startTransition(() => {
+            setVideoSubmissions(prev => prev.filter(v => 
+              (video.submission_id ? v.submission_id !== video.submission_id : true) &&
+              (video.id ? v.id !== video.id : true)
+            ));
+          });
+          showToast(`Deleted video submission from ${name}`, 'success');
+        } catch (err) {
+          console.error('Delete video error:', err);
+          showToast('Error deleting video: ' + err.message, 'error');
+        } finally {
+          setUpdatingId(null);
+        }
       }
-
-      // 2. Delete from LocalStorage
-      try {
-        const local = JSON.parse(localStorage.getItem('asf_goodwill_videos') || '[]');
-        const updatedLocal = local.filter(v => 
-          (video.submission_id ? v.submission_id !== video.submission_id : true) &&
-          (video.id ? v.id !== video.id : true) &&
-          (video.file_name ? v.file_name !== video.file_name : true)
-        );
-        localStorage.setItem('asf_goodwill_videos', JSON.stringify(updatedLocal));
-      } catch (lsErr) {}
-
-      // 3. State update
-      setVideoSubmissions(prev => prev.filter(v => 
-        (video.submission_id ? v.submission_id !== video.submission_id : true) &&
-        (video.id ? v.id !== video.id : true)
-      ));
-    } catch (err) {
-      console.error('Delete video error:', err);
-      alert('Error deleting video: ' + err.message);
-    } finally {
-      setUpdatingId(null);
-    }
+    });
   };
 
   // Export to CSV
@@ -661,10 +780,11 @@ export default function AdminDashboard({ onBackToSite }) {
             </button>
 
             <button
+              type="button"
               onClick={handleLogout}
               className="p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-medium text-rose-300 hover:text-white bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 transition-colors touch-manipulation active:scale-95"
             >
-              <span>Logout</span>
+              <span className="pointer-events-none">Logout</span>
             </button>
           </div>
         </div>
@@ -850,12 +970,13 @@ export default function AdminDashboard({ onBackToSite }) {
             </button>
 
             <button
+              type="button"
               onClick={() => purgeRegistrations('TEST_ONLY')}
               className="w-full sm:w-auto px-2.5 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all"
               title="Purge Test Registrations"
             >
-              <Trash2 className="w-3.5 h-3.5 shrink-0" />
-              <span>Purge Test</span>
+              <Trash2 className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
+              <span className="pointer-events-none">Purge Test</span>
             </button>
           </div>
 
@@ -1016,18 +1137,20 @@ export default function AdminDashboard({ onBackToSite }) {
                         {/* Details & Actions View */}
                         <td className="px-4 py-3.5 text-right whitespace-nowrap space-x-1.5">
                           <button
+                            type="button"
                             onClick={() => setSelectedAttendee(attendee)}
                             className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-jubilee-lightgold transition-colors inline-block"
                             title="View Full Profile"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-4 h-4 pointer-events-none" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => deleteAttendee(attendee)}
                             className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 transition-colors inline-block"
                             title="Delete Record"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4 pointer-events-none" />
                           </button>
                         </td>
                       </tr>
@@ -1142,19 +1265,21 @@ export default function AdminDashboard({ onBackToSite }) {
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => setSelectedAttendee(attendee)}
                         className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-white/10 transition-colors touch-manipulation active:scale-95 shrink-0"
                         title="View Full Profile"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-4 h-4 pointer-events-none" />
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => deleteAttendee(attendee)}
                         className="p-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 transition-colors touch-manipulation active:scale-95 shrink-0"
                         title="Delete Record"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 pointer-events-none" />
                       </button>
                     </div>
                   </div>
@@ -1262,12 +1387,13 @@ export default function AdminDashboard({ onBackToSite }) {
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => purgeSponsorships('TEST_ONLY')}
                     className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 active:scale-95 transition-all"
                     title="Purge Test Donations & Ad Bookings"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>Purge Test</span>
+                    <Trash2 className="w-3.5 h-3.5 pointer-events-none shrink-0" />
+                    <span className="pointer-events-none">Purge Test</span>
                   </button>
 
                   <button
@@ -1418,15 +1544,16 @@ export default function AdminDashboard({ onBackToSite }) {
                                 title="Open Pre-filled Acknowledgment Email"
                                 className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-jubilee-lightgold transition-colors inline-block"
                               >
-                                <Mail className="w-3.5 h-3.5" />
+                                <Mail className="w-3.5 h-3.5 pointer-events-none" />
                               </a>
                               <button
+                                type="button"
                                 onClick={() => deleteSponsorship(s)}
                                 disabled={updatingId === s.reference}
-                                className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 transition-colors inline-block"
+                                className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 transition-colors inline-block disabled:opacity-50"
                                 title="Delete Record"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
                               </button>
                             </td>
                           </tr>
@@ -1490,12 +1617,13 @@ export default function AdminDashboard({ onBackToSite }) {
                               <span>Email</span>
                             </a>
                             <button
+                              type="button"
                               onClick={() => deleteSponsorship(s)}
                               disabled={updatingId === s.reference}
-                              className="px-2.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold flex items-center space-x-1"
+                              className="px-2.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold flex items-center space-x-1 disabled:opacity-50"
                             >
-                              <Trash2 className="w-3 h-3" />
-                              <span>Delete</span>
+                              <Trash2 className="w-3 h-3 pointer-events-none" />
+                              <span className="pointer-events-none">Delete</span>
                             </button>
                           </div>
                         </div>
@@ -1635,12 +1763,13 @@ export default function AdminDashboard({ onBackToSite }) {
                           </a>
                         )}
                         <button
+                          type="button"
                           onClick={() => deleteVideoSubmission(video)}
                           disabled={updatingId === (video.id || video.submission_id || video.file_name)}
-                          className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs transition-colors"
+                          className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs transition-colors disabled:opacity-50"
                           title="Delete Video Submission"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 pointer-events-none" />
                         </button>
                       </div>
                     </div>
@@ -1769,15 +1898,17 @@ export default function AdminDashboard({ onBackToSite }) {
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => deleteAttendee(selectedAttendee)}
                   className="p-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs transition-colors touch-manipulation active:scale-95"
                   title="Delete Record"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4 pointer-events-none" />
                 </button>
               </div>
 
               <button
+                type="button"
                 onClick={() => setSelectedAttendee(null)}
                 className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 text-stone-300 hover:text-white text-xs font-medium text-center touch-manipulation"
               >
@@ -1785,6 +1916,109 @@ export default function AdminDashboard({ onBackToSite }) {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* 4. IN-APP CONFIRMATION MODAL (Non-blocking, Ultra-fast INP < 15ms) */}
+      {confirmModal.isOpen && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={closeConfirmModal}
+        >
+          <div 
+            className="bg-[#0b1f14] border border-rose-500/40 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5 animate-scale-up"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start space-x-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-rose-950/80 border border-rose-600/40 flex items-center justify-center shrink-0 text-rose-400 shadow-md">
+                <AlertTriangle className="w-5 h-5 pointer-events-none" />
+              </div>
+              <div className="space-y-1 flex-1">
+                <h3 className="text-base sm:text-lg font-bold text-white font-serif">{confirmModal.title}</h3>
+                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">{confirmModal.message}</p>
+              </div>
+            </div>
+
+            {confirmModal.details && Array.isArray(confirmModal.details) && (
+              <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 space-y-2 text-xs">
+                {confirmModal.details.map((item, i) => (
+                  <div key={i} className="flex justify-between items-center text-xs">
+                    <span className="text-stone-400">{item.label}:</span>
+                    <span className="font-semibold text-stone-200 font-mono text-right max-w-[200px] truncate">{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end space-x-3 pt-3 border-t border-white/10">
+              <button
+                type="button"
+                onClick={closeConfirmModal}
+                disabled={confirmModal.isLoading}
+                className="px-4 py-2.5 rounded-xl text-xs font-semibold text-stone-300 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (confirmModal.onConfirm) {
+                    setConfirmModal(prev => ({ ...prev, isLoading: true }));
+                    try {
+                      await confirmModal.onConfirm();
+                    } finally {
+                      closeConfirmModal();
+                    }
+                  }
+                }}
+                disabled={confirmModal.isLoading}
+                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-lg active:scale-95 transition-all flex items-center space-x-1.5 disabled:opacity-50"
+              >
+                {confirmModal.isLoading ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0"></div>
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5 pointer-events-none shrink-0" />
+                    <span>{confirmModal.confirmText}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. IN-APP TOAST NOTIFICATION (Non-blocking, Replaces alert) */}
+      {toast.show && (
+        <div className="fixed bottom-6 right-6 z-[110] max-w-sm w-full animate-fade-in pointer-events-auto">
+          <div className={`p-4 rounded-2xl shadow-2xl border flex items-center justify-between space-x-3 backdrop-blur-xl ${
+            toast.type === 'error' 
+              ? 'bg-rose-950/95 border-rose-500/60 text-rose-200 shadow-rose-950/50' 
+              : toast.type === 'info'
+              ? 'bg-amber-950/95 border-amber-500/60 text-amber-200 shadow-amber-950/50'
+              : 'bg-[#082817]/95 border-emerald-500/60 text-emerald-100 shadow-emerald-950/50'
+          }`}>
+            <div className="flex items-center space-x-2.5 text-xs sm:text-sm font-medium">
+              {toast.type === 'error' ? (
+                <XCircle className="w-4 h-4 text-rose-400 shrink-0 pointer-events-none" />
+              ) : toast.type === 'info' ? (
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 pointer-events-none" />
+              ) : (
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 pointer-events-none" />
+              )}
+              <span>{toast.message}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setToast(prev => ({ ...prev, show: false }))}
+              className="p-1 rounded-lg hover:bg-white/10 text-stone-400 hover:text-white transition-colors"
+            >
+              <X className="w-3.5 h-3.5 pointer-events-none" />
+            </button>
           </div>
         </div>
       )}
