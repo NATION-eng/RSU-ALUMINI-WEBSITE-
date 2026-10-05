@@ -43,7 +43,8 @@ export async function sendSponsorAcknowledgmentEmail({
     to: email.trim(),
     recipientName: donorName.trim(),
     fromName: "NAAS RSU 45th Jubilee Central Planning Committee",
-    fromEmail: "secretariat@asfrsu45th.org",
+    fromEmail: "Asfrsu@gmail.com",
+    replyTo: "Asfrsu@gmail.com",
     subject,
     html: htmlContent,
     tierName: tier.name,
@@ -66,7 +67,7 @@ export async function sendSponsorAcknowledgmentEmail({
     if (!error && data) {
       dispatchStatus = 'DELIVERED';
       serviceResponse = data;
-      console.log('Sponsor email successfully dispatched via Supabase Edge Function:', email);
+      console.log('Sponsor email successfully dispatched via Supabase Edge Function to:', email);
     } else if (error) {
       console.info('Edge function note (falling back to API/Database Queue):', error.message);
     }
@@ -78,19 +79,41 @@ export async function sendSponsorAcknowledgmentEmail({
   const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
   if (dispatchStatus !== 'DELIVERED' && resendApiKey) {
     try {
-      const res = await fetch('https://api.resend.com/emails', {
+      // First attempt sending directly from Asfrsu@gmail.com
+      let res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${resendApiKey}`
         },
         body: JSON.stringify({
-          from: 'NAAS RSU 45th Jubilee <onboarding@resend.dev>',
+          from: 'NAAS RSU 45th Jubilee <Asfrsu@gmail.com>',
+          reply_to: 'Asfrsu@gmail.com',
           to: [email.trim()],
           subject,
           html: htmlContent
         })
       });
+
+      // If domain verification restricts direct @gmail.com on Resend, fallback to certified relay with reply_to
+      if (!res.ok) {
+        const errNotice = await res.json().catch(() => ({}));
+        console.info('Resend direct sender note (delivering with reply_to Asfrsu@gmail.com):', errNotice);
+        res = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${resendApiKey}`
+          },
+          body: JSON.stringify({
+            from: 'NAAS RSU 45th Jubilee <onboarding@resend.dev>',
+            reply_to: 'Asfrsu@gmail.com',
+            to: [email.trim()],
+            subject,
+            html: htmlContent
+          })
+        });
+      }
 
       if (res.ok) {
         const resData = await res.json();
@@ -168,7 +191,7 @@ Contribution Details:
 • Reference: ${reference}
 • Bank Account: ECOBANK | 0570076237 | NAAS RSU ALUMNI PROJECT
 
-Please forward your high-resolution corporate logo or compendium advert artwork (PDF/TIFF/PNG 300DPI) to secretariat@asfrsu45th.org.
+Please forward your high-resolution corporate logo or compendium advert artwork (PDF/TIFF/PNG 300DPI) to Asfrsu@gmail.com.
 
 Warm regards in Christ,
 Central Planning Committee (CPC)

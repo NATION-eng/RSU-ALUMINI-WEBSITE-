@@ -195,7 +195,7 @@ export function generateSponsorEmailHtml({
                   📌 Next Steps for Compendium & Media Submission:
                 </h4>
                 <p style="margin: 0; font-size: 12.5px; color: #78350F; line-height: 1.5;">
-                  Please reply to this email or send your high-resolution corporate logo, goodwill photo, and full-page/half-page advertisement artwork (PDF/TIFF/PNG 300DPI) to the Compendium Directorate at <strong>secretariat@asfrsu45th.org</strong> or WhatsApp <strong>+234 803 000 0000</strong>.
+                  Please reply to this email or send your high-resolution corporate logo, goodwill photo, and full-page/half-page advertisement artwork (PDF/TIFF/PNG 300DPI) to the Compendium Directorate at <strong>Asfrsu@gmail.com</strong> or WhatsApp <strong>+234 803 000 0000</strong>.
                 </p>
               </div>
 
