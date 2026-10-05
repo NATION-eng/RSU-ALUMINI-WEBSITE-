@@ -45,7 +45,7 @@ export default function Navbar({ onOpenSponsors }) {
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Official 45th Anniversary Logo & Identity */}
-          <a href="#" className="flex items-center space-x-1.5 sm:space-x-3 group shrink-0 min-w-0">
+          <a href="#" className="flex items-center space-x-1.5 sm:space-x-3 group min-w-0 shrink">
             <img
               src="/official-logo.png"
               alt="ASF RSU 45th Anniversary Logo"
@@ -87,7 +87,7 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="Corporate Sponsorship Tiers & Support Matrix"
-              className="inline-flex items-center space-x-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
+              className="inline-flex items-center space-x-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
               <Award className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
               <span>Sponsor</span>
@@ -119,22 +119,23 @@ export default function Navbar({ onOpenSponsors }) {
               <span className="pointer-events-none">QR</span>
             </a>
 
-            {/* RSVP & Census CTA Button */}
+            {/* RSVP & Census CTA Button - Hidden on small mobile screens to keep three-dash dropdown cleanly in-frame */}
             <a
               href="#census-rsvp"
-              className="inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 touch-manipulation"
+              className="hidden sm:inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 touch-manipulation"
             >
               <UserCheck className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
               <span className="whitespace-nowrap font-black">RSVP</span>
             </a>
 
-            {/* Hamburger Menu Button */}
+            {/* Hamburger / Three-Dash Nav Dropdown Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 focus:outline-none transition-colors"
-              aria-label="Toggle Menu"
+              className="lg:hidden flex items-center justify-center p-2 rounded-xl text-jubilee-lightgold hover:text-white bg-white/[0.08] hover:bg-white/15 border border-jubilee-gold/30 hover:border-jubilee-gold focus:outline-none transition-all duration-200 shrink-0 touch-manipulation active:scale-95 shadow-sm"
+              aria-label="Toggle Navigation Menu"
+              aria-expanded={isOpen}
             >
-              {isOpen ? <X className="w-5 h-5 text-jubilee-gold" /> : <Menu className="w-5 h-5" />}
+              {isOpen ? <X className="w-5 h-5 text-jubilee-gold" /> : <Menu className="w-5 h-5 text-jubilee-gold" />}
             </button>
           </div>
 
@@ -193,7 +194,7 @@ export default function Navbar({ onOpenSponsors }) {
             <a
               href="#census-rsvp"
               onClick={() => setIsOpen(false)}
-              className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white border border-white/15 font-sans"
+              className="w-full flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-jubilee-gold/40 shadow-sm font-sans touch-manipulation active:scale-95 transition-all"
             >
               <UserCheck className="w-4 h-4 text-jubilee-gold" />
               <span>Register for 45th Homecoming (RSVP)</span>
