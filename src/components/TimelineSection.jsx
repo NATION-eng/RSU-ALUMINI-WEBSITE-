@@ -208,12 +208,12 @@ export default function TimelineSection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-4">
             {ARCHIVAL_GALLERY.map((item) => (
               <div
                 key={item.id}
                 onClick={() => setSelectedPhoto(item)}
-                className="group relative aspect-square rounded-2xl overflow-hidden border border-stone-300/80 hover:border-jubilee-gold shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-stone-900 touch-manipulation"
+                className="group relative aspect-square rounded-2xl overflow-hidden border border-stone-300/80 hover:border-jubilee-gold shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-stone-900 touch-manipulation active:scale-[0.98]"
               >
                 <img
                   src={item.src}
@@ -221,15 +221,15 @@ export default function TimelineSection() {
                   className="w-full h-full object-cover object-center filter contrast-110 saturate-105 group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-85 group-hover:opacity-95 transition-opacity" />
-                <div className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-85 group-hover:opacity-95 transition-opacity" />
+                <div className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
                   <ZoomIn className="w-3.5 h-3.5" />
                 </div>
-                <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                  <span className="text-[9px] font-mono text-jubilee-gold block leading-tight font-bold tracking-wider">
+                <div className="absolute bottom-2 left-2 right-2 sm:bottom-2.5 sm:left-2.5 sm:right-2.5 text-white">
+                  <span className="text-[8px] sm:text-[9px] font-mono text-jubilee-gold block leading-tight font-bold tracking-wider uppercase">
                     {item.era}
                   </span>
-                  <span className="text-[11px] font-bold line-clamp-1 leading-snug text-stone-100">
+                  <span className="text-[10px] sm:text-[11px] font-bold line-clamp-1 leading-snug text-stone-100 mt-0.5">
                     {item.title}
                   </span>
                 </div>
@@ -240,34 +240,35 @@ export default function TimelineSection() {
 
       </div>
 
-      {/* Lightbox Modal for Full View */}
+      {/* Lightbox Modal for Full View (Mobile Optimized) */}
       {selectedPhoto && (
         <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in"
           onClick={() => setSelectedPhoto(null)}
         >
           <div 
-            className="bg-[#051A0F] border border-jubilee-gold/40 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-4"
+            className="bg-[#051A0F] border border-jubilee-gold/40 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-3 sm:space-y-4 max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div>
-                <span className="text-[10px] font-mono font-bold text-jubilee-gold uppercase tracking-wider">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3 gap-2">
+              <div className="min-w-0">
+                <span className="text-[10px] font-mono font-bold text-jubilee-gold uppercase tracking-wider block">
                   {selectedPhoto.era}
                 </span>
-                <h4 className="text-base sm:text-lg font-retro font-bold text-white">
+                <h4 className="text-sm sm:text-lg font-retro font-bold text-white truncate">
                   {selectedPhoto.title}
                 </h4>
               </div>
               <button
                 onClick={() => setSelectedPhoto(null)}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                className="p-2 sm:p-2.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-colors shrink-0 touch-manipulation"
+                aria-label="Close Preview"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="relative aspect-square max-h-[65vh] w-full rounded-2xl overflow-hidden border border-white/15 bg-black shadow-inner">
+            <div className="relative aspect-square max-h-[55vh] sm:max-h-[65vh] w-full rounded-2xl overflow-hidden border border-white/15 bg-black shadow-inner mx-auto">
               <img
                 src={selectedPhoto.src}
                 alt={selectedPhoto.title}
@@ -275,7 +276,7 @@ export default function TimelineSection() {
               />
             </div>
 
-            <div className="text-center text-xs text-stone-400 font-sans font-light">
+            <div className="text-center text-[11px] sm:text-xs text-stone-400 font-sans font-light pt-1">
               ASF Rivers State University 45th Anniversary Historical Archive (1981–2026)
             </div>
           </div>

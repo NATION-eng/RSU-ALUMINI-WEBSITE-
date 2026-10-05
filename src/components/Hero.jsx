@@ -33,7 +33,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center pt-24 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white overflow-hidden vintage-texture">
+    <section className="relative min-h-[92vh] flex items-center justify-center pt-20 xs:pt-24 sm:pt-32 pb-14 xs:pb-16 sm:pb-24 px-3 xs:px-4 sm:px-6 lg:px-8 bg-[#051A0F] text-white overflow-hidden vintage-texture">
       
       {/* The Single Merged 10-Photo Historical Backdrop (Matching connected-in-praise architecture) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
@@ -42,7 +42,7 @@ export default function Hero() {
         <img
           src="/heritage/asf_heritage_master_backdrop.jpg"
           alt="ASF RSU 45th Anniversary Historical Heritage Mural"
-          className="w-full h-full object-cover animate-slow-pan filter contrast-120 brightness-[0.78] saturate-110"
+          className="w-full h-full object-cover object-[center_35%] animate-slow-pan filter contrast-120 brightness-[0.78] saturate-110"
           loading="eager"
         />
 
@@ -152,9 +152,9 @@ export default function Hero() {
           </a>
         </div>
 
-        {/* Subtle Archival Photography Attribution Badge */}
-        <div className="mt-8 sm:mt-10 flex items-center justify-center space-x-2 text-[10px] sm:text-xs text-jubilee-lightgold/70 font-sans tracking-wide">
-          <Camera className="w-3.5 h-3.5 text-jubilee-gold/80 shrink-0" />
+        {/* Subtle Archival Photography Attribution Badge (Mobile Responsive) */}
+        <div className="mt-7 sm:mt-10 flex items-center justify-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-xs text-jubilee-lightgold/75 font-sans tracking-wide px-3 text-center leading-normal">
+          <Camera className="w-3.5 h-3.5 text-jubilee-gold/90 shrink-0" />
           <span>Featuring Authentic 1981–2026 Historical Archive Photography</span>
         </div>
 
