@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Globe, Video, Clock, MessageSquare, HeartHandshake, ArrowRight, CheckCircle2, Tv } from 'lucide-react';
+import { Globe, Video, Clock, MessageSquare, HeartHandshake, ArrowRight, CheckCircle2, Tv, UploadCloud } from 'lucide-react';
+import VideoUploadModal from './VideoUploadModal';
 
-export default function DiasporaHub() {
+export default function DiasporaHub({ onOpenSponsors }) {
   const [activeZone, setActiveZone] = useState('WAT');
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const timezoneSchedule = [
     { city: 'Port Harcourt (WAT)', region: 'Local Host Venue', time: '08:30 AM', note: 'Campus Sanctuary Live' },
@@ -36,7 +38,8 @@ export default function DiasporaHub() {
         'Featured during the Alumni Gala Dinner',
         'Preserved in the permanent 45th Digital Archive',
         'Direct WhatsApp Secretariat submission'
-      ]
+      ],
+      actionType: 'UPLOAD_VIDEO'
     },
     {
       icon: HeartHandshake,
@@ -48,7 +51,8 @@ export default function DiasporaHub() {
         'Campus medical evangelism outreach funding',
         'Student professional mentorship network',
         'Directly stewarded by the Alumni Advisory Council'
-      ]
+      ],
+      actionType: 'SUPPORT_ENDOWMENT'
     }
   ];
 
@@ -105,10 +109,44 @@ export default function DiasporaHub() {
                     ))}
                   </ul>
                 </div>
+
+                {/* Card Action Buttons */}
+                {pillar.actionType === 'UPLOAD_VIDEO' && (
+                  <button
+                    type="button"
+                    onClick={() => setIsVideoModalOpen(true)}
+                    className="w-full mt-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 font-bold text-xs flex items-center justify-center space-x-2 shadow-luxury hover:scale-[1.02] active:scale-95 transition-all font-sans"
+                  >
+                    <UploadCloud className="w-4 h-4 text-emerald-950" />
+                    <span>Upload Video</span>
+                  </button>
+                )}
+
+                {pillar.actionType === 'SUPPORT_ENDOWMENT' && (
+                  <a
+                    href="#sponsors"
+                    onClick={(e) => {
+                      if (onOpenSponsors) {
+                        e.preventDefault();
+                        onOpenSponsors('sponsors');
+                      }
+                    }}
+                    className="w-full mt-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 font-bold text-xs flex items-center justify-center space-x-2 shadow-luxury hover:scale-[1.02] active:scale-95 transition-all font-sans text-center"
+                  >
+                    <HeartHandshake className="w-4 h-4 text-emerald-950" />
+                    <span>Support</span>
+                  </a>
+                )}
               </div>
             );
           })}
         </div>
+
+        {/* Video Upload Modal */}
+        <VideoUploadModal
+          isOpen={isVideoModalOpen}
+          onClose={() => setIsVideoModalOpen(false)}
+        />
 
         {/* Official Sabbath Broadcast Worldwide Time Guide */}
         <div className="luxury-glass rounded-3xl p-6 sm:p-8 border border-jubilee-gold/30 mb-12 shadow-luxury">

@@ -11,8 +11,9 @@ import DiasporaHub from './components/DiasporaHub';
 import QrSection from './components/QrSection';
 import Footer from './components/Footer';
 
-// Code-split AdminDashboard for fast initial load and non-blocking view transitions
+// Code-split AdminDashboard & SponsorshipPortal for fast initial load and non-blocking view transitions
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+const SponsorshipPortal = lazy(() => import('./components/SponsorshipPortal'));
 
 export default function App() {
   const [isAdminView, setIsAdminView] = useState(() => {
@@ -22,10 +23,31 @@ export default function App() {
     return false;
   });
 
+  const [isSponsorsView, setIsSponsorsView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.hash.startsWith('#sponsors') || window.location.pathname === '/sponsors';
+    }
+    return false;
+  });
+
+  const [sponsorsTab, setSponsorsTab] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.hash.includes('ads')) {
+      return 'ads';
+    }
+    return 'sponsors';
+  });
+
   useEffect(() => {
     const handleHashChange = () => {
       startTransition(() => {
         setIsAdminView(window.location.hash === '#admin' || window.location.pathname === '/admin');
+        const isSponsors = window.location.hash.startsWith('#sponsors') || window.location.pathname === '/sponsors';
+        setIsSponsorsView(isSponsors);
+        if (window.location.hash.includes('ads')) {
+          setSponsorsTab('ads');
+        } else if (isSponsors) {
+          setSponsorsTab('sponsors');
+        }
       });
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -43,12 +65,21 @@ export default function App() {
     });
   };
 
+  const handleOpenSponsors = (tab = 'sponsors') => {
+    window.location.hash = tab === 'ads' ? 'sponsors-ads' : 'sponsors';
+    startTransition(() => {
+      setSponsorsTab(tab);
+      setIsSponsorsView(true);
+    });
+  };
+
   const handleBackToSite = () => {
     if (window.location.hash) {
       history.pushState("", document.title, window.location.pathname + window.location.search);
     }
     startTransition(() => {
       setIsAdminView(false);
+      setIsSponsorsView(false);
     });
   };
 
@@ -67,10 +98,25 @@ export default function App() {
     );
   }
 
+  if (isSponsorsView) {
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-[#051A0F] text-white flex items-center justify-center p-4">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-2 border-jubilee-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-xs text-stone-300 font-mono tracking-wider">Loading Sponsorship &amp; Advertising Portal...</p>
+          </div>
+        </div>
+      }>
+        <SponsorshipPortal onBackToSite={handleBackToSite} initialTab={sponsorsTab} />
+      </Suspense>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-jubilee-cream text-stone-900 selection:bg-emerald-900 selection:text-jubilee-lightgold font-sans antialiased">
       {/* 1. Global Navigation */}
-      <Navbar onOpenAdmin={handleOpenAdmin} />
+      <Navbar onOpenAdmin={handleOpenAdmin} onOpenSponsors={handleOpenSponsors} />
 
       {/* 2. Hero Section with Live Countdown and Jubilee Theme */}
       <Hero />
@@ -94,7 +140,7 @@ export default function App() {
       <MediaSection />
 
       {/* 9. Global Diaspora Fellowship Hub */}
-      <DiasporaHub />
+      <DiasporaHub onOpenSponsors={handleOpenSponsors} />
 
       {/* 10. Official Scannable QR Code Share & Download Section */}
       <QrSection />

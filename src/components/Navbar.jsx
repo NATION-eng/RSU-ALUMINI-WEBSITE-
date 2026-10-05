@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ onOpenSponsors }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -33,7 +33,6 @@ export default function Navbar() {
     { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon, badge: 'Popular' },
     { name: 'Media Hub', href: '#media-hub', icon: Video },
     { name: 'Diaspora', href: '#diaspora', icon: Globe },
-    { name: 'Official QR', href: '#qr-share', icon: QrCode },
   ];
 
   return (
@@ -81,13 +80,43 @@ export default function Navbar() {
           </div>
 
           {/* Action Area (Mobile-optimized touch buttons) */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             
+            {/* Bold Support Button (Leads to Sponsorship Matrix) */}
+            <a
+              href="#sponsors"
+              onClick={(e) => {
+                if (onOpenSponsors) {
+                  e.preventDefault();
+                  onOpenSponsors('sponsors');
+                }
+              }}
+              title="ASF RSU 45th Jubilee Sponsorship Tiers & Matrix"
+              className="inline-flex items-center space-x-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300"
+            >
+              <span>Support</span>
+            </a>
+
+            {/* Promote Brand / Business (Leads to Compendium Ad tab) */}
+            <a
+              href="#sponsors"
+              onClick={(e) => {
+                if (onOpenSponsors) {
+                  e.preventDefault();
+                  onOpenSponsors('ads');
+                }
+              }}
+              title="Compendium Adverts & Brand Promotion"
+              className="hidden md:inline-flex items-center space-x-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-jubilee-lightgold border border-jubilee-gold/40 hover:border-jubilee-gold hover:bg-white/[0.08] transition-all hover:scale-105 shrink-0"
+            >
+              <span>Promote Brand</span>
+            </a>
+
             {/* Quick QR Code Shortcut */}
             <a
               href="#qr-share"
               title="Share & Download Official QR Code"
-              className="inline-flex items-center space-x-1 p-2 sm:px-3 sm:py-2 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
+              className="inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
             >
               <QrCode className="w-3.5 h-3.5 text-jubilee-gold shrink-0 pointer-events-none" />
               <span className="hidden sm:inline pointer-events-none">QR</span>
@@ -96,9 +125,9 @@ export default function Navbar() {
             {/* RSVP & Census CTA Button */}
             <a
               href="#census-rsvp"
-              className="inline-flex items-center space-x-1.5 px-3 sm:px-4.5 py-1.5 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow active:scale-95 transition-all duration-200 font-sans tracking-tight sm:tracking-wide shrink-0"
+              className="inline-flex items-center space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0"
             >
-              <UserCheck className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
+              <UserCheck className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
               <span className="whitespace-nowrap font-black">RSVP</span>
             </a>
 
@@ -140,14 +169,42 @@ export default function Navbar() {
             );
           })}
           
-          <div className="pt-3 border-t border-white/10">
+          <div className="pt-3 border-t border-white/10 space-y-2">
+            <a
+              href="#sponsors"
+              onClick={(e) => {
+                setIsOpen(false);
+                if (onOpenSponsors) {
+                  e.preventDefault();
+                  onOpenSponsors('sponsors');
+                }
+              }}
+              className="w-full flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury font-sans"
+            >
+              <span>🏆 45th Jubilee Sponsorship Tiers (Support)</span>
+            </a>
+
+            <a
+              href="#sponsors"
+              onClick={(e) => {
+                setIsOpen(false);
+                if (onOpenSponsors) {
+                  e.preventDefault();
+                  onOpenSponsors('ads');
+                }
+              }}
+              className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white/10 text-jubilee-lightgold border border-jubilee-gold/30 font-sans"
+            >
+              <span>Promote Your Brand / Compendium Adverts</span>
+            </a>
+
             <a
               href="#census-rsvp"
               onClick={() => setIsOpen(false)}
-              className="w-full flex items-center justify-center space-x-2 px-5 py-3.5 rounded-xl text-sm font-bold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury font-sans active:scale-95"
+              className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white border border-white/15 font-sans"
             >
-              <UserCheck className="w-4 h-4" />
-              <span>Register for 45th Homecoming</span>
+              <UserCheck className="w-4 h-4 text-jubilee-gold" />
+              <span>Register for 45th Homecoming (RSVP)</span>
             </a>
           </div>
         </div>

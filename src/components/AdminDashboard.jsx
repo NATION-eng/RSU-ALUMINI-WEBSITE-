@@ -3,8 +3,10 @@ import { supabase } from '../lib/supabase';
 import { 
   Shield, Lock, Search, Filter, Download, CheckCircle, XCircle, 
   Users, UserCheck, HeartHandshake, RefreshCw, Eye, ArrowLeft,
-  Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2
+  Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2,
+  Video, Play, Sparkles, Building2, ExternalLink
 } from 'lucide-react';
+import { getMailtoLink } from '../lib/emailService';
 
 export default function AdminDashboard({ onBackToSite }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -20,12 +22,18 @@ export default function AdminDashboard({ onBackToSite }) {
   const [selectedAttendee, setSelectedAttendee] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
 
+  // New admin tabs: 'REGISTRATIONS' | 'SPONSORSHIPS' | 'VIDEOS'
+  const [activeAdminTab, setActiveAdminTab] = useState('REGISTRATIONS');
+  const [sponsorships, setSponsorships] = useState([]);
+  const [videoSubmissions, setVideoSubmissions] = useState([]);
+  const [playingVideoUrl, setPlayingVideoUrl] = useState(null);
+
   // Check if admin is already logged in for this session
   useEffect(() => {
     const savedAuth = sessionStorage.getItem('asf_cpc_admin_auth');
     if (savedAuth === 'true') {
       setIsAuthenticated(true);
-      fetchRegistrations();
+      fetchAllData();
     }
   }, []);
 
@@ -37,7 +45,7 @@ export default function AdminDashboard({ onBackToSite }) {
       setIsAuthenticated(true);
       sessionStorage.setItem('asf_cpc_admin_auth', 'true');
       setAuthError('');
-      fetchRegistrations();
+      fetchAllData();
     } else {
       setAuthError('Invalid CPC Master Passcode. Please check with the Central Planning Committee.');
     }
@@ -46,6 +54,54 @@ export default function AdminDashboard({ onBackToSite }) {
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('asf_cpc_admin_auth');
+  };
+
+  const fetchAllData = () => {
+    fetchRegistrations();
+    fetchSponsorships();
+    fetchVideoSubmissions();
+  };
+
+  const fetchSponsorships = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('sponsorship_payments')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      const combined = [...(data || [])];
+      local.forEach(item => {
+        if (!combined.some(c => c.reference === item.reference)) {
+          combined.push(item);
+        }
+      });
+      setSponsorships(combined);
+    } catch (e) {
+      const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      setSponsorships(local);
+    }
+  };
+
+  const fetchVideoSubmissions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('video_goodwill_submissions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const local = JSON.parse(localStorage.getItem('asf_goodwill_videos') || '[]');
+      const combined = [...(data || [])];
+      local.forEach(item => {
+        if (!combined.some(c => c.submission_id === item.submission_id)) {
+          combined.push(item);
+        }
+      });
+      setVideoSubmissions(combined);
+    } catch (e) {
+      const local = JSON.parse(localStorage.getItem('asf_goodwill_videos') || '[]');
+      setVideoSubmissions(local);
+    }
   };
 
   const fetchRegistrations = async () => {
@@ -358,10 +414,48 @@ export default function AdminDashboard({ onBackToSite }) {
 
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 space-y-5 sm:space-y-8">
         
-        {/* Metric Cards Banner (Optimized 2-col on mobile with 5th card spanning full) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
-          
-          <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-white/10">
+        {/* Admin Navigation Tabs */}
+        <div className="flex items-center space-x-2 border-b border-white/10 pb-3 overflow-x-auto">
+          <button
+            onClick={() => setActiveAdminTab('REGISTRATIONS')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              activeAdminTab === 'REGISTRATIONS'
+                ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10'
+            }`}
+          >
+            📋 Alumni Directory &amp; RSVP ({registrations.length})
+          </button>
+
+          <button
+            onClick={() => setActiveAdminTab('SPONSORSHIPS')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              activeAdminTab === 'SPONSORSHIPS'
+                ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10'
+            }`}
+          >
+            🏆 Sponsorships &amp; Payments ({sponsorships.length})
+          </button>
+
+          <button
+            onClick={() => setActiveAdminTab('VIDEOS')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              activeAdminTab === 'VIDEOS'
+                ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10'
+            }`}
+          >
+            🎬 Goodwill Video Messages ({videoSubmissions.length})
+          </button>
+        </div>
+
+        {activeAdminTab === 'REGISTRATIONS' && (
+          <div className="space-y-5 sm:space-y-8">
+            {/* Metric Cards Banner (Optimized 2-col on mobile with 5th card spanning full) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
+              
+              <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-white/10">
             <div className="flex items-center justify-between text-xs text-stone-400 mb-1">
               <span className="text-[11px] sm:text-xs">Total Alumni</span>
               <Users className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-jubilee-gold" />
@@ -779,8 +873,333 @@ export default function AdminDashboard({ onBackToSite }) {
           )}
 
         </div>
+        </div>
+        )}
 
-      </main>
+        {/* 2. SPONSORSHIPS & PAYSTACK PAYMENTS TAB */}
+        {activeAdminTab === 'SPONSORSHIPS' && (
+          <div className="space-y-6">
+            
+            {/* Sponsorship Metrics */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              <div className="luxury-glass rounded-2xl p-4 border border-jubilee-gold/40 bg-jubilee-gold/10">
+                <span className="text-[11px] text-jubilee-lightgold font-bold uppercase tracking-wider block">
+                  Total Committed Funds
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-jubilee-gold mt-1">
+                  ₦{sponsorships.reduce((acc, s) => acc + (Number(s.amount) || 0), 0).toLocaleString()}
+                </div>
+                <div className="text-[10px] text-emerald-200 mt-0.5">Across All Tiers &amp; Adverts</div>
+              </div>
+
+              <div className="luxury-glass rounded-2xl p-4 border border-white/10">
+                <span className="text-[11px] text-stone-400 font-semibold uppercase tracking-wider block">
+                  Total Partners
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-white mt-1">
+                  {sponsorships.length}
+                </div>
+                <div className="text-[10px] text-stone-400 mt-0.5">Corporate &amp; Individual</div>
+              </div>
+
+              <div className="luxury-glass rounded-2xl p-4 border border-emerald-500/30 bg-emerald-950/20">
+                <span className="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider block">
+                  Paystack Online
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-emerald-300 mt-1">
+                  {sponsorships.filter(s => s.payment_method?.includes('Paystack')).length}
+                </div>
+                <div className="text-[10px] text-emerald-200/70 mt-0.5">Instant Card/Transfer/USSD</div>
+              </div>
+
+              <div className="luxury-glass rounded-2xl p-4 border border-teal-500/30 bg-teal-950/20">
+                <span className="text-[11px] text-teal-300 font-semibold uppercase tracking-wider block">
+                  ECOBANK Direct
+                </span>
+                <div className="text-2xl sm:text-3xl font-retro font-black text-teal-300 mt-1">
+                  {sponsorships.filter(s => !s.payment_method?.includes('Paystack')).length}
+                </div>
+                <div className="text-[10px] text-teal-200/70 mt-0.5">Acct: 0570076237</div>
+              </div>
+            </div>
+
+            {/* Sponsorships Table Container */}
+            <div className="luxury-glass rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+              <div className="p-4 sm:p-5 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-base sm:text-lg font-retro font-bold text-white flex items-center space-x-2">
+                    <Award className="w-5 h-5 text-jubilee-gold" />
+                    <span>Jubilee Sponsorships &amp; Contributions Ledger</span>
+                  </h3>
+                  <p className="text-xs text-stone-400 font-light mt-0.5">
+                    Real-time payment logs, tier classifications, and contact channels.
+                  </p>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      if (sponsorships.length === 0) return;
+                      const headers = ['Reference', 'Donor Name', 'Organization', 'Tier', 'Amount (NGN)', 'Channel', 'Email', 'Phone', 'Date'];
+                      const rows = sponsorships.map(s => [
+                        `"${s.reference}"`,
+                        `"${s.donor_name}"`,
+                        `"${s.organization || ''}"`,
+                        `"${s.tier_name || s.tier_key}"`,
+                        s.amount,
+                        `"${s.payment_method}"`,
+                        `"${s.email}"`,
+                        `"${s.phone || ''}"`,
+                        `"${s.created_at}"`
+                      ]);
+                      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+                      const encodedUri = encodeURI(csvContent);
+                      const link = document.createElement('a');
+                      link.setAttribute('href', encodedUri);
+                      link.setAttribute('download', `asf45th_sponsorships_${new Date().toISOString().slice(0, 10)}.csv`);
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-jubilee-gold/30"
+                  >
+                    <Download className="w-3.5 h-3.5 text-jubilee-gold" />
+                    <span>Download Ledger (CSV)</span>
+                  </button>
+
+                  <button
+                    onClick={fetchSponsorships}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300"
+                    title="Refresh Ledger"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {sponsorships.length === 0 ? (
+                <div className="p-12 text-center text-stone-400 space-y-2">
+                  <HeartHandshake className="w-10 h-10 text-stone-600 mx-auto" />
+                  <p className="text-sm font-medium">No sponsorship records logged yet.</p>
+                  <p className="text-xs text-stone-500">Payments made via Paystack or direct transfer notifications will appear here immediately.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs text-stone-300">
+                    <thead className="bg-black/60 text-stone-400 font-mono uppercase text-[10px] tracking-wider border-b border-white/10">
+                      <tr>
+                        <th className="p-3.5">Contributor / Brand</th>
+                        <th className="p-3.5">Tier / Item</th>
+                        <th className="p-3.5">Amount (₦)</th>
+                        <th className="p-3.5">Channel / Ref</th>
+                        <th className="p-3.5">Contact</th>
+                        <th className="p-3.5">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {sponsorships.map((s, idx) => (
+                        <tr key={idx} className="hover:bg-white/[0.04] transition-colors">
+                          <td className="p-3.5">
+                            <div className="font-bold text-white text-sm">{s.donor_name}</div>
+                            {s.organization && (
+                              <div className="text-[11px] text-jubilee-lightgold font-medium">{s.organization}</div>
+                            )}
+                            {s.is_anonymous && (
+                              <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-stone-800 text-stone-300 font-bold">
+                                Anonymous
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-3.5">
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-jubilee-gold/20 text-jubilee-lightgold border border-jubilee-gold/30">
+                              {s.tier_name || s.tier_key}
+                            </span>
+                          </td>
+                          <td className="p-3.5">
+                            <div className="font-retro font-bold text-base text-amber-400">
+                              ₦{Number(s.amount).toLocaleString()}
+                            </div>
+                          </td>
+                          <td className="p-3.5">
+                            <div className="text-[11px] text-emerald-300 font-medium">{s.payment_method}</div>
+                            <div className="font-mono text-[10px] text-stone-400">{s.reference}</div>
+                          </td>
+                          <td className="p-3.5">
+                            <div className="flex items-center space-x-1.5">
+                              <span className="font-mono text-white text-[11px] truncate max-w-[150px]">{s.email}</span>
+                              <a
+                                href={getMailtoLink({
+                                  email: s.email,
+                                  donorName: s.donor_name,
+                                  tierName: s.tier_name || s.tier_key,
+                                  amount: s.amount,
+                                  reference: s.reference
+                                })}
+                                title="Send / Resend Official Letter to Sponsor"
+                                className="p-1 rounded bg-white/10 hover:bg-white/20 text-jubilee-lightgold transition-colors"
+                              >
+                                <Mail className="w-3.5 h-3.5" />
+                              </a>
+                            </div>
+                            {s.phone && (
+                              <div className="mt-0.5">
+                                <a
+                                  href={`https://wa.me/${s.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Dear ${s.donor_name}, warm greetings from the NAAS RSU 45th Jubilee Secretariat. Thank you for your partnership!`)}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-emerald-400 hover:underline text-[11px]"
+                                >
+                                  {s.phone}
+                                </a>
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-3.5 text-stone-400 text-[11px] whitespace-nowrap">
+                            {new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 3. GOODWILL VIDEO MESSAGES ARCHIVE TAB */}
+        {activeAdminTab === 'VIDEOS' && (
+          <div className="space-y-6">
+            
+            <div className="luxury-glass rounded-2xl p-4 sm:p-5 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base sm:text-lg font-retro font-bold text-white flex items-center space-x-2">
+                  <Video className="w-5 h-5 text-jubilee-gold" />
+                  <span>30-Second Video Goodwill Messages Submissions</span>
+                </h3>
+                <p className="text-xs text-stone-400 font-light mt-0.5">
+                  Screen, stream, and download congratulatory video greetings for the Sunday Jubilee Banquet.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <span className="px-3 py-1.5 rounded-full bg-jubilee-gold/20 text-jubilee-lightgold font-bold text-xs border border-jubilee-gold/30">
+                  {videoSubmissions.length} Videos Submitted
+                </span>
+                <button
+                  onClick={fetchVideoSubmissions}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300"
+                  title="Refresh Videos"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {videoSubmissions.length === 0 ? (
+              <div className="luxury-glass rounded-2xl p-12 text-center text-stone-400 space-y-2 border border-white/10">
+                <Video className="w-10 h-10 text-stone-600 mx-auto" />
+                <p className="text-sm font-medium">No video goodwill messages uploaded yet.</p>
+                <p className="text-xs text-stone-500">Alumni submissions via the Diaspora Hub "Upload Video" button will appear here for media curation.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {videoSubmissions.map((video, idx) => (
+                  <div key={idx} className="luxury-glass rounded-2xl p-4 border border-white/10 flex flex-col justify-between space-y-3">
+                    <div>
+                      {/* Submitter Info */}
+                      <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-2.5 mb-3">
+                        <div>
+                          <div className="font-bold text-white text-sm">{video.full_name}</div>
+                          <div className="text-[11px] text-jubilee-lightgold font-medium">
+                            {video.chapter_set || 'Alumni / Family'}
+                          </div>
+                        </div>
+                        <span className="text-[10px] text-stone-400 font-mono">
+                          {new Date(video.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                        </span>
+                      </div>
+
+                      {/* Video Player or Placeholder */}
+                      <div className="rounded-xl overflow-hidden bg-black/60 aspect-video flex items-center justify-center relative border border-white/10">
+                        {video.video_url && video.video_url.startsWith('http') ? (
+                          <video
+                            controls
+                            src={video.video_url}
+                            className="w-full h-full object-cover"
+                            preload="metadata"
+                          />
+                        ) : (
+                          <div className="text-center p-3">
+                            <Video className="w-8 h-8 text-jubilee-gold/60 mx-auto mb-1" />
+                            <span className="text-xs text-stone-300 font-mono block truncate max-w-[200px]">
+                              {video.file_name || 'Goodwill Clip'}
+                            </span>
+                            <span className="text-[10px] text-emerald-400 mt-1 block">Cloud Archiving</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Contact Details */}
+                      <div className="mt-3 space-y-1 text-xs text-stone-300">
+                        <div className="truncate"><span className="text-stone-400">Email:</span> {video.email}</div>
+                        {video.phone && (
+                          <div>
+                            <span className="text-stone-400">WhatsApp: </span>
+                            <a
+                              href={`https://wa.me/${video.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${video.full_name}, thank you for submitting your 45th Jubilee Goodwill Video!`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-emerald-400 hover:underline"
+                            >
+                              {video.phone}
+                            </a>
+                          </div>
+                        )}
+                        {video.message_note && (
+                          <div className="text-[11px] text-stone-400 italic pt-1">
+                            “{video.message_note}”
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+                      {video.video_url && video.video_url.startsWith('http') ? (
+                        <a
+                          href={video.video_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          download={video.file_name || 'asf_goodwill_message.mp4'}
+                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-jubilee-gold/20 hover:bg-jubilee-gold/30 text-jubilee-lightgold text-xs font-semibold"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download Clip</span>
+                        </a>
+                      ) : (
+                        <span className="text-[11px] text-stone-500 font-mono">Local Stored</span>
+                      )}
+
+                      {video.phone && (
+                        <a
+                          href={`https://wa.me/${video.phone.replace(/[^0-9]/g, '')}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-400 text-xs"
+                          title="Contact Submitter on WhatsApp"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+        )}
 
       {/* Profile Detail Modal */}
       {selectedAttendee && (

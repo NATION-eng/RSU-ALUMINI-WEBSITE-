@@ -1,36 +1,11 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Building2 } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Building2, Copy, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
-
-const COUNTRIES = [
-  'Nigeria',
-  'United Kingdom',
-  'United States',
-  'Canada',
-  'Ghana',
-  'South Africa',
-  'Kenya',
-  'Germany',
-  'United Arab Emirates',
-  'Australia',
-  'France',
-  'Ireland',
-  'Netherlands',
-  'Italy',
-  'Spain',
-  'Sweden',
-  'Norway',
-  'Switzerland',
-  'Saudi Arabia',
-  'Qatar',
-  'Bahamas',
-  'Jamaica',
-  'Trinidad and Tobago',
-  'Other Country'
-];
+import { WORLD_COUNTRIES } from '../data/countries';
 
 export default function CensusRsvpSection() {
+  const [copiedAcct, setCopiedAcct] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     maidenName: '',
@@ -321,24 +296,28 @@ export default function CensusRsvpSection() {
                   />
                 </div>
 
-                {/* Updated: Country Selector Dropdown */}
+                {/* Updated: Comprehensive Searchable Country Selector (195+ Countries) */}
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1">
                     Country *
                   </label>
-                  <select
-                    required
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none bg-white text-sm font-medium"
-                  >
-                    {COUNTRIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      list="world-countries-list"
+                      required
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      placeholder="Type or select country (e.g. Nigeria, United Kingdom)"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none bg-white text-sm font-medium"
+                    />
+                    <datalist id="world-countries-list">
+                      {WORLD_COUNTRIES.map((c) => (
+                        <option key={c} value={c} />
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
 
                 <div>
@@ -437,7 +416,7 @@ export default function CensusRsvpSection() {
               {/* Memory Tribute */}
               <div>
                 <label className="block text-xs font-semibold text-stone-700 mb-1">
-                  Memory or Tribute for the 45th Compendium (Optional)
+                  Share your memories or Experience (Optional)
                 </label>
                 <textarea
                   rows="2"
@@ -464,15 +443,59 @@ export default function CensusRsvpSection() {
                 </h3>
               </div>
 
-              {/* BOLD NOTICE */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-black/50 border border-jubilee-gold/60 mb-5">
-                <div className="text-jubilee-gold font-retro font-extrabold text-sm sm:text-base mb-1.5 flex items-center space-x-2">
-                  <Building2 className="w-4 h-4 text-jubilee-gold shrink-0" />
-                  <span>OFFICIAL DEDICATED BANK ACCOUNT DETAILS WILL BE PROVIDED SOON</span>
+              {/* OFFICIAL AUDITED BANK ACCOUNT DETAILS */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-black/60 border border-jubilee-gold/80 mb-5 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                  <div>
+                    <div className="text-jubilee-gold font-retro font-extrabold text-sm sm:text-base flex items-center space-x-2">
+                      <Building2 className="w-4 h-4 text-jubilee-gold shrink-0" />
+                      <span>OFFICIAL DEDICATED AUDITED BANK ACCOUNT</span>
+                    </div>
+                    <p className="text-xs text-stone-300 font-light mt-0.5">
+                      Central Planning Committee (CPC) Financial Directorate
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText('0570076237');
+                      setCopiedAcct(true);
+                      setTimeout(() => setCopiedAcct(false), 2500);
+                    }}
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all active:scale-95 shrink-0 self-start sm:self-auto"
+                  >
+                    {copiedAcct ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedAcct ? 'Copied 0570076237!' : 'Copy Account No.'}</span>
+                  </button>
                 </div>
-                <p className="text-xs sm:text-sm text-emerald-100/90 font-light leading-relaxed">
-                  The Central Planning Committee (CPC) Financial Directorate is setting up dedicated audited accounts for the 45th Anniversary. If you desire to sponsor, pledge, or financially support the Homecoming, indicate below so the official bank details are forwarded directly to you once released.
-                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10">
+                    <span className="text-stone-400 block text-[10px] uppercase tracking-wider">Bank Name</span>
+                    <span className="font-bold text-white text-sm">ECOBANK</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10">
+                    <span className="text-stone-400 block text-[10px] uppercase tracking-wider">Account Number</span>
+                    <span className="font-bold text-jubilee-lightgold font-mono text-base tracking-wider">0570076237</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10">
+                    <span className="text-stone-400 block text-[10px] uppercase tracking-wider">Account Name</span>
+                    <span className="font-bold text-white text-xs truncate block" title="NAAS RSU ALUMNI PROJECT">NAAS RSU ALUMNI PROJECT</span>
+                  </div>
+                </div>
+
+                <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs border-t border-white/10">
+                  <span className="text-emerald-100/80 font-light">
+                    Want to pay online via card or view exclusive sponsorship perks?
+                  </span>
+                  <a
+                    href="#sponsors"
+                    className="inline-flex items-center space-x-1 text-xs font-bold text-jubilee-gold hover:text-amber-200 underline decoration-jubilee-gold underline-offset-4"
+                  >
+                    <span>View 5 Sponsorship Tiers &amp; Pay via Paystack →</span>
+                  </a>
+                </div>
               </div>
 
               <div className="space-y-4">
