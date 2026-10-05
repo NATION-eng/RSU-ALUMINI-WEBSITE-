@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Building2, Copy, Check, Award, HeartHandshake, BookOpen } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Award, HeartHandshake, BookOpen } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 import { WORLD_COUNTRIES } from '../data/countries';
 import CountrySelect from './CountrySelect';
 
 export default function CensusRsvpSection({ onOpenSponsors }) {
-  const [copiedAcct, setCopiedAcct] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     maidenName: '',
@@ -461,35 +460,6 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
               <p className="text-xs sm:text-sm text-emerald-100/80 font-sans font-light leading-relaxed">
                 Empower the 45th Homecoming, fund student welfare, Mass Choir cantatas, and the 45-year legacy endowment across 5 distinguished sponsorship tiers or book compendium advertising.
               </p>
-
-              {/* Official Bank Account Details with Copy Button */}
-              <div className="pt-2 p-3.5 rounded-2xl bg-black/40 border border-jubilee-gold/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                <div>
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-jubilee-lightgold flex items-center space-x-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
-                    <span>Audited Dedicated Bank Account (Ecobank)</span>
-                  </div>
-                  <div className="text-sm sm:text-base font-mono font-bold text-white mt-0.5">
-                    ECOBANK • <span className="text-jubilee-gold">0570076237</span>
-                  </div>
-                  <div className="text-[11px] text-stone-300">
-                    Account Name: <strong>NAAS RSU ALUMNI PROJECT</strong>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText('0570076237');
-                    setCopiedAcct(true);
-                    setTimeout(() => setCopiedAcct(false), 2500);
-                  }}
-                  className="inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl bg-jubilee-gold hover:bg-amber-300 text-emerald-950 font-bold text-xs transition-all active:scale-95 shrink-0 touch-manipulation"
-                >
-                  {copiedAcct ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedAcct ? 'Copied 0570076237!' : 'Copy Account No.'}</span>
-                </button>
-              </div>
             </div>
 
             {/* Action Buttons */}
