@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '380px',
+      },
       colors: {
         emerald: {
           950: '#051A0F',

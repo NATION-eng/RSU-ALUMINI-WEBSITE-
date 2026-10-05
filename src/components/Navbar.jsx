@@ -36,28 +36,40 @@ export default function Navbar({ onOpenSponsors }) {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 py-2 sm:py-2.5 ${
       scrolled 
-        ? 'bg-[#051A0F]/95 backdrop-blur-md shadow-luxury py-2 sm:py-2.5 border-b border-jubilee-gold/20' 
-        : 'bg-gradient-to-b from-[#051A0F]/95 via-[#051A0F]/60 to-transparent py-3 sm:py-4'
+        ? 'bg-[#051A0F]/95 backdrop-blur-md shadow-luxury border-b border-jubilee-gold/20' 
+        : 'bg-[#051A0F]/90 backdrop-blur-md border-b border-white/5'
     }`}>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Official 45th Anniversary Logo & Identity */}
-          <a href="#" className="flex items-center space-x-1.5 sm:space-x-2.5 group min-w-0 shrink overflow-hidden max-w-[58%] xs:max-w-[65%] sm:max-w-none">
+          <a href="#" className="flex items-center space-x-1.5 sm:space-x-2.5 group min-w-0 shrink">
             <img
               src="/official-logo.png"
               alt="ASF RSU 45th Anniversary Logo"
-              className="h-8 xs:h-9 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+              className="h-8 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
-            <div className="text-left flex flex-col justify-center min-w-0 overflow-hidden">
-              <span className="font-retro font-bold text-white text-[11px] xs:text-sm sm:text-[15px] md:text-base tracking-tight sm:tracking-wide group-hover:text-jubilee-lightgold transition-colors leading-tight truncate block">
-                Anniversary Celebration &amp;
-              </span>
-              <span className="text-[9px] xs:text-[11px] sm:text-xs text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase leading-tight mt-0.5 truncate block">
-                Alumni Homecoming
-              </span>
+            <div className="text-left flex flex-col justify-center min-w-0">
+              {/* Mobile text: compact to guarantee zero overflow on all devices */}
+              <div className="sm:hidden flex flex-col justify-center min-w-0 leading-tight">
+                <span className="font-retro font-bold text-white text-xs tracking-tight truncate">
+                  45th Jubilee
+                </span>
+                <span className="text-[9px] text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase truncate">
+                  Homecoming
+                </span>
+              </div>
+              {/* Tablet & Desktop text: full title */}
+              <div className="hidden sm:flex flex-col justify-center min-w-0 leading-tight">
+                <span className="font-retro font-bold text-white text-sm md:text-base tracking-wide group-hover:text-jubilee-lightgold transition-colors truncate">
+                  Anniversary Celebration &amp;
+                </span>
+                <span className="text-xs text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase mt-0.5 truncate">
+                  Alumni Homecoming
+                </span>
+              </div>
             </div>
           </a>
 
@@ -75,7 +87,7 @@ export default function Navbar({ onOpenSponsors }) {
           </div>
 
           {/* Action Area (Mobile-optimized touch buttons) */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          <div className="flex items-center space-x-2 shrink-0">
             
             {/* Corporate Sponsorship Button */}
             <a
@@ -87,7 +99,7 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="Corporate Sponsorship Tiers & Support Matrix"
-              className="inline-flex items-center space-x-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
               <Award className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
               <span>Sponsor</span>
@@ -122,7 +134,7 @@ export default function Navbar({ onOpenSponsors }) {
             {/* Three-Dash Nav Dropdown Button - Mobile & Tablet only (< 1024px) */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden flex items-center justify-center p-2 rounded-xl text-jubilee-lightgold hover:text-white bg-white/[0.08] hover:bg-white/15 border border-jubilee-gold/30 hover:border-jubilee-gold focus:outline-none transition-all duration-200 shrink-0 touch-manipulation active:scale-95 shadow-sm"
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl text-jubilee-lightgold hover:text-white bg-white/[0.08] hover:bg-white/15 border border-jubilee-gold/30 hover:border-jubilee-gold focus:outline-none transition-all duration-200 shrink-0 touch-manipulation active:scale-95 shadow-sm"
               aria-label="Toggle Navigation Menu"
               aria-expanded={isOpen}
             >

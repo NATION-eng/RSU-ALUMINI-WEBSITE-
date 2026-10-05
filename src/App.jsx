@@ -114,7 +114,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-jubilee-cream text-stone-900 selection:bg-emerald-900 selection:text-jubilee-lightgold font-sans antialiased">
+    <div className="min-h-screen bg-jubilee-cream text-stone-900 selection:bg-emerald-900 selection:text-jubilee-lightgold font-sans antialiased w-full max-w-full overflow-x-hidden relative">
       {/* 1. Global Navigation */}
       <Navbar onOpenAdmin={handleOpenAdmin} onOpenSponsors={handleOpenSponsors} />
 
