@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, HeartHandshake, BookOpen } from 'lucide-react';
+import { Calendar, Image as ImageIcon, UserCheck, ArrowRight } from 'lucide-react';
 
-export default function Hero({ onOpenSponsors }) {
+export default function Hero() {
   // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
   const targetDate = new Date('2026-11-14T08:30:00');
 
@@ -150,27 +150,6 @@ export default function Hero({ onOpenSponsors }) {
             <ImageIcon className="w-4 h-4 text-jubilee-gold shrink-0" />
             <span className="tracking-wide">Create "I Will Be There" DP</span>
           </a>
-        </div>
-
-        {/* Quick Access Dual Badges: Support & Compendium Ads */}
-        <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3">
-          <button
-            type="button"
-            onClick={() => onOpenSponsors ? onOpenSponsors('sponsors') : (window.location.hash = 'donate')}
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-100 text-xs font-semibold backdrop-blur-sm transition-all hover:scale-105 active:scale-95 shadow-md touch-manipulation"
-          >
-            <HeartHandshake className="w-3.5 h-3.5 text-rose-400" />
-            <span>Donate &amp; Support</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onOpenSponsors ? onOpenSponsors('ads') : (window.location.hash = 'compendium-ads')}
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-jubilee-gold/15 hover:bg-jubilee-gold/25 border border-jubilee-gold/50 text-jubilee-lightgold text-xs font-semibold backdrop-blur-sm transition-all hover:scale-105 active:scale-95 shadow-md touch-manipulation"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-jubilee-gold" />
-            <span>Book Compendium Ad</span>
-          </button>
         </div>
 
       </div>
