@@ -185,7 +185,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
               { display_name: "Customer Name", variable_name: "customer_name", value: formData.fullName },
               { display_name: "Email Address", variable_name: "email", value: formData.email.trim() },
               { display_name: "Phone Number", variable_name: "phone", value: formData.phone },
-              { display_name: "Selected Category", variable_name: "selected_category", value: TIER_DETAILS[selectedTier]?.name || selectedTier },
+              { display_name: "Selected Category", variable_name: "selected_category", value: COMPENDIUM_AD_TIERS[selectedTier]?.name || TIER_DETAILS[selectedTier]?.name || selectedTier },
               { display_name: "Engagement Type", variable_name: "engagement_type", value: 'Compendium Ad Booking' },
               { display_name: "Company / Alumni Set", variable_name: "organization", value: formData.organization || formData.alumniSet || "Individual Contributor" },
               { display_name: "Amount (₦)", variable_name: "amount_naira", value: numAmount }
@@ -410,13 +410,14 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
             {onOpenDonate && (
               <button
                 onClick={onOpenDonate}
-                className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/40 hover:bg-white/10 transition-all touch-manipulation active:scale-95"
+                className="inline-flex items-center space-x-1 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/40 hover:bg-white/10 transition-all touch-manipulation active:scale-95"
               >
                 <HeartHandshake className="w-3.5 h-3.5 text-jubilee-gold" />
-                <span>Donate / Support Tiers &rarr;</span>
+                <span className="hidden xs:inline">Donate / Support &rarr;</span>
+                <span className="xs:hidden">Donate &rarr;</span>
               </button>
             )}
-            <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-jubilee-lightgold px-2.5 sm:px-3 py-1 rounded-full bg-jubilee-gold/10 border border-jubilee-gold/30">
+            <span className="hidden xs:inline-block text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-jubilee-lightgold px-2.5 sm:px-3 py-1 rounded-full bg-jubilee-gold/10 border border-jubilee-gold/30">
               Audited CPC Account
             </span>
           </div>
@@ -424,10 +425,33 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#051A0F] via-[#082817] to-[#0D3821] text-white pt-10 sm:pt-14 pb-14 sm:pb-20 px-3 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="bg-gradient-to-b from-[#051A0F] via-[#082817] to-[#0D3821] text-white pt-8 sm:pt-14 pb-14 sm:pb-20 px-3 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
         
         <div className="relative max-w-5xl mx-auto text-center space-y-4">
+          {/* Top Segmented Dual Portal Switcher */}
+          <div className="flex items-center justify-center pb-1">
+            <div className="inline-flex p-1 rounded-full bg-black/50 border border-jubilee-gold/40 backdrop-blur-md shadow-lg max-w-full">
+              {onOpenDonate && (
+                <button
+                  type="button"
+                  onClick={onOpenDonate}
+                  className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold text-stone-300 hover:text-white hover:bg-white/10 transition-all flex items-center space-x-1.5 active:scale-95 touch-manipulation"
+                >
+                  <HeartHandshake className="w-3.5 h-3.5 text-rose-400" />
+                  <span>Donate &amp; Support</span>
+                </button>
+              )}
+              <button
+                type="button"
+                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 shadow-md flex items-center space-x-1.5 cursor-default"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Compendium Adverts</span>
+              </button>
+            </div>
+          </div>
+
           <div className="inline-flex items-center space-x-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-white/[0.07] border border-jubilee-gold/40 text-jubilee-lightgold text-[10px] sm:text-xs font-bold uppercase tracking-widest max-w-full">
             <BookOpen className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
             <span className="truncate">Official Archival Compendium (1981–2026)</span>
@@ -821,7 +845,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Complete Your Ad Booking &amp; Details
                 </h3>
                 <p className="text-xs text-stone-500 mt-0.5">
-                  Selected Category: <strong className="text-emerald-900 font-semibold">{TIER_DETAILS[selectedTier]?.name || selectedTier}</strong>
+                  Selected Category: <strong className="text-emerald-900 font-semibold">{COMPENDIUM_AD_TIERS[selectedTier]?.name || TIER_DETAILS[selectedTier]?.name || selectedTier}</strong>
                   <span className="mx-2 text-stone-300">•</span>
                   <button
                     type="button"

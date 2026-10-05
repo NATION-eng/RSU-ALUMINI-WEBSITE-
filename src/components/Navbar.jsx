@@ -33,6 +33,7 @@ export default function Navbar({ onOpenSponsors }) {
     { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon },
     { name: 'Media Hub', href: '#media-hub', icon: Video },
     { name: 'Diaspora', href: '#diaspora', icon: Globe },
+    { name: 'Compendium Ads', href: '#compendium-ads', icon: BookOpen },
   ];
 
   return (
@@ -79,6 +80,12 @@ export default function Navbar({ onOpenSponsors }) {
               <a
                 key={link.name}
                 href={link.href}
+                onClick={(e) => {
+                  if (link.href === '#compendium-ads' && onOpenSponsors) {
+                    e.preventDefault();
+                    onOpenSponsors('ads');
+                  }
+                }}
                 className="px-3 py-2 text-xs xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
               >
                 {link.name}
@@ -87,7 +94,7 @@ export default function Navbar({ onOpenSponsors }) {
           </div>
 
           {/* Action Area (Mobile-optimized touch buttons) */}
-          <div className="flex items-center space-x-2 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             
             {/* Donate / Support Button */}
             <a
@@ -99,13 +106,13 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="Donate / Support Tiers & Support Matrix"
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
+              className="inline-flex items-center space-x-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
-              <Award className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
-              <span>Sponsor</span>
+              <HeartHandshake className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
+              <span>Donate</span>
             </a>
 
-            {/* Compendium Ad Booking - Wide desktop only */}
+            {/* Compendium Ad Booking - Visible across ALL screen sizes! */}
             <a
               href="#compendium-ads"
               onClick={(e) => {
@@ -115,17 +122,18 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="Compendium Advertising Rates & Space Booking"
-              className="hidden xl:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.05] hover:border-jubilee-gold hover:bg-white/[0.12] transition-all hover:scale-105 shrink-0"
+              className="inline-flex items-center space-x-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.08] hover:border-jubilee-gold hover:bg-white/[0.15] transition-all hover:scale-105 active:scale-95 shrink-0 touch-manipulation"
             >
               <BookOpen className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
-              <span>Compendium Ads</span>
+              <span className="hidden xs:inline">Compendium Ads</span>
+              <span className="xs:hidden">Book Ad</span>
             </a>
 
             {/* Quick QR Code Shortcut - Wide desktop only */}
             <a
               href="#qr-share"
               title="Share & Download Official QR Code"
-              className="hidden xl:inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
+              className="hidden 2xl:inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
             >
               <QrCode className="w-3.5 h-3.5 text-jubilee-gold shrink-0 pointer-events-none" />
               <span className="pointer-events-none">QR</span>

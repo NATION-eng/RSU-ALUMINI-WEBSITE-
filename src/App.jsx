@@ -11,23 +11,44 @@ import DiasporaHub from './components/DiasporaHub';
 import QrSection from './components/QrSection';
 import Footer from './components/Footer';
 
-// Code-split AdminDashboard, SupportDonatePortal & CompendiumAdsPortal for fast initial load
-const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
-const SupportDonatePortal = lazy(() => import('./components/SupportDonatePortal'));
-const CompendiumAdsPortal = lazy(() => import('./components/CompendiumAdsPortal'));
+import SupportDonatePortal from './components/SupportDonatePortal';
+import CompendiumAdsPortal from './components/CompendiumAdsPortal';
 
-const isHashAds = (hash, path) => {
-  return hash === '#compendium-ads' || hash === '#ads' || hash === '#sponsors-ads' || path === '/compendium-ads' || path === '/ads';
+// Code-split AdminDashboard for security and performance
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+
+const isHashAds = (hash = '', path = '') => {
+  const cleanHash = (hash || '').toLowerCase().replace(/^#[/]?/, '').split('?')[0].replace(/\/+$/, '');
+  const cleanPath = (path || '').toLowerCase().replace(/^\/+/, '').split('?')[0].replace(/\/+$/, '');
+  
+  const keywords = [
+    'compendium-ads', 'compendium-ad', 'compendiumads', 'compendium_ads',
+    'compendium', 'ads', 'ad', 'ad-booking', 'ads-booking', 'compendium-booking',
+    'sponsors-ads', 'sponsor-ads', 'book-ad', 'book-ads'
+  ];
+  return keywords.includes(cleanHash) || keywords.includes(cleanPath);
 };
 
-const isHashDonate = (hash, path) => {
-  return hash === '#donate' || hash === '#support' || hash === '#sponsors' || path === '/donate' || path === '/support' || path === '/sponsors';
+const isHashDonate = (hash = '', path = '') => {
+  const cleanHash = (hash || '').toLowerCase().replace(/^#[/]?/, '').split('?')[0].replace(/\/+$/, '');
+  const cleanPath = (path || '').toLowerCase().replace(/^\/+/, '').split('?')[0].replace(/\/+$/, '');
+  
+  const keywords = [
+    'donate', 'support', 'sponsors', 'sponsor', 'donation', 'giving', 'pledge', 'partners'
+  ];
+  return keywords.includes(cleanHash) || keywords.includes(cleanPath);
+};
+
+const isHashAdmin = (hash = '', path = '') => {
+  const cleanHash = (hash || '').toLowerCase().replace(/^#[/]?/, '').split('?')[0].replace(/\/+$/, '');
+  const cleanPath = (path || '').toLowerCase().replace(/^\/+/, '').split('?')[0].replace(/\/+$/, '');
+  return cleanHash === 'admin' || cleanPath === 'admin';
 };
 
 export default function App() {
   const [isAdminView, setIsAdminView] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.location.hash === '#admin' || window.location.pathname === '/admin';
+      return isHashAdmin(window.location.hash, window.location.pathname);
     }
     return false;
   });
@@ -55,7 +76,7 @@ export default function App() {
       startTransition(() => {
         const h = window.location.hash;
         const p = window.location.pathname;
-        setIsAdminView(h === '#admin' || p === '/admin');
+        setIsAdminView(isHashAdmin(h, p));
         const ads = isHashAds(h, p);
         const donate = isHashDonate(h, p) && !ads;
         setIsAdsView(ads);
@@ -132,33 +153,11 @@ export default function App() {
   }
 
   if (isDonateView) {
-    return (
-      <Suspense fallback={
-        <div className="min-h-screen bg-[#051A0F] text-white flex items-center justify-center p-4">
-          <div className="text-center space-y-3">
-            <div className="w-10 h-10 border-2 border-jubilee-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-xs text-stone-300 font-mono tracking-wider">Loading Donate &amp; Support Portal...</p>
-          </div>
-        </div>
-      }>
-        <SupportDonatePortal onBackToSite={handleBackToSite} onOpenAds={handleOpenAds} />
-      </Suspense>
-    );
+    return <SupportDonatePortal onBackToSite={handleBackToSite} onOpenAds={handleOpenAds} />;
   }
 
   if (isAdsView) {
-    return (
-      <Suspense fallback={
-        <div className="min-h-screen bg-[#051A0F] text-white flex items-center justify-center p-4">
-          <div className="text-center space-y-3">
-            <div className="w-10 h-10 border-2 border-jubilee-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-xs text-stone-300 font-mono tracking-wider">Loading Compendium Advertising Portal...</p>
-          </div>
-        </div>
-      }>
-        <CompendiumAdsPortal onBackToSite={handleBackToSite} onOpenDonate={handleOpenDonate} />
-      </Suspense>
-    );
+    return <CompendiumAdsPortal onBackToSite={handleBackToSite} onOpenDonate={handleOpenDonate} />;
   }
 
   return (
@@ -167,7 +166,7 @@ export default function App() {
       <Navbar onOpenAdmin={handleOpenAdmin} onOpenSponsors={handleOpenSponsors} />
 
       {/* 2. Hero Section with Live Countdown and Jubilee Theme */}
-      <Hero />
+      <Hero onOpenSponsors={handleOpenSponsors} />
 
       {/* 3. Milestone Impact Stats Bar */}
       <ImpactStats />
@@ -194,7 +193,7 @@ export default function App() {
       <QrSection />
 
       {/* 11. Grand Footer & Governance Credits */}
-      <Footer onOpenAdmin={handleOpenAdmin} />
+      <Footer onOpenAdmin={handleOpenAdmin} onOpenSponsors={handleOpenSponsors} />
     </div>
   );
 }

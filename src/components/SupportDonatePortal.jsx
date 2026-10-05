@@ -267,13 +267,14 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             {onOpenAds && (
               <button
                 onClick={onOpenAds}
-                className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/40 hover:bg-white/10 transition-all touch-manipulation active:scale-95"
+                className="inline-flex items-center space-x-1 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/40 hover:bg-white/10 transition-all touch-manipulation active:scale-95"
               >
                 <BookOpen className="w-3.5 h-3.5 text-jubilee-gold" />
-                <span>Compendium Ads &rarr;</span>
+                <span className="hidden xs:inline">Compendium Ads &rarr;</span>
+                <span className="xs:hidden">Ads &rarr;</span>
               </button>
             )}
-            <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-jubilee-lightgold px-2.5 sm:px-3 py-1 rounded-full bg-jubilee-gold/10 border border-jubilee-gold/30">
+            <span className="hidden xs:inline-block text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-jubilee-lightgold px-2.5 sm:px-3 py-1 rounded-full bg-jubilee-gold/10 border border-jubilee-gold/30">
               Audited CPC Account
             </span>
           </div>
@@ -281,10 +282,33 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#051A0F] via-[#082817] to-[#0D3821] text-white pt-10 sm:pt-14 pb-14 sm:pb-20 px-3 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="bg-gradient-to-b from-[#051A0F] via-[#082817] to-[#0D3821] text-white pt-8 sm:pt-14 pb-14 sm:pb-20 px-3 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
         
         <div className="relative max-w-5xl mx-auto text-center space-y-4">
+          {/* Top Segmented Dual Portal Switcher */}
+          <div className="flex items-center justify-center pb-1">
+            <div className="inline-flex p-1 rounded-full bg-black/50 border border-jubilee-gold/40 backdrop-blur-md shadow-lg max-w-full">
+              <button
+                type="button"
+                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 shadow-md flex items-center space-x-1.5 cursor-default"
+              >
+                <HeartHandshake className="w-3.5 h-3.5" />
+                <span>Donate &amp; Support</span>
+              </button>
+              {onOpenAds && (
+                <button
+                  type="button"
+                  onClick={onOpenAds}
+                  className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold text-stone-300 hover:text-white hover:bg-white/10 transition-all flex items-center space-x-1.5 active:scale-95 touch-manipulation"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-jubilee-gold" />
+                  <span>Compendium Adverts</span>
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="inline-flex items-center space-x-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-white/[0.07] border border-jubilee-gold/40 text-jubilee-lightgold text-[10px] sm:text-xs font-bold uppercase tracking-widest max-w-full">
             <HeartHandshake className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
             <span className="truncate">45th Jubilee Support &amp; Giving Prospectus</span>

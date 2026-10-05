@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heart, Shield, MessageCircle, ExternalLink, Code } from 'lucide-react';
 
-export default function Footer() {
+export default function Footer({ onOpenAdmin, onOpenSponsors }) {
   return (
     <footer className="bg-stone-950 text-white border-t border-white/10 pt-16 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -46,8 +46,24 @@ export default function Footer() {
               <li><a href="#program" className="hover:text-white transition-colors">Jubilee Schedule</a></li>
               <li><a href="#dp-generator" className="hover:text-white transition-colors">DP Generator</a></li>
               <li><a href="#census-rsvp" className="hover:text-white transition-colors">Alumni Census Directory</a></li>
-              <li><a href="#donate" className="text-jubilee-lightgold font-bold hover:text-white transition-colors">Donate &amp; Support</a></li>
-              <li><a href="#compendium-ads" className="text-jubilee-lightgold font-bold hover:text-white transition-colors">Compendium Ad Booking</a></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onOpenSponsors ? onOpenSponsors('sponsors') : (window.location.hash = 'donate')}
+                  className="text-left text-jubilee-lightgold font-bold hover:text-white transition-colors cursor-pointer"
+                >
+                  Donate &amp; Support
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onOpenSponsors ? onOpenSponsors('ads') : (window.location.hash = 'compendium-ads')}
+                  className="text-left text-jubilee-lightgold font-bold hover:text-white transition-colors cursor-pointer"
+                >
+                  Compendium Ad Booking
+                </button>
+              </li>
               <li><a href="#diaspora" className="hover:text-white transition-colors">Diaspora Network</a></li>
             </ul>
           </div>
@@ -96,10 +112,14 @@ export default function Footer() {
             <span>•</span>
             <a href="#dp-generator" className="hover:text-stone-300 transition-colors">Brand Assets & DP Kit</a>
             <span>•</span>
-            <a href="#admin" className="hover:text-jubilee-lightgold transition-colors inline-flex items-center space-x-1 text-stone-400">
+            <button
+              type="button"
+              onClick={() => onOpenAdmin ? onOpenAdmin() : (window.location.hash = 'admin')}
+              className="hover:text-jubilee-lightgold transition-colors inline-flex items-center space-x-1 text-stone-400 cursor-pointer"
+            >
               <Shield className="w-3 h-3 text-jubilee-gold" />
               <span>CPC Secretariat Admin</span>
-            </a>
+            </button>
           </div>
         </div>
 
