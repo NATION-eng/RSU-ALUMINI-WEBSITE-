@@ -932,7 +932,7 @@ export default function SponsorshipPortal({ onBackToSite, initialTab = 'sponsors
                     </div>
                   </div>
                   <p className="text-[11px] text-stone-300 pt-1">
-                    Booking &amp; Deadlines: Ads can be reserved directly through the fellowship web portal (<span className="font-mono text-jubilee-gold">asfrsu.org</span> / <span className="font-mono text-jubilee-gold">alumni.asfrsu.org</span>) under this Compendium submission page.
+                    Booking &amp; Deadlines: Ads can be reserved directly through the fellowship web portal (<span className="font-mono text-jubilee-gold">asfrsualumni.org</span>) under this Compendium submission page.
                   </p>
                 </div>
 
