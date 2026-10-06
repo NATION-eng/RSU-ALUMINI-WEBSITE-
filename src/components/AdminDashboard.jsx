@@ -1320,7 +1320,7 @@ export default function AdminDashboard({ onBackToSite }) {
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 space-y-5 sm:space-y-8">
         
         {/* Admin Navigation Tabs */}
-        <div className="flex items-center space-x-2.5 border-b border-white/10 pb-3 overflow-x-auto">
+        <div className="flex items-center space-x-2 xs:space-x-2.5 border-b border-white/10 pb-3 overflow-x-auto scrollbar-none px-1">
           <button
             onClick={() => setActiveAdminTab('REGISTRATIONS')}
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${

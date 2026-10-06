@@ -95,7 +95,7 @@ export default function TimelineSection() {
         </div>
 
         {/* Sleek Era Switcher Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 xs:gap-2 sm:gap-3 mb-8 sm:mb-12">
           {eras.map((era, index) => {
             const Icon = era.icon;
             const isSelected = activeEra === index;
@@ -103,7 +103,7 @@ export default function TimelineSection() {
               <button
                 key={index}
                 onClick={() => setActiveEra(index)}
-                className={`flex items-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 touch-manipulation ${
+                className={`flex items-center space-x-1.5 sm:space-x-2 px-3 xs:px-3.5 sm:px-5 py-1.5 xs:py-2 sm:py-3 rounded-full text-[11px] xs:text-xs sm:text-sm font-bold transition-all duration-300 touch-manipulation ${
                   isSelected
                     ? 'bg-emerald-950 text-white shadow-luxury scale-105 border border-jubilee-gold/50'
                     : 'bg-white text-stone-700 border border-stone-200 hover:border-emerald-800/40 hover:bg-stone-50'
@@ -204,7 +204,7 @@ export default function TimelineSection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 xs:gap-2.5 sm:gap-4">
             {ARCHIVAL_GALLERY.map((item) => (
               <div
                 key={item.id}
@@ -243,7 +243,7 @@ export default function TimelineSection() {
           onClick={() => setSelectedPhoto(null)}
         >
           <div 
-            className="bg-[#051A0F] border border-jubilee-gold/40 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-3 sm:space-y-4 max-h-[92vh] overflow-y-auto"
+            className="bg-[#051A0F] border border-jubilee-gold/40 rounded-2xl sm:rounded-3xl max-w-2xl w-full p-3.5 xs:p-4 sm:p-6 shadow-2xl relative text-white space-y-3 sm:space-y-4 max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-3 gap-2">

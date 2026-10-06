@@ -81,7 +81,7 @@ export default function DiasporaHub({ onOpenSponsors }) {
             return (
               <div
                 key={idx}
-                className="luxury-glass rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-white/10 hover:border-jubilee-gold/40 transition-all duration-300 flex flex-col justify-between"
+                className="luxury-glass rounded-2xl sm:rounded-3xl p-4 xs:p-5 sm:p-7 border border-white/10 hover:border-jubilee-gold/40 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">

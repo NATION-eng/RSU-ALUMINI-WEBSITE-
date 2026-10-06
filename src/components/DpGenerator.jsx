@@ -452,7 +452,7 @@ export default function DpGenerator() {
             
             {/* Left Column: Canvas Preview */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[290px] xs:max-w-[340px] sm:max-w-[420px] aspect-square rounded-2xl overflow-hidden shadow-luxury border-4 border-jubilee-gold/60 bg-emerald-950">
+              <div className="relative w-full max-w-[270px] xs:max-w-[320px] sm:max-w-[420px] aspect-square rounded-2xl overflow-hidden shadow-luxury border-4 border-jubilee-gold/60 bg-emerald-950">
                 <canvas
                   ref={canvasRef}
                   className="w-full h-full object-contain cursor-grab active:cursor-grabbing"
@@ -466,7 +466,7 @@ export default function DpGenerator() {
               </p>
 
               {/* Pan & Zoom Controls */}
-              <div className="w-full max-w-[290px] xs:max-w-[340px] sm:max-w-[420px] mt-3.5 bg-white/10 rounded-xl p-3 border border-white/10 space-y-2.5">
+              <div className="w-full max-w-[270px] xs:max-w-[320px] sm:max-w-[420px] mt-3.5 bg-white/10 rounded-xl p-2.5 xs:p-3 border border-white/10 space-y-2.5">
                 <div className="flex items-center justify-between text-xs text-emerald-200 font-semibold">
                   <div className="flex items-center space-x-1">
                     <ZoomIn className="w-3.5 h-3.5 text-jubilee-gold" />
@@ -484,7 +484,7 @@ export default function DpGenerator() {
                   className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-jubilee-gold"
                 />
 
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 text-[11px]">
                   <div>
                     <label className="text-[10px] text-emerald-300 font-medium block mb-0.5">Pan Left/Right:</label>
                     <input

@@ -43,23 +43,23 @@ export default function Navbar({ onOpenSponsors }) {
         ? 'bg-[#051A0F]/95 backdrop-blur-md shadow-luxury border-b border-jubilee-gold/20' 
         : 'bg-[#051A0F]/90 backdrop-blur-md border-b border-white/5'
     }`}>
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-2 sm:gap-4">
+      <div className="max-w-7xl mx-auto px-2 xs:px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-1.5 xs:gap-2 sm:gap-4">
           
           {/* Official 45th Anniversary Logo & Identity */}
-          <a href="#" className="flex items-center space-x-1.5 sm:space-x-2.5 group min-w-0 shrink">
+          <a href="#" className="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2.5 group min-w-0 shrink">
             <img
               src="/official-logo.png"
               alt="ASF RSU 45th Anniversary Logo"
-              className="h-8 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+              className="h-7 xs:h-8 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
             <div className="text-left flex flex-col justify-center min-w-0">
               {/* Mobile text: compact to guarantee zero overflow on all devices */}
               <div className="sm:hidden flex flex-col justify-center min-w-0 leading-tight">
-                <span className="font-retro font-bold text-white text-xs tracking-tight truncate">
+                <span className="font-retro font-bold text-white text-[11px] xs:text-xs tracking-tight truncate">
                   45th Jubilee
                 </span>
-                <span className="text-[9px] text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase truncate">
+                <span className="text-[8px] xs:text-[9px] text-jubilee-lightgold font-sans font-semibold tracking-wider uppercase truncate">
                   Homecoming
                 </span>
               </div>
@@ -87,7 +87,7 @@ export default function Navbar({ onOpenSponsors }) {
                     onOpenSponsors('ads');
                   }
                 }}
-                className="px-2 xl:px-3 py-1.5 xl:py-2 text-xs xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
+                className="px-2 xl:px-3 py-1.5 xl:py-2 text-[11px] xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
               >
                 {link.name}
               </a>
@@ -95,7 +95,7 @@ export default function Navbar({ onOpenSponsors }) {
           </div>
 
           {/* Action Area (Mobile-optimized touch buttons) */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          <div className="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2 shrink-0">
             
             {/* Donate / Support Button */}
             <a
@@ -107,13 +107,13 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="Donate / Support Tiers & Support Matrix"
-              className="inline-flex items-center space-x-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
+              className="inline-flex items-center space-x-1 px-2 py-1.5 xs:px-2.5 xs:py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[10px] xs:text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
-              <HeartHandshake className="w-3.5 h-3.5 text-emerald-950 shrink-0" />
+              <HeartHandshake className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-emerald-950 shrink-0" />
               <span>Donate</span>
             </a>
 
-            {/* Compendium Ad Booking - Visible across ALL screen sizes! */}
+            {/* Compendium Ad Booking - Available on mobile/tablet and ultra-wide screens */}
             <a
               href="#compendium-ads"
               onClick={(e) => {
@@ -123,11 +123,11 @@ export default function Navbar({ onOpenSponsors }) {
                 }
               }}
               title="Compendium Advertising Rates & Space Booking"
-              className="inline-flex items-center space-x-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.08] hover:border-jubilee-gold hover:bg-white/[0.15] transition-all hover:scale-105 active:scale-95 shrink-0 touch-manipulation"
+              className="inline-flex lg:hidden 2xl:inline-flex items-center space-x-1 px-2 py-1.5 xs:px-2.5 xs:py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[10px] xs:text-[11px] sm:text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.08] hover:border-jubilee-gold hover:bg-white/[0.15] transition-all hover:scale-105 active:scale-95 shrink-0 touch-manipulation"
             >
-              <BookOpen className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
-              <span className="hidden xs:inline">Compendium Ads</span>
-              <span className="xs:hidden">Book Ad</span>
+              <BookOpen className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-jubilee-gold shrink-0" />
+              <span className="hidden sm:inline">Compendium Ads</span>
+              <span className="sm:hidden">Ads</span>
             </a>
 
             {/* Quick QR Code Shortcut - Wide desktop only */}
@@ -152,11 +152,11 @@ export default function Navbar({ onOpenSponsors }) {
             {/* Three-Dash Nav Dropdown Button - Mobile & Tablet only (< 1024px) */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl text-jubilee-lightgold hover:text-white bg-white/[0.08] hover:bg-white/15 border border-jubilee-gold/30 hover:border-jubilee-gold focus:outline-none transition-all duration-200 shrink-0 touch-manipulation active:scale-95 shadow-sm"
+              className="lg:hidden flex items-center justify-center w-8 h-8 xs:w-9 xs:h-9 rounded-xl text-jubilee-lightgold hover:text-white bg-white/[0.08] hover:bg-white/15 border border-jubilee-gold/30 hover:border-jubilee-gold focus:outline-none transition-all duration-200 shrink-0 touch-manipulation active:scale-95 shadow-sm"
               aria-label="Toggle Navigation Menu"
               aria-expanded={isOpen}
             >
-              {isOpen ? <X className="w-5 h-5 text-jubilee-gold" /> : <Menu className="w-5 h-5 text-jubilee-gold" />}
+              {isOpen ? <X className="w-4 xs:w-5 h-4 xs:h-5 text-jubilee-gold" /> : <Menu className="w-4 xs:w-5 h-4 xs:h-5 text-jubilee-gold" />}
             </button>
           </div>
 
@@ -165,7 +165,7 @@ export default function Navbar({ onOpenSponsors }) {
 
       {/* Mobile Drawer Menu (Full slide down with glass blur) */}
       {isOpen && (
-        <div className="lg:hidden bg-[#051A0F]/98 border-b border-jubilee-gold/30 px-4 pt-3 pb-6 space-y-1.5 mt-2 shadow-2xl backdrop-blur-xl animate-fade-in">
+        <div className="lg:hidden bg-[#051A0F]/98 border-b border-jubilee-gold/30 px-4 pt-3 pb-8 space-y-1.5 mt-2 shadow-2xl backdrop-blur-xl animate-fade-in max-h-[82vh] overflow-y-auto">
           {navLinks.map((link) => {
             const Icon = link.icon;
             return (

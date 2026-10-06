@@ -514,10 +514,10 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
           </div>
 
           {/* 6 Ad Sizes Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             
             {/* 1. Outer Back Cover */}
-            <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+            <div className={`rounded-2xl sm:rounded-3xl p-4 xs:p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
               selectedTier === 'ad_back_cover'
                 ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
                 : 'border-stone-200 bg-white hover:border-amber-400 text-stone-900 shadow-md'
@@ -873,7 +873,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
 
         {/* CHECKOUT & PAYMENT INTEGRATION FORM */}
         <section id="ads-checkout-form" className="mt-12 sm:mt-16 max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-stone-200 shadow-luxury">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 xs:p-6 sm:p-10 border border-stone-200 shadow-luxury">
             
             <div className="border-b border-stone-100 pb-5 mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div>

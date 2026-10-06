@@ -152,21 +152,21 @@ export default function ScheduleSection() {
         </div>
 
         {/* Day Navigation Tabs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 xs:gap-2.5 sm:gap-3 mb-6 sm:mb-8">
           {schedule.map((item, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedDay(idx)}
-              className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all duration-300 border touch-manipulation ${
+              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all duration-300 border touch-manipulation ${
                 selectedDay === idx
                   ? 'bg-emerald-950 text-white border-jubilee-gold/50 shadow-luxury scale-[1.02]'
                   : 'bg-white text-stone-700 border-stone-200 hover:border-emerald-800/40 hover:bg-stone-50'
               }`}
             >
-              <span className="block text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold opacity-75 truncate">
+              <span className="block text-[9px] xs:text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold opacity-75 truncate">
                 {item.date}
               </span>
-              <span className="block text-sm sm:text-lg font-retro font-bold mt-0.5 leading-snug truncate">
+              <span className="block text-xs xs:text-sm sm:text-lg font-retro font-bold mt-0.5 leading-snug truncate">
                 {item.day}
               </span>
             </button>
@@ -174,7 +174,7 @@ export default function ScheduleSection() {
         </div>
 
         {/* Selected Day Program Detail */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-stone-200/90 shadow-luxury">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 xs:p-5 sm:p-10 border border-stone-200/90 shadow-luxury">
           <div className="border-b border-stone-100 pb-5 mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
             <div>
               <span className="inline-block px-3 py-1 rounded-full bg-emerald-900/10 text-emerald-900 text-xs font-bold uppercase tracking-wider mb-2">

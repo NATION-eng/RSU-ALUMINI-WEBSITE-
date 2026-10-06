@@ -164,7 +164,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-luxury p-4 sm:p-10 space-y-6 sm:space-y-8">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-luxury p-3.5 xs:p-5 sm:p-10 space-y-5 sm:space-y-8">
             
             {submitError && (
               <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2">

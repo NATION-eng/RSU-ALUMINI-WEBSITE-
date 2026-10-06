@@ -214,7 +214,7 @@ export default function CommunityPhotoUploadModal({ isOpen, onClose, onUploadSuc
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in">
       <div 
-        className="bg-[#051A0F] border-2 border-jubilee-gold/50 rounded-3xl max-w-xl w-full p-5 sm:p-8 shadow-2xl relative text-white my-auto max-h-[92vh] overflow-y-auto"
+        className="bg-[#051A0F] border-2 border-jubilee-gold/50 rounded-2xl sm:rounded-3xl max-w-xl w-full p-4 xs:p-5 sm:p-8 shadow-2xl relative text-white my-auto max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}

@@ -386,7 +386,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 xs:gap-2.5 sm:gap-3 max-w-5xl mx-auto">
             {/* Pillar 1 Tab */}
             <button
               type="button"
@@ -395,7 +395,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                 setSelectedTier('celebration');
                 setCustomAmount('50000');
               }}
-              className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'celebration'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
                   : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
@@ -403,17 +403,17 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             >
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Radio className={`w-4 h-4 ${activePillar === 'celebration' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[10px] font-mono font-bold uppercase opacity-80">Pillar 1</span>
+                  <Radio className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'celebration' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 1</span>
                 </div>
-                <div className="font-retro font-bold text-sm sm:text-base leading-snug">
+                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
                   45th Celebration
                 </div>
-                <div className="text-[11px] opacity-75 mt-0.5 font-light">
+                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
                   Media &amp; Live Stream
                 </div>
               </div>
-              <div className={`mt-3 pt-2 border-t text-[11px] font-mono font-bold ${
+              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'celebration' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
                 Goal: ₦15M • 63%
@@ -428,7 +428,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                 setSelectedTier('homecoming');
                 setCustomAmount('50000');
               }}
-              className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'homecoming'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
                   : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
@@ -436,17 +436,17 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             >
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Users className={`w-4 h-4 ${activePillar === 'homecoming' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[10px] font-mono font-bold uppercase opacity-80">Pillar 2</span>
+                  <Users className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'homecoming' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 2</span>
                 </div>
-                <div className="font-retro font-bold text-sm sm:text-base leading-snug">
+                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
                   Homecoming
                 </div>
-                <div className="text-[11px] opacity-75 mt-0.5 font-light">
+                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
                   Hospitality &amp; Setup
                 </div>
               </div>
-              <div className={`mt-3 pt-2 border-t text-[11px] font-mono font-bold ${
+              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'homecoming' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
                 Goal: ₦12.5M • 62%
@@ -461,7 +461,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                 setSelectedTier('trust_fund');
                 setCustomAmount('50000');
               }}
-              className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'trust_fund'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
                   : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
@@ -469,17 +469,17 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             >
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <GraduationCap className={`w-4 h-4 ${activePillar === 'trust_fund' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[10px] font-mono font-bold uppercase opacity-80">Pillar 3</span>
+                  <GraduationCap className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'trust_fund' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 3</span>
                 </div>
-                <div className="font-retro font-bold text-sm sm:text-base leading-snug">
+                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
                   Education Trust
                 </div>
-                <div className="text-[11px] opacity-75 mt-0.5 font-light">
+                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
                   Student Scholarships
                 </div>
               </div>
-              <div className={`mt-3 pt-2 border-t text-[11px] font-mono font-bold ${
+              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'trust_fund' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
                 Goal: ₦20M • 56%
@@ -494,7 +494,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                 setSelectedTier('centre_of_influence');
                 setCustomAmount('150000');
               }}
-              className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'centre_of_influence'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
                   : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
@@ -502,17 +502,17 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             >
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Landmark className={`w-4 h-4 ${activePillar === 'centre_of_influence' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[10px] font-mono font-bold uppercase opacity-80">Pillar 4</span>
+                  <Landmark className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'centre_of_influence' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 4</span>
                 </div>
-                <div className="font-retro font-bold text-sm sm:text-base leading-snug">
+                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
                   Centre of Influence
                 </div>
-                <div className="text-[11px] opacity-75 mt-0.5 font-light">
+                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
                   3-Wing Campus Complex
                 </div>
               </div>
-              <div className={`mt-3 pt-2 border-t text-[11px] font-mono font-bold ${
+              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'centre_of_influence' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
                 Goal: ₦50M • 46%
@@ -527,7 +527,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                 setSelectedTier('platinum');
                 setCustomAmount('2000000');
               }}
-              className={`p-3.5 sm:p-4 rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between col-span-2 lg:col-span-1 ${
+              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between col-span-2 lg:col-span-1 ${
                 activePillar === 'corporate_tiers'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
                   : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
@@ -535,17 +535,17 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             >
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Award className={`w-4 h-4 ${activePillar === 'corporate_tiers' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[10px] font-mono font-bold uppercase opacity-80">Corporate</span>
+                  <Award className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'corporate_tiers' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Corporate</span>
                 </div>
-                <div className="font-retro font-bold text-sm sm:text-base leading-snug">
+                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
                   Executive Tiers
                 </div>
-                <div className="text-[11px] opacity-75 mt-0.5 font-light">
+                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
                   5 General Matrix Tiers
                 </div>
               </div>
-              <div className={`mt-3 pt-2 border-t text-[11px] font-mono font-bold ${
+              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'corporate_tiers' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
                 ₦100K – ₦2M+
@@ -986,7 +986,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
 
         {/* CHECKOUT & PAYMENT INTEGRATION FORM (Directly follows overview) */}
         <section id="donate-checkout-form" className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-stone-200 shadow-luxury">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 xs:p-6 sm:p-10 border border-stone-200 shadow-luxury">
             
             <div className="border-b border-stone-100 pb-5 mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div>

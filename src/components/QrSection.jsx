@@ -161,19 +161,19 @@ export default function QrSection() {
   return (
     <section id="qr-share" className="py-16 sm:py-20 px-3 sm:px-6 lg:px-8 bg-[#051A0F] text-white relative vintage-texture border-t border-white/10">
       <div className="max-w-4xl mx-auto">
-        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-5 sm:p-10 border-2 border-jubilee-gold/40 shadow-luxury flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-4 xs:p-5 sm:p-10 border-2 border-jubilee-gold/40 shadow-luxury flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
           
           {/* Left Column: QR Code Display Card */}
           <div className="shrink-0 flex flex-col items-center">
-            <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-2xl border-4 border-jubilee-gold/50 max-w-[220px] sm:max-w-[240px]">
+            <div className="bg-white rounded-2xl p-3 xs:p-3.5 sm:p-4 shadow-2xl border-4 border-jubilee-gold/50 max-w-[200px] xs:max-w-[220px] sm:max-w-[240px]">
               {qrDataUrl ? (
                 <img
                   src={qrDataUrl}
                   alt="Official 45th Jubilee QR Code"
-                  className="w-44 h-44 sm:w-52 sm:h-52 object-contain"
+                  className="w-36 h-36 xs:w-44 xs:h-44 sm:w-52 sm:h-52 object-contain"
                 />
               ) : (
-                <div className="w-44 h-44 sm:w-48 sm:h-48 flex items-center justify-center text-stone-500 text-xs">
+                <div className="w-36 h-36 xs:w-44 xs:h-44 sm:w-48 sm:h-48 flex items-center justify-center text-stone-500 text-xs">
                   Generating QR...
                 </div>
               )}

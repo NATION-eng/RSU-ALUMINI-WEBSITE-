@@ -91,7 +91,7 @@ export default function Hero() {
         </p>
 
         {/* Official Date Badge (Clean wrap on all mobile viewports) */}
-        <div className="inline-flex items-center space-x-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl bg-emerald-900/60 border border-jubilee-gold/40 text-jubilee-lightgold text-[11px] sm:text-xs font-bold shadow-lg mb-6 sm:mb-8 backdrop-blur-sm max-w-full">
+        <div className="inline-flex items-center space-x-1.5 xs:space-x-2 px-3 xs:px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl bg-emerald-900/60 border border-jubilee-gold/40 text-jubilee-lightgold text-[10px] xs:text-[11px] sm:text-xs font-bold shadow-lg mb-6 sm:mb-8 backdrop-blur-sm max-w-full text-center">
           <Calendar className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
           <span className="tracking-wide leading-tight">
             NOV 13–15, 2026 • GRAND JUBILEE: SATURDAY, NOV 14
@@ -105,7 +105,7 @@ export default function Hero() {
         </p>
 
         {/* Luxury Grand Countdown Container (Mobile 4-grid responsive) */}
-        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-4 sm:p-7 max-w-xl mx-auto mb-8 sm:mb-10 shadow-luxury border border-jubilee-gold/30 relative overflow-hidden">
+        <div className="luxury-glass rounded-2xl sm:rounded-3xl p-3 xs:p-4 sm:p-7 max-w-xl mx-auto mb-8 sm:mb-10 shadow-luxury border border-jubilee-gold/30 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-jubilee-gold to-transparent"></div>
           
           <div className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-emerald-300 font-bold mb-3 sm:mb-4 flex items-center justify-center space-x-1.5">
@@ -113,18 +113,18 @@ export default function Hero() {
             <span>Countdown to Grand Jubilee Sabbath</span>
           </div>
           
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-3">
+          <div className="grid grid-cols-4 gap-1 xs:gap-1.5 sm:gap-3">
             {[
               { label: 'Days', value: timeLeft.days },
               { label: 'Hours', value: timeLeft.hours },
               { label: 'Mins', value: timeLeft.minutes },
               { label: 'Secs', value: timeLeft.seconds },
             ].map((item, idx) => (
-              <div key={idx} className="bg-black/35 border border-white/[0.08] rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center">
-                <span className="block text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-jubilee-gold font-retro tracking-tight leading-tight">
+              <div key={idx} className="bg-black/35 border border-white/[0.08] rounded-xl sm:rounded-2xl p-1.5 xs:p-2 sm:p-3.5 text-center">
+                <span className="block text-xl xs:text-2xl sm:text-4xl md:text-5xl font-black text-jubilee-gold font-retro tracking-tight leading-tight">
                   {String(item.value).padStart(2, '0')}
                 </span>
-                <span className="text-[9px] sm:text-xs text-emerald-200/80 uppercase tracking-widest font-sans font-semibold mt-0.5 sm:mt-1 block">
+                <span className="text-[8px] xs:text-[9px] sm:text-xs text-emerald-200/80 uppercase tracking-widest font-sans font-semibold mt-0.5 sm:mt-1 block">
                   {item.label}
                 </span>
               </div>

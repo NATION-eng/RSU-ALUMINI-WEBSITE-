@@ -331,7 +331,7 @@ export default function MediaSection() {
             </div>
 
             {/* Approved Community Photo Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {approvedPhotos.map((photo, idx) => (
                 <div 
                   key={idx}

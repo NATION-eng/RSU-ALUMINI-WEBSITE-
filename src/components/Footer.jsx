@@ -3,11 +3,11 @@ import { Heart, Shield, MessageCircle, ExternalLink, Code } from 'lucide-react';
 
 export default function Footer({ onOpenAdmin, onOpenSponsors }) {
   return (
-    <footer className="bg-stone-950 text-white border-t border-white/10 pt-16 pb-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-stone-950 text-white border-t border-white/10 pt-12 xs:pt-16 pb-10 sm:pb-12 px-3 xs:px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-white/10">
           
           {/* Fellowship Identity */}
           <div className="lg:col-span-5 space-y-4">

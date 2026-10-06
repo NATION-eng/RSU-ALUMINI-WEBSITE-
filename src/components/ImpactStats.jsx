@@ -31,8 +31,8 @@ export default function ImpactStats() {
 
   return (
     <section className="relative z-20 -mt-8 sm:-mt-12 max-w-5xl mx-auto px-3 sm:px-6">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-luxury border border-stone-200/90 p-4 sm:p-8 backdrop-blur-md">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 sm:divide-x sm:divide-stone-100">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-luxury border border-stone-200/90 p-3.5 xs:p-4 sm:p-8 backdrop-blur-md">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8 sm:divide-x sm:divide-stone-100">
           {stats.map((stat, idx) => (
             <div
               key={idx}
@@ -40,11 +40,11 @@ export default function ImpactStats() {
                 idx > 0 ? 'sm:pl-6' : ''
               }`}
             >
-              <div className="flex items-baseline space-x-1.5 mb-1">
-                <span className="font-retro text-3xl sm:text-4xl lg:text-5xl font-black text-emerald-950 group-hover:text-emerald-800 transition-colors">
+              <div className="flex items-baseline space-x-1 xs:space-x-1.5 mb-1">
+                <span className="font-retro text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-emerald-950 group-hover:text-emerald-800 transition-colors">
                   {stat.num}
                 </span>
-                <span className="font-editorial italic text-base sm:text-lg text-jubilee-darkgold font-semibold">
+                <span className="font-editorial italic text-sm xs:text-base sm:text-lg text-jubilee-darkgold font-semibold">
                   {stat.unit}
                 </span>
               </div>
