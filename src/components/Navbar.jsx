@@ -28,9 +28,9 @@ export default function Navbar({ onOpenSponsors }) {
   }, []);
 
   const navLinks = [
+    { name: 'Accommodation', href: '#accommodation', icon: Building2 },
     { name: 'Heritage', href: '#heritage', icon: Shield },
     { name: 'Program', href: '#program', icon: Calendar },
-    { name: 'Where to Stay', href: '#where-to-stay', icon: Building2 },
     { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon },
     { name: 'Media Hub', href: '#media-hub', icon: Video },
     { name: 'Diaspora', href: '#diaspora', icon: Globe },

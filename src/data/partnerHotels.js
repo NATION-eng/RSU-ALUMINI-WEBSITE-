@@ -169,8 +169,8 @@ export const TRAVEL_LOGISTICS_ADVISORY = {
     security: 'Designated secure alumni parking zones near the RSU Chapel Pavilion and Amphitheatre with 24-hour campus security marshals and official event access stickers.'
   },
   hotline: {
-    contactPerson: 'Eld. Jephta Ekpor (CPC Hospitality & Protocol Directorate)',
-    phone: '+234 803 000 0000',
-    email: 'ekporjephta@gmail.com / Asfrsu@gmail.com'
+    contactPerson: 'ENG. ELD JONATHAN DAVID JUNIOR (CPC Accommodation & Hospitality Coordinator)',
+    phone: '+234 706 383 6336',
+    email: 'Jonathandavidjunior@gmail.com'
   }
 };

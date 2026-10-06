@@ -10,8 +10,12 @@ import { supabase } from '../lib/supabase';
 import { TIER_DETAILS } from '../lib/emailTemplates';
 import { sendSponsorAcknowledgmentEmail } from '../lib/emailService';
 import { FUNDRAISING_PILLARS } from '../data/fundraisingPillars';
+import { useLivePillars } from '../lib/dynamicPillarsService';
 
 export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
+  // Live dynamic pillars data subscription (Supabase + LocalStorage)
+  const { pillars: livePillars, totalRaised, totalDonors, totalTarget, overallPercentage } = useLivePillars();
+
   // 4 Core Fundraising Pillars + Corporate Tiers
   const [activePillar, setActivePillar] = useState('celebration'); // 'celebration' | 'homecoming' | 'trust_fund' | 'centre_of_influence' | 'corporate_tiers'
   const [selectedTier, setSelectedTier] = useState('celebration');
@@ -254,9 +258,14 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
         origin: { y: 0.55 }
       });
     }
+
+    // Trigger instant real-time update across all subscribed components
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('asf-donation-recorded', { detail: paymentRecord }));
+    }
   };
 
-  const currentPillarData = FUNDRAISING_PILLARS[activePillar];
+  const currentPillarData = livePillars?.[activePillar] || FUNDRAISING_PILLARS[activePillar];
 
   return (
     <div className="min-h-screen bg-[#FAF7EE] text-[#141E18] font-sans antialiased selection:bg-emerald-900 selection:text-amber-200">
@@ -416,7 +425,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'celebration' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦15M • 63%
+                Goal: ₦15M • {livePillars?.celebration?.percentage ?? 63}%
               </div>
             </button>
 
@@ -449,7 +458,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'homecoming' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦12.5M • 62%
+                Goal: ₦12.5M • {livePillars?.homecoming?.percentage ?? 62}%
               </div>
             </button>
 
@@ -482,7 +491,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'trust_fund' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦20M • 56%
+                Goal: ₦20M • {livePillars?.trust_fund?.percentage ?? 56}%
               </div>
             </button>
 
@@ -515,7 +524,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'centre_of_influence' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦50M • 46%
+                Goal: ₦50M • {livePillars?.centre_of_influence?.percentage ?? 46}%
               </div>
             </button>
 
@@ -567,9 +576,15 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                 {/* Header Row */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
                   <div>
-                    <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/40 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
-                      <Sparkles className="w-3.5 h-3.5 text-jubilee-gold" />
-                      <span>{currentPillarData.badge}</span>
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/40 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                        <Sparkles className="w-3.5 h-3.5 text-jubilee-gold" />
+                        <span>{currentPillarData.badge}</span>
+                      </div>
+                      <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Live Data Sync</span>
+                      </div>
                     </div>
 
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-retro font-bold text-white tracking-tight">
@@ -601,7 +616,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                     <div className="flex items-center space-x-3 text-stone-300">
                       <span>Donors: <strong className="text-white">{currentPillarData.donorsCount}</strong></span>
                       <span className="text-jubilee-gold font-bold text-base sm:text-lg">
-                        {Math.round((currentPillarData.raised / currentPillarData.target) * 100)}% Funded
+                        {currentPillarData.percentage ?? Math.round((currentPillarData.raised / currentPillarData.target) * 100)}% Funded
                       </span>
                     </div>
                   </div>
@@ -610,7 +625,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                   <div className="w-full h-4 sm:h-5 rounded-full bg-black/60 border border-white/20 p-0.5 overflow-hidden">
                     <div 
                       className="h-full rounded-full bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 shadow-gold-glow transition-all duration-1000"
-                      style={{ width: `${Math.min(100, Math.round((currentPillarData.raised / currentPillarData.target) * 100))}%` }}
+                      style={{ width: `${Math.min(100, currentPillarData.percentage ?? Math.round((currentPillarData.raised / currentPillarData.target) * 100))}%` }}
                     />
                   </div>
 

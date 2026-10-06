@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Image as ImageIcon, UserCheck, ArrowRight } from 'lucide-react';
+import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Building2 } from 'lucide-react';
 
 export default function Hero() {
   // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
@@ -133,22 +133,30 @@ export default function Hero() {
         </div>
 
         {/* Mobile Action Triggers (Full width thumb-friendly on phones) */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 px-3">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-3 flex-wrap">
           <a
             href="#census-rsvp"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-8 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow active:scale-[0.98] transition-all duration-200 font-sans"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow active:scale-[0.98] transition-all duration-200 font-sans"
           >
             <UserCheck className="w-4 h-4 text-emerald-950 shrink-0" />
-            <span className="tracking-wide">Alumni Census & RSVP</span>
+            <span className="tracking-wide">Alumni Census &amp; RSVP</span>
             <ArrowRight className="w-4 h-4" />
           </a>
 
           <a
+            href="#accommodation"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-bold bg-white/10 hover:bg-white/20 active:scale-[0.98] border border-jubilee-gold/50 text-jubilee-lightgold backdrop-blur-md transition-all duration-200 shadow-md font-sans"
+          >
+            <Building2 className="w-4 h-4 text-jubilee-gold shrink-0" />
+            <span className="tracking-wide">Accommodation</span>
+          </a>
+
+          <a
             href="#dp-generator"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-bold bg-white/[0.05] hover:bg-white/[0.1] active:scale-[0.98] border border-jubilee-gold/40 text-white backdrop-blur-md transition-all duration-200 shadow-md font-sans"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-bold bg-white/[0.05] hover:bg-white/[0.1] active:scale-[0.98] border border-white/20 text-white backdrop-blur-md transition-all duration-200 shadow-md font-sans"
           >
             <ImageIcon className="w-4 h-4 text-jubilee-gold shrink-0" />
-            <span className="tracking-wide">Create "I Will Be There" DP</span>
+            <span className="tracking-wide">Create 45th DP</span>
           </a>
         </div>
 

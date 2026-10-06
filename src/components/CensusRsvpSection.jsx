@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Award, HeartHandshake, BookOpen } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Award, HeartHandshake, BookOpen, MessageCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 import { WORLD_COUNTRIES } from '../data/countries';
@@ -149,6 +149,15 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href="https://chat.whatsapp.com/L7tCTNupT6y4BEg4my964K"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-xs font-black bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white hover:brightness-110 shadow-md transition-all active:scale-95"
+              >
+                <MessageCircle className="w-4 h-4 text-white shrink-0 fill-current" />
+                <span>Join Our WhatsApp Group</span>
+              </a>
               <a
                 href="#dp-generator"
                 className="w-full sm:w-auto px-6 py-3 rounded-full text-xs font-bold bg-emerald-950 text-white hover:bg-emerald-900 shadow-md transition-all"
@@ -412,6 +421,32 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                   placeholder="Share a sentence or memory about your fellowship days at RSU."
                   className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none text-sm font-sans"
                 />
+              </div>
+
+              {/* Official Alumni WhatsApp Group Call-To-Action */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#051A0F] via-[#092B19] to-[#0A2E1A] text-white border border-jubilee-gold/40 shadow-luxury flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="space-y-1 text-center sm:text-left">
+                  <div className="flex items-center justify-center sm:justify-start space-x-2 text-jubilee-lightgold text-xs font-bold uppercase tracking-wider font-mono">
+                    <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Official 45th Jubilee Community</span>
+                  </div>
+                  <h4 className="text-sm font-retro font-bold text-white">
+                    Join the Official Alumni WhatsApp Group
+                  </h4>
+                  <p className="text-xs text-emerald-100/80 font-light max-w-lg">
+                    Connect with fellow alumni, your graduating set, and receive instant homecoming announcements and logistics updates.
+                  </p>
+                </div>
+
+                <a
+                  href="https://chat.whatsapp.com/L7tCTNupT6y4BEg4my964K"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-full text-xs font-black bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#20ba5a] hover:to-[#0e7568] text-white shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0 touch-manipulation border border-emerald-400/30"
+                >
+                  <MessageCircle className="w-4 h-4 text-white shrink-0 fill-current" />
+                  <span>Join Our WhatsApp Group</span>
+                </a>
               </div>
 
             </div>
