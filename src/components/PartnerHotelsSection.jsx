@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Building2, MapPin, Clock, Phone, MessageSquare, ExternalLink, 
-  Copy, Check, Star, ShieldCheck, Plane, Car, Sparkles, Tag, ChevronRight, Info
+  Copy, Check, Star, ShieldCheck, Plane, Car, Sparkles, Tag, ChevronRight, Info, Mail
 } from 'lucide-react';
 import { PARTNER_HOTELS, PARTNER_DISCOUNT_CODE, TRAVEL_LOGISTICS_ADVISORY } from '../data/partnerHotels';
 
@@ -24,7 +24,8 @@ export default function PartnerHotelsSection() {
   });
 
   return (
-    <section id="where-to-stay" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-[#FAF7EE] text-[#141E18] relative">
+    <section id="accommodation" className="py-16 sm:py-24 px-3 sm:px-6 lg:px-8 bg-[#FAF7EE] text-[#141E18] relative">
+      <span id="where-to-stay" className="sr-only" />
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
@@ -35,12 +36,58 @@ export default function PartnerHotelsSection() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-emerald-950 tracking-tight">
-            Where to Stay in Port Harcourt
+            Accommodation in Port Harcourt
           </h2>
 
           <p className="text-stone-600 text-xs sm:text-base font-light leading-relaxed px-2">
             To ensure a seamless, restful experience for physical delegates and diaspora alumni arriving for the 45th Jubilee, we have partnered with top-rated hotels offering verified security, proximity, and special conference tariffs.
           </p>
+        </div>
+
+        {/* Official Accommodation Coordinator Contact Card */}
+        <div className="max-w-4xl mx-auto mb-8 p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#051A0F] via-[#092B19] to-[#0D3821] text-white border-2 border-jubilee-gold/70 shadow-luxury relative overflow-hidden">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-5 relative z-10 text-center md:text-left">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/40 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-jubilee-gold" />
+                <span>Accommodation &amp; Hospitality Directorate</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl font-retro font-bold text-white">
+                ENG. ELD JONATHAN DAVID JUNIOR
+              </h3>
+              <p className="text-xs sm:text-sm text-stone-300 font-light max-w-xl">
+                For room reservations, alumni set blocks, or airport arrival assistance, please contact the Accommodation Coordinator directly:
+              </p>
+            </div>
+
+            <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-2.5 shrink-0 w-full md:w-auto">
+              <a
+                href="tel:+2347063836336"
+                className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-jubilee-gold/50 text-white font-mono font-bold text-xs transition-all active:scale-95 touch-manipulation"
+              >
+                <Phone className="w-3.5 h-3.5 text-jubilee-gold" />
+                <span>+234 706 383 6336</span>
+              </a>
+
+              <a
+                href="https://wa.me/2347063836336?text=Hello%20Eng%20Jonathan%2C%20I%20am%20attending%20the%20ASF%20RSU%2045th%20Jubilee%20and%20need%20assistance%20with%20accommodation"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs transition-all active:scale-95 touch-manipulation shadow-md"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-white fill-current" />
+                <span>WhatsApp</span>
+              </a>
+
+              <a
+                href="mailto:Jonathandavidjunior@gmail.com?subject=ASF%20RSU%2045th%20Jubilee%20Accommodation%20Inquiry"
+                className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-jubilee-lightgold font-sans text-xs font-semibold transition-all active:scale-95 touch-manipulation"
+              >
+                <Mail className="w-3.5 h-3.5 text-jubilee-gold" />
+                <span>Email</span>
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Exclusive Delegate Discount Code Banner */}
@@ -286,7 +333,7 @@ export default function PartnerHotelsSection() {
               </p>
               <div className="text-[11px] space-y-1 pt-1 font-mono text-emerald-200">
                 <div>Phone: <a href={`tel:${TRAVEL_LOGISTICS_ADVISORY.hotline.phone}`} className="underline">{TRAVEL_LOGISTICS_ADVISORY.hotline.phone}</a></div>
-                <div>Email: <a href="mailto:ekporjephta@gmail.com" className="underline">ekporjephta@gmail.com</a></div>
+                <div>Email: <a href="mailto:Jonathandavidjunior@gmail.com" className="underline hover:text-white">Jonathandavidjunior@gmail.com</a></div>
               </div>
             </div>
           </div>

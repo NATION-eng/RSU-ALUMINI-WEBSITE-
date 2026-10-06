@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode, Award, BookOpen, HeartHandshake, Building2 } from 'lucide-react';
 
-export default function Navbar({ onOpenSponsors }) {
+export default function Navbar({ onOpenSponsors, onOpenMedia }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -85,6 +85,9 @@ export default function Navbar({ onOpenSponsors }) {
                   if (link.href === '#compendium-ads' && onOpenSponsors) {
                     e.preventDefault();
                     onOpenSponsors('ads');
+                  } else if (link.href === '#media-hub' && onOpenMedia) {
+                    e.preventDefault();
+                    onOpenMedia();
                   }
                 }}
                 className="px-2 xl:px-3 py-1.5 xl:py-2 text-[11px] xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
@@ -177,6 +180,9 @@ export default function Navbar({ onOpenSponsors }) {
                   if (link.href === '#compendium-ads' && onOpenSponsors) {
                     e.preventDefault();
                     onOpenSponsors('ads');
+                  } else if (link.href === '#media-hub' && onOpenMedia) {
+                    e.preventDefault();
+                    onOpenMedia();
                   }
                 }}
                 className="flex items-center space-x-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:bg-white/10 hover:text-white font-sans active:bg-emerald-900/50 transition-colors"
