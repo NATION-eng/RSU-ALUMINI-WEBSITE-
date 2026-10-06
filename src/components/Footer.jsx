@@ -44,7 +44,9 @@ export default function Footer({ onOpenAdmin, onOpenSponsors }) {
             <ul className="space-y-2 text-xs text-stone-400">
               <li><a href="#heritage" className="hover:text-white transition-colors">45-Year Heritage</a></li>
               <li><a href="#program" className="hover:text-white transition-colors">Jubilee Schedule</a></li>
+              <li><a href="#where-to-stay" className="hover:text-white transition-colors">Where to Stay (Hotels)</a></li>
               <li><a href="#dp-generator" className="hover:text-white transition-colors">DP Generator</a></li>
+              <li><a href="#media-hub" className="hover:text-white transition-colors">Media &amp; Living Archive</a></li>
               <li><a href="#census-rsvp" className="hover:text-white transition-colors">Alumni Census Directory</a></li>
               <li>
                 <button

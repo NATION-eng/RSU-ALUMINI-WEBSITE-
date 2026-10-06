@@ -154,6 +154,54 @@ export const TIER_DETAILS = {
       'Official letter of appreciation from the Alumni Advisory Council',
       'Direct contribution towards student welfare & 45th Jubilee projects'
     ]
+  },
+  celebration: {
+    name: '45th Anniversary Celebration Pillar',
+    minAmount: 25000,
+    badge: '🎥 Media & Celebration Partner',
+    color: '#D4AF37',
+    leadTime: 'Production Directorate Liaison',
+    perks: [
+      'Directly funds bonded 4K multi-camera livestream reach for worldwide diaspora alumni',
+      'Support for 45-year commemorative historical documentary production & studio jingles',
+      'Name credit in official anniversary broadcast credits and permanent digital cloud archive'
+    ]
+  },
+  homecoming: {
+    name: 'Homecoming Weekend Pillar',
+    minAmount: 20000,
+    badge: '🤝 Hospitality & Logistics Partner',
+    color: '#F59E0B',
+    leadTime: 'Hospitality Directorate Liaison',
+    perks: [
+      'Directly covers delegate welcome materials, registration kits & commemorative badges',
+      'Subsidizes intergenerational Sabbath Love Feast banqueting for visiting alumni and students',
+      'Recognition in the official homecoming weekend guide and plenary roll call'
+    ]
+  },
+  trust_fund: {
+    name: 'ASF-RSU Education Trust Fund Pillar',
+    minAmount: 25000,
+    badge: '🎓 Education Trust Fund Benefactor',
+    color: '#0284C7',
+    leadTime: 'Scholarship Board Verification',
+    perks: [
+      'Direct payment of school fee subsidies for indigent Adventist undergraduates at RSU',
+      'Funding final-year undergraduate laboratory research projects & emergency student welfare',
+      'Permanent inscription on the Education Trust Fund Roll of Honor'
+    ]
+  },
+  centre_of_influence: {
+    name: 'Physical Legacy Project (Centre of Influence)',
+    minAmount: 50000,
+    badge: '🏛️ Centre of Influence Builder',
+    color: '#059669',
+    leadTime: 'Infrastructure Board Verification',
+    perks: [
+      'Direct contribution toward building the 3-winged ASF-RSU Centre of Influence complex on campus',
+      'Permanent inscription on the Centre of Influence Founder’s Wall & commemorative plaza',
+      'VIP ceremonial invitation to the ground-breaking and foundation stone laying ceremonies'
+    ]
   }
 };
 

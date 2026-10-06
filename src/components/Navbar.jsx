@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode, Award, BookOpen, HeartHandshake } from 'lucide-react';
+import { Menu, X, Calendar, UserCheck, Globe, Image as ImageIcon, Video, Shield, QrCode, Award, BookOpen, HeartHandshake, Building2 } from 'lucide-react';
 
 export default function Navbar({ onOpenSponsors }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +30,7 @@ export default function Navbar({ onOpenSponsors }) {
   const navLinks = [
     { name: 'Heritage', href: '#heritage', icon: Shield },
     { name: 'Program', href: '#program', icon: Calendar },
+    { name: 'Where to Stay', href: '#where-to-stay', icon: Building2 },
     { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon },
     { name: 'Media Hub', href: '#media-hub', icon: Video },
     { name: 'Diaspora', href: '#diaspora', icon: Globe },

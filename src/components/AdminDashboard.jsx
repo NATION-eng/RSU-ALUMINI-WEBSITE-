@@ -5,7 +5,7 @@ import {
   Users, UserCheck, HeartHandshake, RefreshCw, Eye, ArrowLeft,
   Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2,
   Video, Play, Sparkles, Building2, ExternalLink, AlertTriangle, X,
-  BookOpen, FileText, Palette, UploadCloud, Layers
+  BookOpen, FileText, Palette, UploadCloud, Layers, Image as ImageIcon
 } from 'lucide-react';
 import { getMailtoLink } from '../lib/emailService';
 import { COMPENDIUM_AD_TIERS, AD_EDITORIAL_STATUSES } from '../lib/adSpecs';
@@ -80,6 +80,12 @@ export default function AdminDashboard({ onBackToSite }) {
   const [videoSubmissions, setVideoSubmissions] = useState([]);
   const [playingVideoUrl, setPlayingVideoUrl] = useState(null);
 
+  // Community Photos Moderation State
+  const [communityPhotos, setCommunityPhotos] = useState([]);
+  const [photoFilterStatus, setPhotoFilterStatus] = useState('ALL'); // 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
+  const [photoSearchQuery, setPhotoSearchQuery] = useState('');
+  const [selectedPhotoPreview, setSelectedPhotoPreview] = useState(null);
+
   // Search & Filter for Sponsorships
   const [sponsorshipSearch, setSponsorshipSearch] = useState('');
   const [sponsorshipFilterType, setSponsorshipFilterType] = useState('ALL'); // 'ALL' | 'DONATION' | 'AD'
@@ -124,6 +130,7 @@ export default function AdminDashboard({ onBackToSite }) {
     fetchSponsorships();
     fetchAdBookings();
     fetchVideoSubmissions();
+    fetchCommunityPhotos();
   };
 
   const fetchAdBookings = async () => {
@@ -219,6 +226,137 @@ export default function AdminDashboard({ onBackToSite }) {
       const local = JSON.parse(localStorage.getItem('asf_goodwill_videos') || '[]');
       setVideoSubmissions(local);
     }
+  };
+
+  const fetchCommunityPhotos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('community_photos')
+        .select('*')
+        .order('submitted_at', { ascending: false });
+
+      const local = JSON.parse(localStorage.getItem('asf_community_photos') || '[]');
+      const combined = [...(data || [])];
+      local.forEach(item => {
+        if (!combined.some(c => c.submission_id === item.submission_id || (c.id && c.id === item.id))) {
+          combined.push(item);
+        }
+      });
+      setCommunityPhotos(combined);
+    } catch (e) {
+      const local = JSON.parse(localStorage.getItem('asf_community_photos') || '[]');
+      setCommunityPhotos(local);
+    }
+  };
+
+  const updatePhotoStatus = async (photo, newStatus, reason = null) => {
+    const targetRef = photo.submission_id || photo.id;
+    setUpdatingId(targetRef);
+    const approvedAt = newStatus === 'APPROVED' ? new Date().toISOString() : null;
+
+    try {
+      if (photo.id) {
+        try {
+          await supabase
+            .from('community_photos')
+            .update({ status: newStatus, approved_at: approvedAt, rejection_reason: reason })
+            .eq('id', photo.id);
+        } catch (e) {}
+      } else if (photo.submission_id) {
+        try {
+          await supabase
+            .from('community_photos')
+            .update({ status: newStatus, approved_at: approvedAt, rejection_reason: reason })
+            .eq('submission_id', photo.submission_id);
+        } catch (e) {}
+      }
+
+      // Local storage
+      try {
+        const local = JSON.parse(localStorage.getItem('asf_community_photos') || '[]');
+        const updated = local.map(p =>
+          (p.submission_id === targetRef || (photo.id && p.id === photo.id))
+            ? { ...p, status: newStatus, approved_at: approvedAt, rejection_reason: reason }
+            : p
+        );
+        localStorage.setItem('asf_community_photos', JSON.stringify(updated));
+      } catch (e) {}
+
+      startTransition(() => {
+        setCommunityPhotos(prev => prev.map(p =>
+          (p.submission_id === targetRef || (photo.id && p.id === photo.id))
+            ? { ...p, status: newStatus, approved_at: approvedAt, rejection_reason: reason }
+            : p
+        ));
+      });
+
+      if (newStatus === 'APPROVED') {
+        showToast('Photo approved and published to public Living Archive!', 'success');
+      } else if (newStatus === 'REJECTED') {
+        showToast('Photo rejected. Kept off public gallery.', 'info');
+      } else {
+        showToast(`Photo status updated to ${newStatus}`, 'success');
+      }
+    } catch (err) {
+      showToast('Error updating photo status: ' + err.message, 'error');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const deleteCommunityPhoto = (photo) => {
+    openConfirmModal({
+      title: 'Delete Photo Submission',
+      message: 'Are you sure you want to permanently delete this photo from the staging queue and permanent archive?',
+      details: [
+        { label: 'Contributor', value: photo.contributor_name },
+        { label: 'Reference', value: photo.submission_id },
+        { label: 'Era', value: photo.era || 'Unknown' },
+        { label: 'Caption', value: photo.caption }
+      ],
+      confirmText: 'Delete Photo',
+      isDanger: true,
+      onConfirm: async () => {
+        const targetRef = photo.submission_id || photo.id;
+        setUpdatingId(targetRef);
+        try {
+          if (photo.id) {
+            try {
+              await supabase
+                .from('community_photos')
+                .delete()
+                .eq('id', photo.id);
+            } catch (e) {}
+          } else if (photo.submission_id) {
+            try {
+              await supabase
+                .from('community_photos')
+                .delete()
+                .eq('submission_id', photo.submission_id);
+            } catch (e) {}
+          }
+
+          try {
+            const local = JSON.parse(localStorage.getItem('asf_community_photos') || '[]');
+            const updated = local.filter(p =>
+              p.submission_id !== targetRef && (!photo.id || p.id !== photo.id)
+            );
+            localStorage.setItem('asf_community_photos', JSON.stringify(updated));
+          } catch (e) {}
+
+          startTransition(() => {
+            setCommunityPhotos(prev => prev.filter(p =>
+              p.submission_id !== targetRef && (!photo.id || p.id !== photo.id)
+            ));
+          });
+          showToast('Photo submission deleted successfully.', 'success');
+        } catch (err) {
+          showToast('Error deleting photo: ' + err.message, 'error');
+        } finally {
+          setUpdatingId(null);
+        }
+      }
+    });
   };
 
   const fetchRegistrations = async () => {
@@ -1259,6 +1397,31 @@ export default function AdminDashboard({ onBackToSite }) {
             }`}>
               {videoSubmissions.length}
             </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveAdminTab('PHOTOS')}
+            className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
+              activeAdminTab === 'PHOTOS'
+                ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
+                : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
+            }`}
+          >
+            <ImageIcon className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'PHOTOS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span>Community Photos</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+              activeAdminTab === 'PHOTOS'
+                ? 'bg-emerald-950/20 text-emerald-950'
+                : 'bg-white/10 text-stone-300'
+            }`}>
+              {communityPhotos.length}
+            </span>
+            {communityPhotos.filter(p => p.status === 'PENDING').length > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-400 text-emerald-950 font-bold animate-pulse">
+                {communityPhotos.filter(p => p.status === 'PENDING').length} Pending
+              </span>
+            )}
           </button>
         </div>
 
@@ -2770,6 +2933,240 @@ export default function AdminDashboard({ onBackToSite }) {
           </div>
         )}
 
+        {/* 5. COMMUNITY PHOTOS MODERATION PIPELINE TAB */}
+        {activeAdminTab === 'PHOTOS' && (
+          <div className="space-y-6">
+            
+            {/* Header & Metrics */}
+            <div className="luxury-glass rounded-2xl p-4 sm:p-5 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base sm:text-lg font-retro font-bold text-white flex items-center space-x-2">
+                  <ImageIcon className="w-5 h-5 text-jubilee-gold" />
+                  <span>Community Photo Repository &amp; Moderation Pipeline</span>
+                </h3>
+                <p className="text-xs text-stone-400 font-light mt-0.5">
+                  Screen, verify, and approve throwback photos submitted by alumni before they appear in the public Living Archive.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <span className="px-3 py-1.5 rounded-full bg-jubilee-gold/20 text-jubilee-lightgold font-bold text-xs border border-jubilee-gold/30">
+                  {communityPhotos.length} Total Uploads
+                </span>
+                <button
+                  onClick={fetchCommunityPhotos}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors"
+                  title="Refresh Community Photos"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Moderation Metrics 4-Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-xl bg-black/40 border border-white/10">
+                <div className="text-[10px] text-stone-400 uppercase font-semibold">Total Submissions</div>
+                <div className="text-xl sm:text-2xl font-retro font-bold text-white mt-0.5">
+                  {communityPhotos.length}
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/30">
+                <div className="text-[10px] text-amber-300 uppercase font-semibold">Pending Review</div>
+                <div className="text-xl sm:text-2xl font-retro font-bold text-amber-400 mt-0.5">
+                  {communityPhotos.filter(p => p.status === 'PENDING').length}
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30">
+                <div className="text-[10px] text-emerald-300 uppercase font-semibold">Approved (Live on Site)</div>
+                <div className="text-xl sm:text-2xl font-retro font-bold text-emerald-400 mt-0.5">
+                  {communityPhotos.filter(p => p.status === 'APPROVED').length}
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-rose-950/30 border border-rose-500/30">
+                <div className="text-[10px] text-rose-300 uppercase font-semibold">Rejected / Kept Hidden</div>
+                <div className="text-xl sm:text-2xl font-retro font-bold text-rose-400 mt-0.5">
+                  {communityPhotos.filter(p => p.status === 'REJECTED').length}
+                </div>
+              </div>
+            </div>
+
+            {/* Search & Status Filters */}
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+              <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+                {[
+                  { key: 'ALL', label: 'All Photos' },
+                  { key: 'PENDING', label: `Pending Review (${communityPhotos.filter(p => p.status === 'PENDING').length})` },
+                  { key: 'APPROVED', label: `Approved (${communityPhotos.filter(p => p.status === 'APPROVED').length})` },
+                  { key: 'REJECTED', label: `Rejected (${communityPhotos.filter(p => p.status === 'REJECTED').length})` }
+                ].map(f => (
+                  <button
+                    key={f.key}
+                    onClick={() => setPhotoFilterStatus(f.key)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors touch-manipulation ${
+                      photoFilterStatus === f.key
+                        ? 'bg-jubilee-gold text-emerald-950 font-bold shadow-sm'
+                        : 'bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative min-w-[220px]">
+                <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search uploader, set, caption..."
+                  value={photoSearchQuery}
+                  onChange={(e) => setPhotoSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white placeholder-stone-500 focus:border-jubilee-gold outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Photo Cards Grid */}
+            {(() => {
+              const filtered = communityPhotos.filter(photo => {
+                const matchesStatus = photoFilterStatus === 'ALL' || photo.status === photoFilterStatus;
+                const q = photoSearchQuery.toLowerCase().trim();
+                const matchesSearch = !q ||
+                  (photo.contributor_name && photo.contributor_name.toLowerCase().includes(q)) ||
+                  (photo.caption && photo.caption.toLowerCase().includes(q)) ||
+                  (photo.alumni_set && photo.alumni_set.toLowerCase().includes(q)) ||
+                  (photo.era && photo.era.toLowerCase().includes(q));
+                return matchesStatus && matchesSearch;
+              });
+
+              if (filtered.length === 0) {
+                return (
+                  <div className="luxury-glass rounded-2xl p-12 text-center text-stone-400 space-y-2 border border-white/10">
+                    <ImageIcon className="w-10 h-10 text-stone-600 mx-auto" />
+                    <p className="text-sm font-medium">No community photos match the selected criteria.</p>
+                    <p className="text-xs text-stone-500">Alumni uploads through the Media Section will enter this staging queue for administrative screening.</p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {filtered.map((photo, idx) => {
+                    const isPending = photo.status === 'PENDING';
+                    const isApproved = photo.status === 'APPROVED';
+                    const isRejected = photo.status === 'REJECTED';
+
+                    return (
+                      <div key={idx} className="luxury-glass rounded-2xl p-4 border border-white/10 flex flex-col justify-between space-y-3">
+                        <div>
+                          {/* Top Row: Uploader Info & Status */}
+                          <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-2.5 mb-2.5">
+                            <div>
+                              <div className="font-bold text-white text-sm">{photo.contributor_name}</div>
+                              <div className="text-[11px] text-jubilee-lightgold font-medium">
+                                {photo.alumni_set}
+                              </div>
+                            </div>
+
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${
+                              isApproved 
+                                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50' 
+                                : isRejected
+                                ? 'bg-rose-950/80 text-rose-300 border-rose-500/50'
+                                : 'bg-amber-950/80 text-amber-300 border-amber-500/50 animate-pulse'
+                            }`}>
+                              {photo.status || 'PENDING'}
+                            </span>
+                          </div>
+
+                          {/* Image Thumbnail with zoom trigger */}
+                          <div 
+                            onClick={() => setSelectedPhotoPreview(photo)}
+                            className="rounded-xl overflow-hidden bg-black/60 aspect-video relative border border-white/10 cursor-pointer group mb-2.5"
+                          >
+                            <img
+                              src={photo.image_url}
+                              alt={photo.caption}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <span className="px-2.5 py-1 rounded-full bg-black/75 text-jubilee-lightgold text-[10px] font-bold flex items-center space-x-1">
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Inspect Full Resolution</span>
+                              </span>
+                            </div>
+                            <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-[9px] font-mono text-jubilee-lightgold border border-white/10">
+                              {photo.era || 'Heritage'}
+                            </span>
+                          </div>
+
+                          {/* Caption & Metadata */}
+                          <p className="text-xs font-serif italic text-stone-200 line-clamp-2">
+                            "{photo.caption}"
+                          </p>
+
+                          <div className="mt-2 text-[11px] text-stone-400 space-y-0.5">
+                            {photo.phone && (
+                              <div>
+                                WhatsApp: <a href={`https://wa.me/${photo.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">{photo.phone}</a>
+                              </div>
+                            )}
+                            <div className="font-mono text-[10px] text-stone-500">
+                              Ref: {photo.submission_id} • {photo.submitted_at ? new Date(photo.submitted_at).toLocaleDateString('en-GB') : ''}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Moderation Actions */}
+                        <div className="pt-2.5 border-t border-white/10 flex items-center justify-between gap-2">
+                          <div className="flex items-center space-x-1.5">
+                            {photo.status !== 'APPROVED' && (
+                              <button
+                                type="button"
+                                onClick={() => updatePhotoStatus(photo, 'APPROVED')}
+                                disabled={updatingId === (photo.submission_id || photo.id)}
+                                className="px-3 py-1.5 rounded-lg bg-emerald-900 hover:bg-emerald-800 text-emerald-100 text-xs font-bold transition-all disabled:opacity-50 flex items-center space-x-1 shadow-sm touch-manipulation active:scale-95"
+                              >
+                                <CheckCircle className="w-3.5 h-3.5 text-emerald-300" />
+                                <span>Approve &amp; Publish</span>
+                              </button>
+                            )}
+
+                            {photo.status !== 'REJECTED' && (
+                              <button
+                                type="button"
+                                onClick={() => updatePhotoStatus(photo, 'REJECTED')}
+                                disabled={updatingId === (photo.submission_id || photo.id)}
+                                className="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 text-xs font-medium transition-colors disabled:opacity-50 touch-manipulation active:scale-95"
+                              >
+                                <span>Reject</span>
+                              </button>
+                            )}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => deleteCommunityPhoto(photo)}
+                            disabled={updatingId === (photo.submission_id || photo.id)}
+                            className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs transition-colors disabled:opacity-50 touch-manipulation active:scale-95"
+                            title="Delete Submission Permanently"
+                          >
+                            <Trash2 className="w-4 h-4 pointer-events-none" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+
+          </div>
+        )}
+
       </main>
 
       {/* Profile Detail Modal */}
@@ -3195,6 +3592,80 @@ export default function AdminDashboard({ onBackToSite }) {
                   </>
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4B. COMMUNITY PHOTO PREVIEW MODAL */}
+      {selectedPhotoPreview && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in overflow-y-auto"
+          onClick={() => setSelectedPhotoPreview(null)}
+        >
+          <div 
+            className="bg-[#051A0F] border border-jubilee-gold/40 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-4 max-h-[92vh] overflow-y-auto my-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between border-b border-white/10 pb-3 gap-2">
+              <div>
+                <span className="text-[10px] font-mono font-bold text-jubilee-gold uppercase tracking-wider block">
+                  {selectedPhotoPreview.era}
+                </span>
+                <h4 className="text-base font-retro font-bold text-white mt-0.5">
+                  Uploaded by {selectedPhotoPreview.contributor_name} ({selectedPhotoPreview.alumni_set})
+                </h4>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedPhotoPreview(null)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="rounded-2xl overflow-hidden bg-black border border-white/10 aspect-square sm:aspect-video flex items-center justify-center max-h-[55vh]">
+              <img
+                src={selectedPhotoPreview.image_url}
+                alt={selectedPhotoPreview.caption}
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-jubilee-lightgold block">Caption / Story:</span>
+              <p className="text-xs font-serif text-stone-200 italic leading-relaxed">
+                "{selectedPhotoPreview.caption}"
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs font-mono text-stone-400">
+                Status: <strong className={selectedPhotoPreview.status === 'APPROVED' ? 'text-emerald-400' : 'text-amber-400'}>{selectedPhotoPreview.status}</strong>
+              </span>
+              <div className="flex items-center space-x-2">
+                {selectedPhotoPreview.status !== 'APPROVED' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updatePhotoStatus(selectedPhotoPreview, 'APPROVED');
+                      setSelectedPhotoPreview(null);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-900 hover:bg-emerald-800 text-white text-xs font-bold"
+                  >
+                    Approve &amp; Publish Live
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setSelectedPhotoPreview(null)}
+                  className="px-3 py-1.5 rounded-lg bg-white/10 text-stone-300 text-xs font-semibold"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

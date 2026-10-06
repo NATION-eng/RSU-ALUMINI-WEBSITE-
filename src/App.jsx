@@ -10,6 +10,7 @@ import MediaSection from './components/MediaSection';
 import DiasporaHub from './components/DiasporaHub';
 import QrSection from './components/QrSection';
 import Footer from './components/Footer';
+import PartnerHotelsSection from './components/PartnerHotelsSection';
 
 import SupportDonatePortal from './components/SupportDonatePortal';
 import CompendiumAdsPortal from './components/CompendiumAdsPortal';
@@ -177,7 +178,10 @@ export default function App() {
       {/* 5. 45th Anniversary Homecoming Program Schedule */}
       <ScheduleSection />
 
-      {/* 6. In-Page Live "I Will Be There" DP Generator */}
+      {/* 6. Partner Conference Hotels & Homecoming Lodging */}
+      <PartnerHotelsSection />
+
+      {/* 7. In-Page Live "I Will Be There" DP Generator */}
       <DpGenerator />
 
       {/* 7. Dual-Purpose Alumni Census Directory & Event RSVP System */}
