@@ -135,7 +135,7 @@ export default function HomePillarsTeaser({ onOpenDonate }) {
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] font-mono pt-0.5">
-                      <span className="text-emerald-300 font-bold">₦{(raised / 1000000).toFixed(1)}M</span>
+                      <span className="text-emerald-300 font-bold">{raised === 0 ? '₦0' : `₦${(raised / 1000000).toFixed(1)}M`}</span>
                       <span className="text-stone-400">Target: ₦{(target / 1000000).toFixed(1)}M</span>
                     </div>
                   </div>

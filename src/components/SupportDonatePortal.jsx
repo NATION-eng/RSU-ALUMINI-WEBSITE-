@@ -425,7 +425,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'celebration' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦15M • {livePillars?.celebration?.percentage ?? 63}%
+                Goal: ₦15M • {livePillars?.celebration?.percentage || 0}%
               </div>
             </button>
 
@@ -458,7 +458,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'homecoming' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦12.5M • {livePillars?.homecoming?.percentage ?? 62}%
+                Goal: ₦12.5M • {livePillars?.homecoming?.percentage || 0}%
               </div>
             </button>
 
@@ -491,7 +491,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'trust_fund' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦20M • {livePillars?.trust_fund?.percentage ?? 56}%
+                Goal: ₦20M • {livePillars?.trust_fund?.percentage || 0}%
               </div>
             </button>
 
@@ -524,7 +524,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
                 activePillar === 'centre_of_influence' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
               }`}>
-                Goal: ₦50M • {livePillars?.centre_of_influence?.percentage ?? 46}%
+                Goal: ₦50M • {livePillars?.centre_of_influence?.percentage || 0}%
               </div>
             </button>
 

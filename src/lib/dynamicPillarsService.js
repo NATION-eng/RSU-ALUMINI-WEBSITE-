@@ -8,23 +8,23 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from './supabase';
 import { FUNDRAISING_PILLARS } from '../data/fundraisingPillars';
 
-// Verified CPC baseline contributions acknowledged prior to online portal launch
+// Baseline contributions initialized to 0 until actual live database records arrive
 const BASELINE_PILLARS = {
   celebration: {
-    baselineRaised: 8250000,
-    baselineDonors: 112
+    baselineRaised: 0,
+    baselineDonors: 0
   },
   homecoming: {
-    baselineRaised: 6900000,
-    baselineDonors: 94
+    baselineRaised: 0,
+    baselineDonors: 0
   },
   trust_fund: {
-    baselineRaised: 10400000,
-    baselineDonors: 138
+    baselineRaised: 0,
+    baselineDonors: 0
   },
   centre_of_influence: {
-    baselineRaised: 21500000,
-    baselineDonors: 76
+    baselineRaised: 0,
+    baselineDonors: 0
   }
 };
 
@@ -175,10 +175,10 @@ export async function calculateLivePillars() {
 
   Object.keys(FUNDRAISING_PILLARS).forEach((key) => {
     const meta = FUNDRAISING_PILLARS[key];
-    const computed = pillarTotals[key] || { raised: meta.target * 0.5, donorSet: new Set() };
+    const computed = pillarTotals[key] || { raised: 0, donorSet: new Set() };
     const liveRaised = computed.raised;
-    const liveDonorsCount = BASELINE_PILLARS[key].baselineDonors + computed.donorSet.size;
-    const percentage = Math.min(100, Math.round((liveRaised / meta.target) * 100));
+    const liveDonorsCount = (BASELINE_PILLARS[key]?.baselineDonors || 0) + computed.donorSet.size;
+    const percentage = meta.target > 0 ? Math.min(100, Math.round((liveRaised / meta.target) * 100)) : 0;
 
     livePillars[key] = {
       ...meta,
@@ -197,7 +197,7 @@ export async function calculateLivePillars() {
     totalRaised: masterTotalRaised,
     totalTarget: masterTotalTarget,
     totalDonors: masterTotalDonors,
-    overallPercentage: Math.min(100, Math.round((masterTotalRaised / masterTotalTarget) * 100)),
+    overallPercentage: masterTotalTarget > 0 ? Math.min(100, Math.round((masterTotalRaised / masterTotalTarget) * 100)) : 0,
     timestamp: new Date().toISOString()
   };
 }
@@ -208,7 +208,7 @@ export async function calculateLivePillars() {
  */
 export function useLivePillars() {
   const [data, setData] = useState(() => {
-    // Immediate synchronous fallback from metadata
+    // Immediate synchronous fallback from metadata (0 until live data arrives)
     let tRaised = 0;
     let tTarget = 0;
     let tDonors = 0;
@@ -216,17 +216,18 @@ export function useLivePillars() {
 
     Object.keys(FUNDRAISING_PILLARS).forEach((k) => {
       const p = FUNDRAISING_PILLARS[k];
-      const base = BASELINE_PILLARS[k] || { baselineRaised: p.raised, baselineDonors: p.donorsCount };
-      const pct = Math.min(100, Math.round((base.baselineRaised / p.target) * 100));
+      const baseRaised = p.raised || 0;
+      const baseDonors = p.donorsCount || 0;
+      const pct = p.target > 0 ? Math.min(100, Math.round((baseRaised / p.target) * 100)) : 0;
       initial[k] = {
         ...p,
-        raised: base.baselineRaised,
-        donorsCount: base.baselineDonors,
+        raised: baseRaised,
+        donorsCount: baseDonors,
         percentage: pct
       };
-      tRaised += base.baselineRaised;
+      tRaised += baseRaised;
       tTarget += p.target;
-      tDonors += base.baselineDonors;
+      tDonors += baseDonors;
     });
 
     return {
@@ -234,7 +235,7 @@ export function useLivePillars() {
       totalRaised: tRaised,
       totalTarget: tTarget,
       totalDonors: tDonors,
-      overallPercentage: Math.min(100, Math.round((tRaised / tTarget) * 100)),
+      overallPercentage: tTarget > 0 ? Math.min(100, Math.round((tRaised / tTarget) * 100)) : 0,
       isLoading: true
     };
   });

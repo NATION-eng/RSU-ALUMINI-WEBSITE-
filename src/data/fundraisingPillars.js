@@ -11,8 +11,8 @@ export const FUNDRAISING_PILLARS = {
     badge: 'Media & Production Pillar',
     tagline: 'Directly funds general jubilee logistics, media production, public branding, studio audio jingles, and multi-camera live-streaming infrastructure.',
     target: 15000000,
-    raised: 9450000,
-    donorsCount: 142,
+    raised: 0,
+    donorsCount: 0,
     leadQuote: '“Connecting our worldwide alumni family in high-definition across four continents.”',
     impactMetrics: [
       {
@@ -52,8 +52,8 @@ export const FUNDRAISING_PILLARS = {
     badge: 'Hospitality & Ground Logistics',
     tagline: 'Dedicated to covering hospitality, delegate materials, venue setup, and logistical coordination for on-ground attendees arriving in Port Harcourt.',
     target: 12500000,
-    raised: 7800000,
-    donorsCount: 118,
+    raised: 0,
+    donorsCount: 0,
     leadQuote: '“Welcoming every returning alumnus home with royal Christian fellowship and honor.”',
     impactMetrics: [
       {
@@ -93,8 +93,8 @@ export const FUNDRAISING_PILLARS = {
     badge: 'Enduring Legacy Vehicle',
     tagline: 'A long-term financial vehicle aimed at supporting indigent students, academic mentorship initiatives, and student leadership development within the chapter.',
     target: 20000000,
-    raised: 11200000,
-    donorsCount: 165,
+    raised: 0,
+    donorsCount: 0,
     leadQuote: '“No Adventist student at Rivers State University should drop out due to lack of tuition fees.”',
     impactMetrics: [
       {
@@ -134,8 +134,8 @@ export const FUNDRAISING_PILLARS = {
     badge: 'Landmark Campus Infrastructure',
     tagline: 'Our landmark infrastructure campaign dedicated to building the proposed purpose-built 3-winged ASF-RSU Centre of Influence complex on campus.',
     target: 50000000,
-    raised: 22850000,
-    donorsCount: 89,
+    raised: 0,
+    donorsCount: 0,
     leadQuote: '“A permanent spiritual, academic, and innovation lighthouse rooted at Rivers State University.”',
     impactMetrics: [
       {

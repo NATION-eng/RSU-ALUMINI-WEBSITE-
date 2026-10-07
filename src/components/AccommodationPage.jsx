@@ -79,11 +79,8 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
             <span>Homecoming Hospitality &amp; Lodging Hub</span>
           </div>
 
-          <h1 className="text-2xl sm:text-5xl lg:text-6xl font-retro font-extrabold text-white tracking-tight leading-tight">
-            ACCOMMODATION <br />
-            <span className="bg-gradient-to-r from-jubilee-gold via-amber-200 to-yellow-400 bg-clip-text text-transparent">
-              IN PORT HARCOURT
-            </span>
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-retro font-extrabold tracking-tight leading-tight bg-gradient-to-r from-white via-amber-200 to-yellow-400 bg-clip-text text-transparent">
+            ACCOMMODATION
           </h1>
 
           <p className="max-w-3xl mx-auto text-xs sm:text-base text-emerald-100/90 font-light leading-relaxed px-2">

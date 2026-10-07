@@ -34,7 +34,7 @@ export default function HomeAccommodationTeaser({ onOpenAccommodation }) {
               </div>
 
               <h2 className="text-2xl sm:text-4xl font-retro font-bold text-white tracking-tight">
-                Accommodation in Port Harcourt
+                Accommodation
               </h2>
 
               <p className="text-xs sm:text-sm text-emerald-100/80 font-light leading-relaxed">

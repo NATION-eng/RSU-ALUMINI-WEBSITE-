@@ -36,7 +36,7 @@ export default function PartnerHotelsSection() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-emerald-950 tracking-tight">
-            Accommodation in Port Harcourt
+            Accommodation
           </h2>
 
           <p className="text-stone-600 text-xs sm:text-base font-light leading-relaxed px-2">
