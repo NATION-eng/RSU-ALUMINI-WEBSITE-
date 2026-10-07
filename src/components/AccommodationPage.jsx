@@ -5,8 +5,9 @@ import {
   ChevronRight, Info, ArrowLeft, Mail, UserCheck
 } from 'lucide-react';
 import { PARTNER_HOTELS, PARTNER_DISCOUNT_CODE, TRAVEL_LOGISTICS_ADVISORY } from '../data/partnerHotels';
+import Footer from './Footer';
 
-export default function AccommodationPage({ onBackToSite }) {
+export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSponsors }) {
   const [copiedCode, setCopiedCode] = useState(false);
   const [filterCategory, setFilterCategory] = useState('ALL');
 
@@ -36,7 +37,7 @@ export default function AccommodationPage({ onBackToSite }) {
               className="inline-flex items-center space-x-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-jubilee-lightgold text-xs sm:text-sm font-semibold transition-all shrink-0 touch-manipulation active:scale-95"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-jubilee-gold" />
-              <span className="hidden xs:inline">Back to Jubilee Portal</span>
+              <span className="hidden xs:inline">Back to Jubilee Home</span>
               <span className="xs:hidden">Back</span>
             </button>
             <span className="hidden lg:inline-block text-xs text-stone-500">|</span>
@@ -415,6 +416,9 @@ export default function AccommodationPage({ onBackToSite }) {
         </section>
 
       </main>
+
+      {/* Grand Footer */}
+      <Footer onOpenAdmin={onOpenAdmin} onOpenSponsors={onOpenSponsors} />
 
     </div>
   );

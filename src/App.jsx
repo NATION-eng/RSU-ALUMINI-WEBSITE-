@@ -4,7 +4,8 @@ import Hero from './components/Hero';
 import ImpactStats from './components/ImpactStats';
 import TimelineSection from './components/TimelineSection';
 import ScheduleSection from './components/ScheduleSection';
-import PartnerHotelsSection from './components/PartnerHotelsSection';
+import HomeAccommodationTeaser from './components/HomeAccommodationTeaser';
+import AccommodationPage from './components/AccommodationPage';
 import DpGenerator from './components/DpGenerator';
 import CensusRsvpSection from './components/CensusRsvpSection';
 import HomeMediaTeaser from './components/HomeMediaTeaser';
@@ -51,6 +52,16 @@ const isHashMedia = (hash = '', path = '') => {
   return keywords.includes(cleanHash) || keywords.includes(cleanPath);
 };
 
+const isHashAccommodation = (hash = '', path = '') => {
+  const cleanHash = (hash || '').toLowerCase().replace(/^#[/]?/, '').split('?')[0].replace(/\/+$/, '');
+  const cleanPath = (path || '').toLowerCase().replace(/^\/+/, '').split('?')[0].replace(/\/+$/, '');
+  
+  const keywords = [
+    'accommodation', 'where-to-stay', 'hotels', 'hotel', 'lodging', 'stay'
+  ];
+  return keywords.includes(cleanHash) || keywords.includes(cleanPath);
+};
+
 const isHashAdmin = (hash = '', path = '') => {
   const cleanHash = (hash || '').toLowerCase().replace(/^#[/]?/, '').split('?')[0].replace(/\/+$/, '');
   const cleanPath = (path || '').toLowerCase().replace(/^\/+/, '').split('?')[0].replace(/\/+$/, '');
@@ -92,6 +103,15 @@ export default function App() {
     return false;
   });
 
+  const [isAccommodationView, setIsAccommodationView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const h = window.location.hash;
+      const p = window.location.pathname;
+      return isHashAccommodation(h, p);
+    }
+    return false;
+  });
+
   useEffect(() => {
     const handleHashChange = () => {
       startTransition(() => {
@@ -101,12 +121,14 @@ export default function App() {
         const ads = isHashAds(h, p);
         const donate = isHashDonate(h, p) && !ads;
         const media = isHashMedia(h, p);
+        const accommodation = isHashAccommodation(h, p);
         setIsAdsView(ads);
         setIsDonateView(donate);
         setIsMediaView(media);
+        setIsAccommodationView(accommodation);
 
         // If navigating to an in-page section on the homepage, scroll smoothly
-        if (!isHashAdmin(h, p) && !ads && !donate && !media && h && h.length > 1) {
+        if (!isHashAdmin(h, p) && !ads && !donate && !media && !accommodation && h && h.length > 1) {
           const targetId = h.replace(/^#/, '');
           const el = document.getElementById(targetId);
           if (el) {
@@ -130,6 +152,8 @@ export default function App() {
       setIsDonateView(false);
       setIsAdsView(false);
       setIsMediaView(false);
+      setIsAccommodationView(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
 
@@ -140,6 +164,8 @@ export default function App() {
       setIsAdsView(false);
       setIsAdminView(false);
       setIsMediaView(false);
+      setIsAccommodationView(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
 
@@ -150,6 +176,8 @@ export default function App() {
       setIsDonateView(false);
       setIsAdminView(false);
       setIsMediaView(false);
+      setIsAccommodationView(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
 
@@ -160,6 +188,20 @@ export default function App() {
       setIsDonateView(false);
       setIsAdsView(false);
       setIsAdminView(false);
+      setIsAccommodationView(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
+  const handleOpenAccommodation = () => {
+    window.location.hash = 'accommodation';
+    startTransition(() => {
+      setIsAccommodationView(true);
+      setIsMediaView(false);
+      setIsDonateView(false);
+      setIsAdsView(false);
+      setIsAdminView(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
 
@@ -180,6 +222,7 @@ export default function App() {
       setIsDonateView(false);
       setIsAdsView(false);
       setIsMediaView(false);
+      setIsAccommodationView(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
@@ -210,7 +253,7 @@ export default function App() {
     return <CompendiumAdsPortal onBackToSite={handleBackToSite} onOpenDonate={handleOpenDonate} />;
   }
 
-  // 4. Dedicated Media Hub & Living Archive View (Excepted from the homepage)
+  // 4. Dedicated Media Hub & Living Archive View
   if (isMediaView) {
     return (
       <MediaHubPage 
@@ -221,7 +264,18 @@ export default function App() {
     );
   }
 
-  // 5. Full Cohesive Homepage (Returned to the way it was before, with all sections continuous)
+  // 5. Dedicated Accommodation Page View (User Request: "give accommodation its own page")
+  if (isAccommodationView) {
+    return (
+      <AccommodationPage 
+        onBackToSite={handleBackToSite}
+        onOpenAdmin={handleOpenAdmin}
+        onOpenSponsors={handleOpenSponsors}
+      />
+    );
+  }
+
+  // 6. Full Cohesive Homepage
   return (
     <div className="min-h-screen bg-jubilee-cream text-stone-900 selection:bg-emerald-900 selection:text-jubilee-lightgold font-sans antialiased w-full max-w-full overflow-x-hidden relative">
       {/* 1. Global Navigation */}
@@ -229,10 +283,14 @@ export default function App() {
         onOpenAdmin={handleOpenAdmin} 
         onOpenSponsors={handleOpenSponsors} 
         onOpenMedia={handleOpenMedia}
+        onOpenAccommodation={handleOpenAccommodation}
       />
 
-      {/* 2. Hero Section with Live Countdown and Jubilee Theme */}
-      <Hero onOpenSponsors={handleOpenSponsors} />
+      {/* 2. Hero Section with Live Countdown, Accommodation, RSVP & DP Buttons */}
+      <Hero 
+        onOpenSponsors={handleOpenSponsors} 
+        onOpenAccommodation={handleOpenAccommodation} 
+      />
 
       {/* 3. Milestone Impact Stats Bar */}
       <ImpactStats />
@@ -243,8 +301,8 @@ export default function App() {
       {/* 5. 45th Anniversary Homecoming Program Schedule */}
       <ScheduleSection />
 
-      {/* 6. Partner Conference Hotels & Accommodation in Port Harcourt */}
-      <PartnerHotelsSection />
+      {/* 6. Partner Conference Hotels & Accommodation Gateway Teaser */}
+      <HomeAccommodationTeaser onOpenAccommodation={handleOpenAccommodation} />
 
       {/* 7. In-Page Live "I Will Be There" DP Generator */}
       <DpGenerator />

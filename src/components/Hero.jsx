@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Building2 } from 'lucide-react';
 
-export default function Hero() {
+export default function Hero({ onOpenSponsors, onOpenAccommodation }) {
   // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
   const targetDate = new Date('2026-11-14T08:30:00');
 
@@ -145,6 +145,12 @@ export default function Hero() {
 
           <a
             href="#accommodation"
+            onClick={(e) => {
+              if (onOpenAccommodation) {
+                e.preventDefault();
+                onOpenAccommodation();
+              }
+            }}
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-bold bg-white/10 hover:bg-white/20 active:scale-[0.98] border border-jubilee-gold/50 text-jubilee-lightgold backdrop-blur-md transition-all duration-200 shadow-md font-sans"
           >
             <Building2 className="w-4 h-4 text-jubilee-gold shrink-0" />
