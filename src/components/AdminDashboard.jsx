@@ -5,10 +5,16 @@ import {
   Users, UserCheck, HeartHandshake, RefreshCw, Eye, ArrowLeft,
   Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2,
   Video, Play, Sparkles, Building2, ExternalLink, AlertTriangle, X,
-  BookOpen, FileText, Palette, UploadCloud, Layers, Image as ImageIcon
+  BookOpen, FileText, Palette, UploadCloud, Layers, Image as ImageIcon,
+  Printer
 } from 'lucide-react';
 import { getMailtoLink } from '../lib/emailService';
 import { COMPENDIUM_AD_TIERS, AD_EDITORIAL_STATUSES } from '../lib/adSpecs';
+import { 
+  generateCensusExecutiveReport, 
+  generateFinancialExecutiveReport, 
+  generateAdManifestExecutiveReport 
+} from '../lib/executiveReports';
 
 export default function AdminDashboard({ onBackToSite }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -1184,6 +1190,40 @@ export default function AdminDashboard({ onBackToSite }) {
     return { total, physical, virtual, sponsors, checkedIn };
   }, [registrations]);
 
+  // Trigger Branded Executive Printable PDF Report for Current Tab View
+  const handleTriggerExecutiveReport = () => {
+    if (activeAdminTab === 'SPONSORSHIPS') {
+      if (sponsorships.length === 0) {
+        showToast('No sponsorship records loaded to generate report.', 'info');
+        return;
+      }
+      generateFinancialExecutiveReport(filteredSponsorships, { 
+        sponsorshipFilterType, 
+        sponsorshipFilterChannel 
+      });
+    } else if (activeAdminTab === 'ADS') {
+      if (adBookings.length === 0) {
+        showToast('No compendium ad bookings loaded to generate report.', 'info');
+        return;
+      }
+      generateAdManifestExecutiveReport(filteredAdBookings, { 
+        adFilterTier, 
+        adFilterStatus, 
+        adFilterPayment 
+      });
+    } else {
+      if (registrations.length === 0) {
+        showToast('No alumni registration records loaded to generate report.', 'info');
+        return;
+      }
+      generateCensusExecutiveReport(filteredRegistrations, { 
+        filterMode, 
+        filterCheckin, 
+        filterSupport 
+      });
+    }
+  };
+
   // LOGIN SCREEN
   if (!isAuthenticated) {
     return (
@@ -1286,12 +1326,12 @@ export default function AdminDashboard({ onBackToSite }) {
             </button>
 
             <button
-              onClick={exportToCSV}
-              title="Export CSV"
+              onClick={handleTriggerExecutiveReport}
+              title="Generate Official Executive PDF Report"
               className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 border border-jubilee-gold/40 text-jubilee-lightgold transition-all touch-manipulation active:scale-95"
             >
-              <Download className="w-3.5 h-3.5 text-jubilee-gold" />
-              <span>Export CSV</span>
+              <Printer className="w-3.5 h-3.5 text-jubilee-gold" />
+              <span>Official Executive PDF</span>
             </button>
 
             <button
@@ -1535,11 +1575,18 @@ export default function AdminDashboard({ onBackToSite }) {
             </select>
 
             <button
-              onClick={exportToCSV}
+              onClick={() => {
+                if (registrations.length === 0) {
+                  showToast('No alumni registrations to report.', 'info');
+                  return;
+                }
+                generateCensusExecutiveReport(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
+              }}
               className="w-full sm:w-auto px-3 py-2.5 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm"
+              title="Generate Official Census Executive PDF Report"
             >
-              <Download className="w-3.5 h-3.5 shrink-0" />
-              <span>Export CSV</span>
+              <Printer className="w-3.5 h-3.5 shrink-0" />
+              <span>Print / Save Census PDF</span>
             </button>
 
             <button
@@ -1930,33 +1977,20 @@ export default function AdminDashboard({ onBackToSite }) {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => {
-                      if (sponsorships.length === 0) return;
-                      const headers = ['Reference', 'Donor Name', 'Organization', 'Tier', 'Amount (NGN)', 'Channel', 'Status', 'Email', 'Phone', 'Date'];
-                      const rows = filteredSponsorships.map(s => [
-                        `"${s.reference}"`,
-                        `"${s.donor_name}"`,
-                        `"${s.organization || ''}"`,
-                        `"${s.tier_name || s.tier_key}"`,
-                        s.amount,
-                        `"${s.payment_method}"`,
-                        `"${s.status || 'VERIFIED'}"`,
-                        `"${s.email}"`,
-                        `"${s.phone || ''}"`,
-                        `"${s.created_at}"`
-                      ]);
-                      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-                      const encodedUri = encodeURI(csvContent);
-                      const link = document.createElement('a');
-                      link.setAttribute('href', encodedUri);
-                      link.setAttribute('download', `asf45th_sponsorships_${new Date().toISOString().slice(0, 10)}.csv`);
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
+                      if (sponsorships.length === 0) {
+                        showToast('No sponsorship records to report.', 'info');
+                        return;
+                      }
+                      generateFinancialExecutiveReport(filteredSponsorships, { 
+                        sponsorshipFilterType, 
+                        sponsorshipFilterChannel 
+                      });
                     }}
-                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-jubilee-gold/30"
+                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-jubilee-gold/30 active:scale-95 transition-all"
+                    title="Generate Official Financial Audit PDF Report"
                   >
-                    <Download className="w-3.5 h-3.5 text-jubilee-gold" />
-                    <span>Export CSV</span>
+                    <Printer className="w-3.5 h-3.5 text-jubilee-gold" />
+                    <span>Print / Save Audit PDF</span>
                   </button>
 
                   <button
@@ -2271,11 +2305,22 @@ export default function AdminDashboard({ onBackToSite }) {
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <button
                   type="button"
-                  onClick={exportAdManifestCSV}
+                  onClick={() => {
+                    if (adBookings.length === 0) {
+                      showToast('No compendium ad bookings to report.', 'info');
+                      return;
+                    }
+                    generateAdManifestExecutiveReport(filteredAdBookings, { 
+                      adFilterTier, 
+                      adFilterStatus, 
+                      adFilterPayment 
+                    });
+                  }}
                   className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl bg-jubilee-gold/20 hover:bg-jubilee-gold/30 text-jubilee-lightgold border border-jubilee-gold/40 text-xs font-bold transition-all touch-manipulation active:scale-95"
+                  title="Generate Official Ad Production Order Manifest PDF"
                 >
-                  <Download className="w-3.5 h-3.5 pointer-events-none" />
-                  <span>Export Production CSV</span>
+                  <Printer className="w-3.5 h-3.5 pointer-events-none" />
+                  <span>Print / Save Production PDF</span>
                 </button>
 
                 <button
