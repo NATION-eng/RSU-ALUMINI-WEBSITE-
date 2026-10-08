@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useTransition, useCallback } from 'react';
 import { 
   ArrowLeft, Award, CheckCircle2, ShieldCheck, CreditCard, Building2, 
   Copy, Check, Sparkles, HeartHandshake, Download, Printer, ExternalLink,
@@ -23,6 +23,15 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
   const [copiedAccount, setCopiedAccount] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
+  const [, startTransition] = useTransition();
+
+  const handleSelectPillar = useCallback((pillar, tier, amount) => {
+    startTransition(() => {
+      setActivePillar(pillar);
+      if (tier) setSelectedTier(tier);
+      if (amount) setCustomAmount(amount);
+    });
+  }, []);
 
   // Check whether live/valid Paystack key is configured
   const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '';
@@ -399,11 +408,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             {/* Pillar 1 Tab */}
             <button
               type="button"
-              onClick={() => {
-                setActivePillar('celebration');
-                setSelectedTier('celebration');
-                setCustomAmount('50000');
-              }}
+              onClick={() => handleSelectPillar('celebration', 'celebration', '50000')}
               className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'celebration'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
@@ -432,11 +437,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             {/* Pillar 2 Tab */}
             <button
               type="button"
-              onClick={() => {
-                setActivePillar('homecoming');
-                setSelectedTier('homecoming');
-                setCustomAmount('50000');
-              }}
+              onClick={() => handleSelectPillar('homecoming', 'homecoming', '50000')}
               className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'homecoming'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
@@ -465,11 +466,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             {/* Pillar 3 Tab */}
             <button
               type="button"
-              onClick={() => {
-                setActivePillar('trust_fund');
-                setSelectedTier('trust_fund');
-                setCustomAmount('50000');
-              }}
+              onClick={() => handleSelectPillar('trust_fund', 'trust_fund', '50000')}
               className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'trust_fund'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
@@ -498,11 +495,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             {/* Pillar 4 Tab */}
             <button
               type="button"
-              onClick={() => {
-                setActivePillar('centre_of_influence');
-                setSelectedTier('centre_of_influence');
-                setCustomAmount('150000');
-              }}
+              onClick={() => handleSelectPillar('centre_of_influence', 'centre_of_influence', '150000')}
               className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
                 activePillar === 'centre_of_influence'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
@@ -531,11 +524,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
             {/* Pillar 5 / Corporate Tab */}
             <button
               type="button"
-              onClick={() => {
-                setActivePillar('corporate_tiers');
-                setSelectedTier('platinum');
-                setCustomAmount('2000000');
-              }}
+              onClick={() => handleSelectPillar('corporate_tiers', 'platinum', '2000000')}
               className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between col-span-2 lg:col-span-1 ${
                 activePillar === 'corporate_tiers'
                   ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
