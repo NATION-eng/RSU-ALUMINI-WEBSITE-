@@ -13,25 +13,36 @@ const BASE_STYLES = `
     padding: 0;
   }
 
-  body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100vw;
     background-color: #F8F9FA;
     color: #1A202C;
-    padding: 24px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 11px;
     line-height: 1.5;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    overflow-x: hidden;
+  }
+
+  body {
+    padding: 20px 16px;
+    box-sizing: border-box;
   }
 
   .report-container {
     max-width: 1280px;
+    width: 100%;
     margin: 0 auto;
     background: #FFFFFF;
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     border: 1px solid #E2E8F0;
+    box-sizing: border-box;
   }
 
   /* Floating Action Bar (Hidden during Print) */
@@ -47,6 +58,8 @@ const BASE_STYLES = `
     justify-content: space-between;
     gap: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .action-bar-title {
@@ -56,6 +69,7 @@ const BASE_STYLES = `
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
   }
 
   .action-bar-badge {
@@ -68,17 +82,20 @@ const BASE_STYLES = `
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
   }
 
   .action-buttons {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
   }
 
   .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     padding: 8px 16px;
     border-radius: 8px;
@@ -88,6 +105,10 @@ const BASE_STYLES = `
     border: none;
     transition: all 0.2s;
     font-family: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .btn-gold {
@@ -116,6 +137,8 @@ const BASE_STYLES = `
     padding: 32px 36px 28px;
     border-bottom: 4px solid #D4AF37;
     position: relative;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .doc-header-top {
@@ -135,8 +158,9 @@ const BASE_STYLES = `
   .logo-img {
     width: 64px;
     height: 64px;
-    object-contain: contain;
+    object-fit: contain;
     filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+    flex-shrink: 0;
   }
 
   .org-title {
@@ -160,6 +184,8 @@ const BASE_STYLES = `
     text-align: right;
     font-size: 10px;
     color: #CBD5E1;
+    line-height: 1.6;
+    flex-shrink: 0;
   }
 
   .doc-meta strong {
@@ -177,6 +203,7 @@ const BASE_STYLES = `
     font-weight: 700;
     color: #FFFFFF;
     letter-spacing: -0.5px;
+    line-height: 1.25;
   }
 
   .doc-theme {
@@ -194,6 +221,8 @@ const BASE_STYLES = `
     padding: 24px 36px;
     background: #F8FAFC;
     border-bottom: 1px solid #E2E8F0;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .metric-card {
@@ -233,14 +262,24 @@ const BASE_STYLES = `
     margin-top: 4px;
   }
 
+  /* Mobile Table Swipe Hint */
+  .mobile-table-hint {
+    display: none;
+  }
+
   /* Data Table */
   .table-wrapper {
     padding: 24px 36px 36px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   table {
     width: 100%;
+    min-width: 780px;
     border-collapse: collapse;
     font-size: 10.5px;
   }
@@ -321,11 +360,192 @@ const BASE_STYLES = `
     justify-content: space-between;
     font-size: 10px;
     color: #64748B;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .sign-off {
     font-weight: 700;
     color: #051A0F;
+  }
+
+  /* Responsive Mobile Overrides */
+  @media (max-width: 768px) {
+    html, body {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+      background: #FFFFFF !important;
+    }
+
+    body {
+      padding: 0 !important;
+    }
+
+    .report-container {
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+
+    .action-bar {
+      padding: 10px 12px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      width: 100% !important;
+    }
+
+    .action-bar-title {
+      justify-content: space-between;
+      width: 100%;
+      font-size: 11px;
+    }
+
+    .action-bar-badge {
+      font-size: 8.5px;
+      padding: 2px 6px;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 0.7fr;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .btn {
+      padding: 8px 6px;
+      font-size: 11px;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .btn svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .doc-header {
+      padding: 16px 14px 14px;
+      width: 100%;
+    }
+
+    .doc-header-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .logo-group {
+      gap: 12px;
+    }
+
+    .logo-img {
+      width: 44px;
+      height: 44px;
+    }
+
+    .org-title {
+      font-size: 14.5px;
+      line-height: 1.25;
+    }
+
+    .org-subtitle {
+      font-size: 9.5px;
+      letter-spacing: 0.5px;
+    }
+
+    .doc-meta {
+      text-align: left;
+      font-size: 9px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 10px;
+      border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      line-height: 1.5;
+    }
+
+    .doc-title-block {
+      padding-top: 12px;
+    }
+
+    .doc-title {
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .doc-theme {
+      font-size: 9.5px;
+      line-height: 1.35;
+    }
+
+    .metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 12px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .metric-card {
+      padding: 10px 10px;
+      border-radius: 8px;
+    }
+
+    .metric-label {
+      font-size: 8.5px;
+    }
+
+    .metric-value {
+      font-size: 17px;
+    }
+
+    .metric-desc {
+      font-size: 8px;
+    }
+
+    .mobile-table-hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #92400E;
+      background: #FEF3C7;
+      border: 1px solid #FCD34D;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .table-wrapper {
+      padding: 12px 10px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .doc-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 12px;
+      font-size: 8.5px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .doc-footer > div:last-child {
+      text-align: left !important;
+    }
   }
 
   /* Print Media Specific Overrides */
@@ -340,9 +560,10 @@ const BASE_STYLES = `
       border: none !important;
       border-radius: 0 !important;
       max-width: 100% !important;
+      width: 100% !important;
     }
 
-    .action-bar {
+    .action-bar, .mobile-table-hint {
       display: none !important;
     }
 
@@ -353,6 +574,7 @@ const BASE_STYLES = `
     .metrics-grid {
       padding: 16px 24px !important;
       gap: 12px !important;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
     }
 
     .table-wrapper {
@@ -382,7 +604,10 @@ const BASE_STYLES = `
  * Helper to open printable report window with auto-print and clipboard copy
  */
 function openReportWindow(title, htmlContent, tableTextForClipboard = '') {
-  const printWindow = window.open('', '_blank', 'width=1200,height=900,menubar=no,toolbar=no');
+  // Mobile check: do not set fixed desktop width so mobile browsers open full-width native viewport
+  const isMobile = typeof window !== 'undefined' && (window.innerWidth < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  const windowFeatures = isMobile ? undefined : 'width=1200,height=900,menubar=no,toolbar=no';
+  const printWindow = window.open('', '_blank', windowFeatures);
   if (!printWindow) {
     alert('Please allow pop-ups for this website to generate the Executive PDF Report.');
     return;
@@ -393,7 +618,7 @@ function openReportWindow(title, htmlContent, tableTextForClipboard = '') {
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
       <title>${title}</title>
       <link rel="icon" type="image/png" href="/official-logo.png">
       <style>${BASE_STYLES}</style>
@@ -407,14 +632,14 @@ function openReportWindow(title, htmlContent, tableTextForClipboard = '') {
         <div class="action-buttons">
           <button class="btn btn-gold" onclick="window.print()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-            Print / Save as PDF
+            <span>Print / PDF</span>
           </button>
           <button class="btn btn-outline" id="copyBtn" onclick="copyTableData()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            Copy Table
+            <span>Copy Table</span>
           </button>
           <button class="btn btn-outline" onclick="window.close()">
-            Close
+            <span>Close</span>
           </button>
         </div>
       </div>
@@ -440,11 +665,14 @@ function openReportWindow(title, htmlContent, tableTextForClipboard = '') {
           });
         }
 
-        // Trigger native print dialog after fonts and logo load
+        // On desktop, auto-open print dialog; on mobile, allow user to preview first
         window.addEventListener('load', () => {
-          setTimeout(() => {
-            window.print();
-          }, 350);
+          const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
+          if (!isMobileDevice) {
+            setTimeout(() => {
+              window.print();
+            }, 400);
+          }
         });
       </script>
     </body>
@@ -552,6 +780,10 @@ export function generateCensusExecutiveReport(registrations = [], filters = {}) 
 
     <!-- Data Table -->
     <div class="table-wrapper">
+      <div class="mobile-table-hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        <span>Swipe table sideways to view full record columns</span>
+      </div>
       <table>
         <thead>
           <tr>
@@ -711,6 +943,10 @@ export function generateFinancialExecutiveReport(sponsorships = [], filters = {}
 
     <!-- Data Table -->
     <div class="table-wrapper">
+      <div class="mobile-table-hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        <span>Swipe table sideways to view full transaction ledger</span>
+      </div>
       <table>
         <thead>
           <tr>
@@ -859,6 +1095,10 @@ export function generateAdManifestExecutiveReport(adBookings = [], filters = {})
 
     <!-- Data Table -->
     <div class="table-wrapper">
+      <div class="mobile-table-hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        <span>Swipe table sideways to view full compendium ad specifications</span>
+      </div>
       <table>
         <thead>
           <tr>
