@@ -33,7 +33,8 @@ serve(async (req) => {
           Authorization: `Bearer ${resendApiKey}`,
         },
         body: JSON.stringify({
-          from: "NAAS RSU 45th Jubilee <onboarding@resend.dev>",
+          from: "ASF RSU Secretariat (Asfrsu@gmail.com) <onboarding@resend.dev>",
+          reply_to: "Asfrsu@gmail.com",
           to: [to],
           subject: subject || `Official Acknowledgment: 45th Jubilee Sponsorship`,
           html: html,

@@ -32,7 +32,14 @@ export default async function handler(req, res) {
       });
     }
 
-    const fromAddress = process.env.RESEND_FROM_EMAIL || 'NAAS RSU 45th Jubilee <onboarding@resend.dev>';
+    // Configure From address with Asfrsu@gmail.com
+    // Global DMARC policy prevents third-party SMTP servers from sending directly as @gmail.com
+    // We brand the From header as "ASF RSU Secretariat (Asfrsu@gmail.com)" with reply_to Asfrsu@gmail.com
+    let fromAddress = process.env.RESEND_FROM_EMAIL;
+    if (!fromAddress || fromAddress.toLowerCase().includes('@gmail.com')) {
+      fromAddress = 'ASF RSU Secretariat (Asfrsu@gmail.com) <onboarding@resend.dev>';
+    }
+
     const recipientList = Array.isArray(to) ? to : [to.trim()];
 
     const resendResponse = await fetch('https://api.resend.com/emails', {
@@ -43,7 +50,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: fromAddress,
-        reply_to: replyTo || 'Asfrsu@gmail.com',
+        reply_to: 'Asfrsu@gmail.com',
         to: recipientList,
         subject: subject || 'Official Acknowledgment: 45th Jubilee Sponsorship',
         html: html
