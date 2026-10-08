@@ -414,7 +414,7 @@ export default function DpGenerator() {
   };
 
   const shareToWhatsApp = () => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const origin = 'https://asfrsualumni.org';
     const text = encodeURIComponent(
       `I will be at the Adventist Students' Fellowship (RSU) 45th Anniversary & Alumni Homecoming (1981–2026)!\n\nTheme: "Rooted to Rise: Honouring our Heritage, Igniting our Future"\n\nCreate your DP here: ${origin}/#dp-generator`
     );

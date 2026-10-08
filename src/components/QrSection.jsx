@@ -5,15 +5,9 @@ import confetti from 'canvas-confetti';
 
 export default function QrSection() {
   const [qrDataUrl, setQrDataUrl] = useState('');
-  const [siteUrl, setSiteUrl] = useState('https://asfrsualumni.org');
+  const siteUrl = 'https://asfrsualumni.org';
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.origin) {
-      setSiteUrl(window.location.origin);
-    }
-  }, []);
 
   useEffect(() => {
     let active = true;
