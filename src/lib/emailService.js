@@ -69,24 +69,57 @@ export async function sendSponsorAcknowledgmentEmail({
   let failureReason = '';
   let serviceResponse = null;
 
-  // 1. Try Supabase Edge Function if available
+  // 1. Try Vercel Serverless Function (/api/send-sponsor-email)
+  // Keeps RESEND_API_KEY secure on the server without client bundle exposure
   try {
-    const { data, error } = await supabase.functions.invoke('send-sponsor-email', {
-      body: emailPayload
+    const apiRes = await fetch('/api/send-sponsor-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: email.trim(),
+        recipientName: donorName.trim(),
+        subject,
+        html: htmlContent,
+        replyTo: 'Asfrsu@gmail.com'
+      })
     });
 
-    if (!error && data && data.success) {
+    const apiData = await apiRes.json().catch(() => ({}));
+    if (apiRes.ok && (apiData.success || apiData.id)) {
       dispatchStatus = 'DELIVERED';
-      serviceResponse = data;
-      console.log('Sponsor email successfully dispatched via Supabase Edge Function to:', email);
-    } else if (error) {
-      console.info('Edge function note:', error.message);
+      serviceResponse = apiData;
+      console.log('Sponsor email successfully dispatched via Serverless API to:', email);
+    } else if (apiRes.status === 403 && apiData.message && apiData.message.includes('only send testing emails')) {
+      dispatchStatus = 'PENDING_DOMAIN_VERIFICATION';
+      failureReason = 'Resend account is in sandbox testing mode. Domain verification at resend.com/domains is required by the Secretariat to deliver to public email addresses.';
+      console.warn('Resend Sandbox restriction:', apiData.message);
+    } else if (apiRes.status !== 404) {
+      console.info('Serverless API response:', apiData.error || apiData.message);
     }
-  } catch (fnErr) {
-    console.info('Supabase function invoke skipped or pending deployment:', fnErr.message);
+  } catch (apiErr) {
+    console.info('Serverless API route skipped (local dev):', apiErr.message);
   }
 
-  // 2. Try Direct Resend API if VITE_RESEND_API_KEY is configured
+  // 2. Try Supabase Edge Function if available
+  if (dispatchStatus !== 'DELIVERED') {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-sponsor-email', {
+        body: emailPayload
+      });
+
+      if (!error && data && data.success) {
+        dispatchStatus = 'DELIVERED';
+        serviceResponse = data;
+        console.log('Sponsor email successfully dispatched via Supabase Edge Function to:', email);
+      } else if (error) {
+        console.info('Edge function note:', error.message);
+      }
+    } catch (fnErr) {
+      console.info('Supabase function invoke skipped or pending deployment:', fnErr.message);
+    }
+  }
+
+  // 3. Try Direct Resend API if VITE_RESEND_API_KEY is configured
   const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
   if (dispatchStatus !== 'DELIVERED' && resendApiKey) {
     try {
