@@ -146,63 +146,73 @@ export default function App() {
   }, []);
 
   const handleOpenAdmin = () => {
-    window.location.hash = 'admin';
-    startTransition(() => {
-      setIsAdminView(true);
-      setIsDonateView(false);
-      setIsAdsView(false);
-      setIsMediaView(false);
-      setIsAccommodationView(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    setTimeout(() => {
+      window.location.hash = 'admin';
+      startTransition(() => {
+        setIsAdminView(true);
+        setIsDonateView(false);
+        setIsAdsView(false);
+        setIsMediaView(false);
+        setIsAccommodationView(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }, 0);
   };
 
   const handleOpenDonate = () => {
-    window.location.hash = 'donate';
-    startTransition(() => {
-      setIsDonateView(true);
-      setIsAdsView(false);
-      setIsAdminView(false);
-      setIsMediaView(false);
-      setIsAccommodationView(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    setTimeout(() => {
+      window.location.hash = 'donate';
+      startTransition(() => {
+        setIsDonateView(true);
+        setIsAdsView(false);
+        setIsAdminView(false);
+        setIsMediaView(false);
+        setIsAccommodationView(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }, 0);
   };
 
   const handleOpenAds = () => {
-    window.location.hash = 'compendium-ads';
-    startTransition(() => {
-      setIsAdsView(true);
-      setIsDonateView(false);
-      setIsAdminView(false);
-      setIsMediaView(false);
-      setIsAccommodationView(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    setTimeout(() => {
+      window.location.hash = 'compendium-ads';
+      startTransition(() => {
+        setIsAdsView(true);
+        setIsDonateView(false);
+        setIsAdminView(false);
+        setIsMediaView(false);
+        setIsAccommodationView(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }, 0);
   };
 
   const handleOpenMedia = () => {
-    window.location.hash = 'media-hub';
-    startTransition(() => {
-      setIsMediaView(true);
-      setIsDonateView(false);
-      setIsAdsView(false);
-      setIsAdminView(false);
-      setIsAccommodationView(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    setTimeout(() => {
+      window.location.hash = 'media-hub';
+      startTransition(() => {
+        setIsMediaView(true);
+        setIsDonateView(false);
+        setIsAdsView(false);
+        setIsAdminView(false);
+        setIsAccommodationView(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }, 0);
   };
 
   const handleOpenAccommodation = () => {
-    window.location.hash = 'accommodation';
-    startTransition(() => {
-      setIsAccommodationView(true);
-      setIsMediaView(false);
-      setIsDonateView(false);
-      setIsAdsView(false);
-      setIsAdminView(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    setTimeout(() => {
+      window.location.hash = 'accommodation';
+      startTransition(() => {
+        setIsAccommodationView(true);
+        setIsMediaView(false);
+        setIsDonateView(false);
+        setIsAdsView(false);
+        setIsAdminView(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }, 0);
   };
 
   const handleOpenSponsors = (target = 'sponsors') => {
@@ -214,17 +224,19 @@ export default function App() {
   };
 
   const handleBackToSite = () => {
-    if (window.location.hash) {
-      history.pushState("", document.title, window.location.pathname + window.location.search);
-    }
-    startTransition(() => {
-      setIsAdminView(false);
-      setIsDonateView(false);
-      setIsAdsView(false);
-      setIsMediaView(false);
-      setIsAccommodationView(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    setTimeout(() => {
+      if (window.location.hash) {
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+      }
+      startTransition(() => {
+        setIsAdminView(false);
+        setIsDonateView(false);
+        setIsAdsView(false);
+        setIsMediaView(false);
+        setIsAccommodationView(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }, 0);
   };
 
   // 1. Admin Console View

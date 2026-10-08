@@ -509,8 +509,8 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                 }}
                 className="inline-flex items-center justify-center space-x-2.5 px-7 py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-105 active:scale-95 transition-all text-center touch-manipulation border border-amber-300"
               >
-                <HeartHandshake className="w-4 h-4 text-emerald-950 shrink-0" />
-                <span>Support the 45th Jubilee</span>
+                <HeartHandshake className="w-4 h-4 text-emerald-950 shrink-0 pointer-events-none" />
+                <span className="pointer-events-none">Support the 45th Jubilee</span>
               </a>
 
               <a
@@ -523,8 +523,8 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                 }}
                 className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full text-xs font-bold bg-white/10 hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/40 hover:scale-105 active:scale-95 transition-all text-center touch-manipulation"
               >
-                <BookOpen className="w-4 h-4 text-jubilee-gold shrink-0" />
-                <span>Promote Your Brand / Compendium Adverts</span>
+                <BookOpen className="w-4 h-4 text-jubilee-gold shrink-0 pointer-events-none" />
+                <span className="pointer-events-none">Promote Your Brand / Compendium Adverts</span>
               </a>
             </div>
           </div>

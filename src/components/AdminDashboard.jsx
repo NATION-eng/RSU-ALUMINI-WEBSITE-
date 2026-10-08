@@ -1190,38 +1190,50 @@ export default function AdminDashboard({ onBackToSite }) {
     return { total, physical, virtual, sponsors, checkedIn };
   }, [registrations]);
 
-  // Trigger Branded Executive Printable PDF Report for Current Tab View
+  // High-performance tab switching with startTransition + setTimeout to prevent INP blocking
+  const switchAdminTab = (tab) => {
+    if (tab === activeAdminTab) return;
+    setTimeout(() => {
+      startTransition(() => {
+        setActiveAdminTab(tab);
+      });
+    }, 0);
+  };
+
+  // Trigger Branded Executive Printable PDF Report for Current Tab View (Non-blocking)
   const handleTriggerExecutiveReport = () => {
-    if (activeAdminTab === 'SPONSORSHIPS') {
-      if (sponsorships.length === 0) {
-        showToast('No sponsorship records loaded to generate report.', 'info');
-        return;
+    setTimeout(() => {
+      if (activeAdminTab === 'SPONSORSHIPS') {
+        if (sponsorships.length === 0) {
+          showToast('No sponsorship records loaded to generate report.', 'info');
+          return;
+        }
+        generateFinancialExecutiveReport(filteredSponsorships, { 
+          sponsorshipFilterType, 
+          sponsorshipFilterChannel 
+        });
+      } else if (activeAdminTab === 'ADS') {
+        if (adBookings.length === 0) {
+          showToast('No compendium ad bookings loaded to generate report.', 'info');
+          return;
+        }
+        generateAdManifestExecutiveReport(filteredAdBookings, { 
+          adFilterTier, 
+          adFilterStatus, 
+          adFilterPayment 
+        });
+      } else {
+        if (registrations.length === 0) {
+          showToast('No alumni registration records loaded to generate report.', 'info');
+          return;
+        }
+        generateCensusExecutiveReport(filteredRegistrations, { 
+          filterMode, 
+          filterCheckin, 
+          filterSupport 
+        });
       }
-      generateFinancialExecutiveReport(filteredSponsorships, { 
-        sponsorshipFilterType, 
-        sponsorshipFilterChannel 
-      });
-    } else if (activeAdminTab === 'ADS') {
-      if (adBookings.length === 0) {
-        showToast('No compendium ad bookings loaded to generate report.', 'info');
-        return;
-      }
-      generateAdManifestExecutiveReport(filteredAdBookings, { 
-        adFilterTier, 
-        adFilterStatus, 
-        adFilterPayment 
-      });
-    } else {
-      if (registrations.length === 0) {
-        showToast('No alumni registration records loaded to generate report.', 'info');
-        return;
-      }
-      generateCensusExecutiveReport(filteredRegistrations, { 
-        filterMode, 
-        filterCheckin, 
-        filterSupport 
-      });
-    }
+    }, 0);
   };
 
   // LOGIN SCREEN
@@ -1326,12 +1338,13 @@ export default function AdminDashboard({ onBackToSite }) {
             </button>
 
             <button
+              type="button"
               onClick={handleTriggerExecutiveReport}
               title="Generate Official Executive PDF Report"
               className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 border border-jubilee-gold/40 text-jubilee-lightgold transition-all touch-manipulation active:scale-95"
             >
-              <Printer className="w-3.5 h-3.5 text-jubilee-gold" />
-              <span>Official Executive PDF</span>
+              <Printer className="w-3.5 h-3.5 text-jubilee-gold pointer-events-none" />
+              <span className="pointer-events-none">Official Executive PDF</span>
             </button>
 
             <button
@@ -1362,16 +1375,17 @@ export default function AdminDashboard({ onBackToSite }) {
         {/* Admin Navigation Tabs */}
         <div className="flex items-center space-x-2 xs:space-x-2.5 border-b border-white/10 pb-3 overflow-x-auto scrollbar-none px-1">
           <button
-            onClick={() => setActiveAdminTab('REGISTRATIONS')}
+            type="button"
+            onClick={() => switchAdminTab('REGISTRATIONS')}
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'REGISTRATIONS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
                 : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            <Users className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'REGISTRATIONS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-            <span>Alumni Directory &amp; RSVP</span>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+            <Users className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${activeAdminTab === 'REGISTRATIONS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span className="pointer-events-none">Alumni Directory &amp; RSVP</span>
+            <span className={`pointer-events-none px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
               activeAdminTab === 'REGISTRATIONS'
                 ? 'bg-emerald-950/20 text-emerald-950'
                 : 'bg-white/10 text-stone-300'
@@ -1381,16 +1395,17 @@ export default function AdminDashboard({ onBackToSite }) {
           </button>
 
           <button
-            onClick={() => setActiveAdminTab('SPONSORSHIPS')}
+            type="button"
+            onClick={() => switchAdminTab('SPONSORSHIPS')}
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'SPONSORSHIPS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
                 : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            <Award className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'SPONSORSHIPS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-            <span>Sponsorships &amp; Payments</span>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+            <Award className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${activeAdminTab === 'SPONSORSHIPS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span className="pointer-events-none">Sponsorships &amp; Payments</span>
+            <span className={`pointer-events-none px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
               activeAdminTab === 'SPONSORSHIPS'
                 ? 'bg-emerald-950/20 text-emerald-950'
                 : 'bg-white/10 text-stone-300'
@@ -1401,16 +1416,16 @@ export default function AdminDashboard({ onBackToSite }) {
 
           <button
             type="button"
-            onClick={() => setActiveAdminTab('ADS')}
+            onClick={() => switchAdminTab('ADS')}
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'ADS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
                 : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            <BookOpen className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'ADS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-            <span>Compendium Ads</span>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+            <BookOpen className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${activeAdminTab === 'ADS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span className="pointer-events-none">Compendium Ads</span>
+            <span className={`pointer-events-none px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
               activeAdminTab === 'ADS'
                 ? 'bg-emerald-950/20 text-emerald-950'
                 : 'bg-white/10 text-stone-300'
@@ -1421,16 +1436,16 @@ export default function AdminDashboard({ onBackToSite }) {
 
           <button
             type="button"
-            onClick={() => setActiveAdminTab('VIDEOS')}
+            onClick={() => switchAdminTab('VIDEOS')}
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'VIDEOS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
                 : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            <Video className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'VIDEOS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-            <span>Goodwill Video Messages</span>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+            <Video className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${activeAdminTab === 'VIDEOS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span className="pointer-events-none">Goodwill Video Messages</span>
+            <span className={`pointer-events-none px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
               activeAdminTab === 'VIDEOS'
                 ? 'bg-emerald-950/20 text-emerald-950'
                 : 'bg-white/10 text-stone-300'
@@ -1441,16 +1456,16 @@ export default function AdminDashboard({ onBackToSite }) {
 
           <button
             type="button"
-            onClick={() => setActiveAdminTab('PHOTOS')}
+            onClick={() => switchAdminTab('PHOTOS')}
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation ${
               activeAdminTab === 'PHOTOS'
                 ? 'bg-jubilee-gold text-emerald-950 shadow-luxury'
                 : 'text-stone-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            <ImageIcon className={`w-3.5 h-3.5 shrink-0 ${activeAdminTab === 'PHOTOS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
-            <span>Community Photos</span>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+            <ImageIcon className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${activeAdminTab === 'PHOTOS' ? 'text-emerald-950' : 'text-jubilee-gold'}`} />
+            <span className="pointer-events-none">Community Photos</span>
+            <span className={`pointer-events-none px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
               activeAdminTab === 'PHOTOS'
                 ? 'bg-emerald-950/20 text-emerald-950'
                 : 'bg-white/10 text-stone-300'
@@ -1458,7 +1473,7 @@ export default function AdminDashboard({ onBackToSite }) {
               {communityPhotos.length}
             </span>
             {communityPhotos.filter(p => p.status === 'PENDING').length > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-400 text-emerald-950 font-bold animate-pulse">
+              <span className="pointer-events-none px-1.5 py-0.5 rounded-full text-[10px] bg-amber-400 text-emerald-950 font-bold animate-pulse">
                 {communityPhotos.filter(p => p.status === 'PENDING').length} Pending
               </span>
             )}
@@ -1575,18 +1590,21 @@ export default function AdminDashboard({ onBackToSite }) {
             </select>
 
             <button
+              type="button"
               onClick={() => {
                 if (registrations.length === 0) {
                   showToast('No alumni registrations to report.', 'info');
                   return;
                 }
-                generateCensusExecutiveReport(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
+                setTimeout(() => {
+                  generateCensusExecutiveReport(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
+                }, 0);
               }}
-              className="w-full sm:w-auto px-3 py-2.5 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm"
+              className="w-full sm:w-auto px-3 py-2.5 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm touch-manipulation"
               title="Generate Official Census Executive PDF Report"
             >
-              <Printer className="w-3.5 h-3.5 shrink-0" />
-              <span>Print / Save Census PDF</span>
+              <Printer className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
+              <span className="pointer-events-none">Print / Save Census PDF</span>
             </button>
 
             <button
@@ -1976,21 +1994,24 @@ export default function AdminDashboard({ onBackToSite }) {
 
                 <div className="flex items-center space-x-2">
                   <button
+                    type="button"
                     onClick={() => {
                       if (sponsorships.length === 0) {
                         showToast('No sponsorship records to report.', 'info');
                         return;
                       }
-                      generateFinancialExecutiveReport(filteredSponsorships, { 
-                        sponsorshipFilterType, 
-                        sponsorshipFilterChannel 
-                      });
+                      setTimeout(() => {
+                        generateFinancialExecutiveReport(filteredSponsorships, { 
+                          sponsorshipFilterType, 
+                          sponsorshipFilterChannel 
+                        });
+                      }, 0);
                     }}
-                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-jubilee-gold/30 active:scale-95 transition-all"
+                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-jubilee-gold/30 active:scale-95 transition-all touch-manipulation"
                     title="Generate Official Financial Audit PDF Report"
                   >
-                    <Printer className="w-3.5 h-3.5 text-jubilee-gold" />
-                    <span>Print / Save Audit PDF</span>
+                    <Printer className="w-3.5 h-3.5 text-jubilee-gold pointer-events-none" />
+                    <span className="pointer-events-none">Print / Save Audit PDF</span>
                   </button>
 
                   <button
@@ -2310,17 +2331,19 @@ export default function AdminDashboard({ onBackToSite }) {
                       showToast('No compendium ad bookings to report.', 'info');
                       return;
                     }
-                    generateAdManifestExecutiveReport(filteredAdBookings, { 
-                      adFilterTier, 
-                      adFilterStatus, 
-                      adFilterPayment 
-                    });
+                    setTimeout(() => {
+                      generateAdManifestExecutiveReport(filteredAdBookings, { 
+                        adFilterTier, 
+                        adFilterStatus, 
+                        adFilterPayment 
+                      });
+                    }, 0);
                   }}
                   className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl bg-jubilee-gold/20 hover:bg-jubilee-gold/30 text-jubilee-lightgold border border-jubilee-gold/40 text-xs font-bold transition-all touch-manipulation active:scale-95"
                   title="Generate Official Ad Production Order Manifest PDF"
                 >
                   <Printer className="w-3.5 h-3.5 pointer-events-none" />
-                  <span>Print / Save Production PDF</span>
+                  <span className="pointer-events-none">Print / Save Production PDF</span>
                 </button>
 
                 <button

@@ -58,10 +58,12 @@ export default function MediaSection() {
 
   const handleTabChange = useCallback((tab) => {
     if (tab === activeMediaTab) return;
-    startTransition(() => {
-      setActiveMediaTab(tab);
-    });
-  }, [activeMediaTab]);
+    setTimeout(() => {
+      startTransition(() => {
+        setActiveMediaTab(tab);
+      });
+    }, 0);
+  }, [activeMediaTab, startTransition]);
 
   const fetchApprovedPhotos = useCallback(async () => {
     setLoadingPhotos(true);
@@ -140,8 +142,8 @@ export default function MediaSection() {
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <Tv className="w-3.5 h-3.5" />
-              <span>Broadcast &amp; Documentary</span>
+              <Tv className="w-3.5 h-3.5 pointer-events-none" />
+              <span className="pointer-events-none">Broadcast &amp; Documentary</span>
             </button>
 
             <button
@@ -157,9 +159,9 @@ export default function MediaSection() {
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <ImageIcon className="w-3.5 h-3.5" />
-              <span>Community Living Archive</span>
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/10 text-jubilee-lightgold font-mono font-bold">
+              <ImageIcon className="w-3.5 h-3.5 pointer-events-none" />
+              <span className="pointer-events-none">Community Living Archive</span>
+              <span className="pointer-events-none px-1.5 py-0.5 rounded-full text-[10px] bg-white/10 text-jubilee-lightgold font-mono font-bold">
                 {approvedPhotos.length}
               </span>
             </button>

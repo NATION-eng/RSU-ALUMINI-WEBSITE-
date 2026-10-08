@@ -451,9 +451,16 @@ function openReportWindow(title, htmlContent, tableTextForClipboard = '') {
     </html>
   `;
 
-  printWindow.document.open();
-  printWindow.document.write(fullHtml);
-  printWindow.document.close();
+  // Defer document writing to unblock main thread and ensure INP stays under 10ms
+  setTimeout(() => {
+    try {
+      printWindow.document.open();
+      printWindow.document.write(fullHtml);
+      printWindow.document.close();
+    } catch (err) {
+      console.error('Error rendering executive report:', err);
+    }
+  }, 0);
 }
 
 /**

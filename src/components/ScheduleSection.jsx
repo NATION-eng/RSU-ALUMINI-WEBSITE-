@@ -1,9 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, startTransition } from 'react';
 import { Calendar, Clock, MapPin, Globe } from 'lucide-react';
 
 export default function ScheduleSection() {
   const [selectedDay, setSelectedDay] = useState(0);
   const [timezone, setTimezone] = useState('WAT');
+
+  const handleSelectDay = (idx) => {
+    if (idx === selectedDay) return;
+    setTimeout(() => {
+      startTransition(() => {
+        setSelectedDay(idx);
+      });
+    }, 0);
+  };
+
+  const handleSelectTimezone = (tz) => {
+    if (tz === timezone) return;
+    setTimeout(() => {
+      startTransition(() => {
+        setTimezone(tz);
+      });
+    }, 0);
+  };
 
   const tzOffsets = {
     WAT: 'Local (Port Harcourt)',
@@ -136,15 +154,16 @@ export default function ScheduleSection() {
             <div className="flex space-x-1 text-xs">
               {Object.keys(tzOffsets).map((tz) => (
                 <button
+                  type="button"
                   key={tz}
-                  onClick={() => setTimezone(tz)}
+                  onClick={() => handleSelectTimezone(tz)}
                   className={`px-2 sm:px-2.5 py-1 rounded-lg font-semibold transition-all touch-manipulation ${
                     timezone === tz
                       ? 'bg-emerald-950 text-white shadow-sm'
                       : 'text-stone-600 hover:bg-stone-100'
                   }`}
                 >
-                  {tz}
+                  <span className="pointer-events-none">{tz}</span>
                 </button>
               ))}
             </div>
@@ -155,18 +174,19 @@ export default function ScheduleSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 xs:gap-2.5 sm:gap-3 mb-6 sm:mb-8">
           {schedule.map((item, idx) => (
             <button
+              type="button"
               key={idx}
-              onClick={() => setSelectedDay(idx)}
+              onClick={() => handleSelectDay(idx)}
               className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all duration-300 border touch-manipulation ${
                 selectedDay === idx
                   ? 'bg-emerald-950 text-white border-jubilee-gold/50 shadow-luxury scale-[1.02]'
                   : 'bg-white text-stone-700 border-stone-200 hover:border-emerald-800/40 hover:bg-stone-50'
               }`}
             >
-              <span className="block text-[9px] xs:text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold opacity-75 truncate">
+              <span className="pointer-events-none block text-[9px] xs:text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold opacity-75 truncate">
                 {item.date}
               </span>
-              <span className="block text-xs xs:text-sm sm:text-lg font-retro font-bold mt-0.5 leading-snug truncate">
+              <span className="pointer-events-none block text-xs xs:text-sm sm:text-lg font-retro font-bold mt-0.5 leading-snug truncate">
                 {item.day}
               </span>
             </button>

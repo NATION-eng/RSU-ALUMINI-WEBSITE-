@@ -8,8 +8,9 @@ export default function CountrySelect({ value = 'Nigeria', onChange, name = 'cou
   const containerRef = useRef(null);
   const searchInputRef = useRef(null);
 
-  // Close when clicking outside
+  // Close when clicking outside - only active when open to prevent main-thread overhead
   useEffect(() => {
+    if (!isOpen) return;
     const handleClickOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setIsOpen(false);
@@ -17,7 +18,7 @@ export default function CountrySelect({ value = 'Nigeria', onChange, name = 'cou
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   // Focus search input when dropdown opens
   useEffect(() => {

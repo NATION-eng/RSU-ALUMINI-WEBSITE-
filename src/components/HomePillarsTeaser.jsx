@@ -38,11 +38,13 @@ export default function HomePillarsTeaser({ onOpenDonate }) {
 
   const handleDonateClick = (e) => {
     if (e && e.preventDefault) e.preventDefault();
-    if (onOpenDonate) {
-      onOpenDonate();
-    } else {
-      window.location.hash = 'donate';
-    }
+    setTimeout(() => {
+      if (onOpenDonate) {
+        onOpenDonate();
+      } else {
+        window.location.hash = 'donate';
+      }
+    }, 0);
   };
 
   return (
@@ -146,10 +148,10 @@ export default function HomePillarsTeaser({ onOpenDonate }) {
                   <button
                     type="button"
                     onClick={handleDonateClick}
-                    className="text-jubilee-gold hover:text-white font-bold transition-colors inline-flex items-center space-x-1"
+                    className="text-jubilee-gold hover:text-white font-bold transition-colors inline-flex items-center space-x-1 touch-manipulation"
                   >
-                    <span>Support</span>
-                    <ArrowRight className="w-3 h-3" />
+                    <span className="pointer-events-none">Support</span>
+                    <ArrowRight className="w-3 h-3 pointer-events-none" />
                   </button>
                 </div>
               </div>
@@ -173,8 +175,8 @@ export default function HomePillarsTeaser({ onOpenDonate }) {
             onClick={handleDonateClick}
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-105 active:scale-95 transition-all shrink-0 touch-manipulation"
           >
-            <HeartHandshake className="w-4 h-4 text-emerald-950 shrink-0" />
-            <span>Open Donate &amp; Fundraising Hub</span>
+            <HeartHandshake className="w-4 h-4 text-emerald-950 shrink-0 pointer-events-none" />
+            <span className="pointer-events-none">Open Donate &amp; Fundraising Hub</span>
           </a>
         </div>
 
