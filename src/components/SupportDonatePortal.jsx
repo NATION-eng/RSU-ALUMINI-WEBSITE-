@@ -11,6 +11,13 @@ import { TIER_DETAILS } from '../lib/emailTemplates';
 import { sendSponsorAcknowledgmentEmail } from '../lib/emailService';
 import { FUNDRAISING_PILLARS } from '../data/fundraisingPillars';
 import { useLivePillars } from '../lib/dynamicPillarsService';
+import { 
+  SPONSORSHIP_LEVELS, 
+  ALUMNI_GIVING_CATEGORIES, 
+  SET_CONTRIBUTION_FRAMEWORK, 
+  VENDOR_EXHIBITION_OPTIONS, 
+  VENDOR_PARTICIPATION_BENEFITS 
+} from '../data/givingData';
 
 export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
   // Live dynamic pillars data subscription (Supabase + LocalStorage)
@@ -73,6 +80,42 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
     setActivePillar('corporate_tiers');
     setSelectedTier(tierKey);
     setCustomAmount(minAmount.toString());
+    const formElement = document.getElementById('donate-checkout-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Handle Alumni Giving category selection
+  const handleSelectAlumniCategory = (categoryKey, amount) => {
+    setActivePillar('alumni_giving');
+    setSelectedTier(categoryKey);
+    setCustomAmount(amount.toString());
+    const formElement = document.getElementById('donate-checkout-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Handle Set Contribution Framework selection
+  const handleSelectSetCohort = (setKey, amount, cohortName) => {
+    setActivePillar('set_giving');
+    setSelectedTier(setKey);
+    setCustomAmount(amount.toString());
+    if (cohortName) {
+      setFormData(prev => ({ ...prev, alumniSet: cohortName }));
+    }
+    const formElement = document.getElementById('donate-checkout-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Handle Vendor / Exhibition selection
+  const handleSelectVendorOption = (vendorKey, fee) => {
+    setActivePillar('vendor_options');
+    setSelectedTier(vendorKey);
+    setCustomAmount(fee.toString());
     const formElement = document.getElementById('donate-checkout-form');
     if (formElement) {
       formElement.scrollIntoView({ behavior: 'smooth' });
@@ -193,7 +236,13 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
   const handleSuccessfulPayment = async (reference, amount, paymentMethod, status = 'VERIFIED') => {
     setIsProcessing(false);
     
-    const pillarTitle = FUNDRAISING_PILLARS[activePillar]?.title || '45th Jubilee Support';
+    const pillarTitle = FUNDRAISING_PILLARS[activePillar]?.title || (
+      activePillar === 'corporate_tiers' ? 'Corporate Sponsorship' :
+      activePillar === 'alumni_giving' ? 'Alumni Giving' :
+      activePillar === 'set_giving' ? 'Set Contribution Framework' :
+      activePillar === 'vendor_options' ? 'Vendor & Exhibition Options' :
+      '45th Jubilee Support'
+    );
     const tierName = TIER_DETAILS[selectedTier]?.name || pillarTitle;
 
     const paymentRecord = {
@@ -393,167 +442,200 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         
-        {/* FOUR FUNDRAISING PILLARS NAVIGATION TABS */}
-        <div className="space-y-6 mb-12">
+        {/* MAIN GIVING CHANNEL NAVIGATION */}
+        <div className="space-y-6 mb-10">
           <div className="text-center max-w-2xl mx-auto space-y-1">
             <span className="text-[11px] font-mono font-bold text-amber-700 uppercase tracking-widest block">
-              Step 1: Choose Your Targeted Campaign
+              Step 1: Choose Your Giving Channel
             </span>
             <h2 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
-              Select a Fundraising Pillar
+              Select a Contribution Category
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 xs:gap-2.5 sm:gap-3 max-w-5xl mx-auto">
-            {/* Pillar 1 Tab */}
+          {/* 5 Channel Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 max-w-5xl mx-auto">
             <button
               type="button"
               onClick={() => handleSelectPillar('celebration', 'celebration', '50000')}
-              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
-                activePillar === 'celebration'
-                  ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
-                  : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
+              className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all touch-manipulation active:scale-95 flex items-center space-x-1.5 ${
+                ['celebration', 'homecoming', 'trust_fund', 'centre_of_influence'].includes(activePillar)
+                  ? 'bg-emerald-950 text-white shadow-luxury border-2 border-jubilee-gold'
+                  : 'bg-white hover:bg-stone-50 text-stone-700 border border-stone-200'
               }`}
             >
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Radio className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'celebration' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 1</span>
-                </div>
-                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
-                  45th Celebration
-                </div>
-                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
-                  Media &amp; Live Stream
-                </div>
-              </div>
-              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
-                activePillar === 'celebration' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
-              }`}>
-                Goal: ₦15M • {livePillars?.celebration?.percentage || 0}%
-              </div>
+              <span>🏛️ 4 Legacy Pillars</span>
             </button>
-
-            {/* Pillar 2 Tab */}
             <button
               type="button"
-              onClick={() => handleSelectPillar('homecoming', 'homecoming', '50000')}
-              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
-                activePillar === 'homecoming'
-                  ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
-                  : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Users className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'homecoming' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 2</span>
-                </div>
-                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
-                  Homecoming
-                </div>
-                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
-                  Hospitality &amp; Setup
-                </div>
-              </div>
-              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
-                activePillar === 'homecoming' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
-              }`}>
-                Goal: ₦12.5M • {livePillars?.homecoming?.percentage || 0}%
-              </div>
-            </button>
-
-            {/* Pillar 3 Tab */}
-            <button
-              type="button"
-              onClick={() => handleSelectPillar('trust_fund', 'trust_fund', '50000')}
-              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
-                activePillar === 'trust_fund'
-                  ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
-                  : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1.5">
-                  <GraduationCap className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'trust_fund' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 3</span>
-                </div>
-                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
-                  Education Trust
-                </div>
-                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
-                  Student Scholarships
-                </div>
-              </div>
-              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
-                activePillar === 'trust_fund' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
-              }`}>
-                Goal: ₦20M • {livePillars?.trust_fund?.percentage || 0}%
-              </div>
-            </button>
-
-            {/* Pillar 4 Tab */}
-            <button
-              type="button"
-              onClick={() => handleSelectPillar('centre_of_influence', 'centre_of_influence', '150000')}
-              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
-                activePillar === 'centre_of_influence'
-                  ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
-                  : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Landmark className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'centre_of_influence' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 4</span>
-                </div>
-                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
-                  Centre of Influence
-                </div>
-                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
-                  3-Wing Campus Complex
-                </div>
-              </div>
-              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
-                activePillar === 'centre_of_influence' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
-              }`}>
-                Goal: ₦50M • {livePillars?.centre_of_influence?.percentage || 0}%
-              </div>
-            </button>
-
-            {/* Pillar 5 / Corporate Tab */}
-            <button
-              type="button"
-              onClick={() => handleSelectPillar('corporate_tiers', 'platinum', '2000000')}
-              className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between col-span-2 lg:col-span-1 ${
+              onClick={() => handleSelectCorporateTier('platinum', 250000)}
+              className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all touch-manipulation active:scale-95 flex items-center space-x-1.5 ${
                 activePillar === 'corporate_tiers'
-                  ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
-                  : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
+                  ? 'bg-emerald-950 text-white shadow-luxury border-2 border-jubilee-gold'
+                  : 'bg-white hover:bg-stone-50 text-stone-700 border border-stone-200'
               }`}
             >
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1.5">
-                  <Award className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'corporate_tiers' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
-                  <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Corporate</span>
-                </div>
-                <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
-                  Executive Tiers
-                </div>
-                <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
-                  5 General Matrix Tiers
-                </div>
-              </div>
-              <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
-                activePillar === 'corporate_tiers' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
-              }`}>
-                ₦100K – ₦2M+
-              </div>
+              <span>🏆 Sponsorship Levels</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSelectAlumniCategory('sapphire_builder', 100000)}
+              className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all touch-manipulation active:scale-95 flex items-center space-x-1.5 ${
+                activePillar === 'alumni_giving'
+                  ? 'bg-emerald-950 text-white shadow-luxury border-2 border-jubilee-gold'
+                  : 'bg-white hover:bg-stone-50 text-stone-700 border border-stone-200'
+              }`}
+            >
+              <span>💎 Alumni Giving Categories</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSelectSetCohort('pioneer_senior', 100000, 'Pioneer / Senior Sets (1981–1995)')}
+              className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all touch-manipulation active:scale-95 flex items-center space-x-1.5 ${
+                activePillar === 'set_giving'
+                  ? 'bg-emerald-950 text-white shadow-luxury border-2 border-jubilee-gold'
+                  : 'bg-white hover:bg-stone-50 text-stone-700 border border-stone-200'
+              }`}
+            >
+              <span>👑 Set Contribution Framework</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSelectVendorOption('vendor_corporate_booth', 15000)}
+              className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all touch-manipulation active:scale-95 flex items-center space-x-1.5 ${
+                activePillar === 'vendor_options'
+                  ? 'bg-emerald-950 text-white shadow-luxury border-2 border-jubilee-gold'
+                  : 'bg-white hover:bg-stone-50 text-stone-700 border border-stone-200'
+              }`}
+            >
+              <span>🏢 Vendor &amp; Exhibition</span>
             </button>
           </div>
+
+          {/* 4 Pillars Sub-Grid (Shown when in pillars mode) */}
+          {['celebration', 'homecoming', 'trust_fund', 'centre_of_influence'].includes(activePillar) && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 xs:gap-2.5 sm:gap-3 max-w-5xl mx-auto pt-2 animate-fade-in">
+              {/* Pillar 1 Tab */}
+              <button
+                type="button"
+                onClick={() => handleSelectPillar('celebration', 'celebration', '50000')}
+                className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+                  activePillar === 'celebration'
+                    ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
+                    : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <Radio className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'celebration' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                    <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 1</span>
+                  </div>
+                  <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
+                    45th Celebration
+                  </div>
+                  <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
+                    Media &amp; Live Stream
+                  </div>
+                </div>
+                <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
+                  activePillar === 'celebration' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
+                }`}>
+                  Goal: ₦15M • {livePillars?.celebration?.percentage || 0}%
+                </div>
+              </button>
+
+              {/* Pillar 2 Tab */}
+              <button
+                type="button"
+                onClick={() => handleSelectPillar('homecoming', 'homecoming', '50000')}
+                className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+                  activePillar === 'homecoming'
+                    ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
+                    : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <Users className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'homecoming' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                    <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 2</span>
+                  </div>
+                  <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
+                    Homecoming
+                  </div>
+                  <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
+                    Hospitality &amp; Setup
+                  </div>
+                </div>
+                <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
+                  activePillar === 'homecoming' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
+                }`}>
+                  Goal: ₦12.5M • {livePillars?.homecoming?.percentage || 0}%
+                </div>
+              </button>
+
+              {/* Pillar 3 Tab */}
+              <button
+                type="button"
+                onClick={() => handleSelectPillar('trust_fund', 'trust_fund', '50000')}
+                className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+                  activePillar === 'trust_fund'
+                    ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
+                    : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <GraduationCap className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'trust_fund' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                    <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 3</span>
+                  </div>
+                  <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
+                    Education Trust
+                  </div>
+                  <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
+                    Student Scholarships
+                  </div>
+                </div>
+                <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
+                  activePillar === 'trust_fund' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
+                }`}>
+                  Goal: ₦20M • {livePillars?.trust_fund?.percentage || 0}%
+                </div>
+              </button>
+
+              {/* Pillar 4 Tab */}
+              <button
+                type="button"
+                onClick={() => handleSelectPillar('centre_of_influence', 'centre_of_influence', '150000')}
+                className={`p-2.5 xs:p-3.5 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border touch-manipulation flex flex-col justify-between ${
+                  activePillar === 'centre_of_influence'
+                    ? 'bg-emerald-950 text-white border-jubilee-gold/60 shadow-luxury scale-[1.02]'
+                    : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <Landmark className={`w-3.5 xs:w-4 h-3.5 xs:h-4 ${activePillar === 'centre_of_influence' ? 'text-jubilee-gold' : 'text-emerald-800'}`} />
+                    <span className="text-[9px] xs:text-[10px] font-mono font-bold uppercase opacity-80">Pillar 4</span>
+                  </div>
+                  <div className="font-retro font-bold text-xs xs:text-sm sm:text-base leading-snug">
+                    Centre of Influence
+                  </div>
+                  <div className="text-[10px] xs:text-[11px] opacity-75 mt-0.5 font-light">
+                    3-Wing Campus Complex
+                  </div>
+                </div>
+                <div className={`mt-2.5 xs:mt-3 pt-2 border-t text-[10px] xs:text-[11px] font-mono font-bold ${
+                  activePillar === 'centre_of_influence' ? 'border-white/10 text-jubilee-lightgold' : 'border-stone-100 text-stone-500'
+                }`}>
+                  Goal: ₦50M • {livePillars?.centre_of_influence?.percentage || 0}%
+                </div>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* PILLAR OVERVIEW & FINANCIAL PROGRESS TRACKER (When a specific pillar is active) */}
-        {currentPillarData && activePillar !== 'corporate_tiers' && (
+        {currentPillarData && ['celebration', 'homecoming', 'trust_fund', 'centre_of_influence'].includes(activePillar) && (
           <div className="space-y-10 animate-fade-in mb-14">
             
             {/* Top Overview & Financial Progress Tracker Card */}
@@ -695,275 +777,289 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
           </div>
         )}
 
-        {/* 5 GENERAL CORPORATE & SET TIERS (When activePillar === 'corporate_tiers') */}
+        {/* 1. SPONSORSHIP LEVELS (When activePillar === 'corporate_tiers') */}
         {activePillar === 'corporate_tiers' && (
           <div className="space-y-12 animate-fade-in mb-14">
             <div className="text-center max-w-3xl mx-auto space-y-2">
+              <div className="inline-flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-amber-800 bg-amber-100/90 px-3 py-1 rounded-full uppercase tracking-wider border border-amber-300/60">
+                <Award className="w-3.5 h-3.5 text-amber-700" />
+                <span>Executive Corporate &amp; Set Partners</span>
+              </div>
               <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
-                Corporate &amp; Alumni Set Sponsorship Matrix
+                Sponsorship Levels
               </h3>
               <p className="text-sm text-stone-600">
                 Designed for major corporate partners, alumni cohorts, and patron families seeking executive visibility across physical, broadcast, and permanent archival platforms.
               </p>
             </div>
 
-            {/* 5 Distinct Tiers Grid */}
+            {/* 5 Distinct Sponsorship Levels Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-              
-              {/* 1. Platinum Sponsor */}
-              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
-                selectedTier === 'platinum'
-                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
-                  : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
-              }`}>
-                <div className="absolute top-0 right-0 px-3.5 sm:px-4 py-1 bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 text-[10px] font-black uppercase tracking-wider rounded-bl-xl shadow-sm">
-                  Most Prestigious
-                </div>
+              {SPONSORSHIP_LEVELS.map((tier) => {
+                const isSelected = selectedTier === tier.key;
+                return (
+                  <div
+                    key={tier.key}
+                    className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                      isSelected
+                        ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                        : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center space-x-2 text-xs font-bold text-jubilee-gold uppercase tracking-wider mb-2">
+                        <Award className="w-4 h-4" />
+                        <span>{tier.subtitle}</span>
+                      </div>
 
-                <div>
-                  <div className="flex items-center space-x-2 text-xs font-bold text-jubilee-gold uppercase tracking-wider mb-2">
-                    <Award className="w-4 h-4" />
-                    <span>Premier Category</span>
-                  </div>
+                      <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${isSelected ? 'text-white' : 'text-emerald-950'}`}>
+                        {tier.name}
+                      </h3>
+                      <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
+                        {tier.formattedAmount}<span className="text-xs font-sans font-medium text-stone-400">+</span>
+                      </div>
 
-                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'platinum' ? 'text-white' : 'text-emerald-950'}`}>
-                    Platinum Sponsor
-                  </h3>
-                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
-                    ₦2,000,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
-                  </div>
+                      <p className={`text-xs leading-relaxed mb-6 ${isSelected ? 'text-stone-300' : 'text-stone-600'}`}>
+                        {tier.tagline}
+                      </p>
 
-                  <p className={`text-xs leading-relaxed mb-6 ${selectedTier === 'platinum' ? 'text-stone-300' : 'text-stone-600'}`}>
-                    For headline institutional partners, corporate visionaries, and patron sets seeking maximum visibility across digital and physical venues.
-                  </p>
-
-                  <div className="border-t border-stone-200/40 pt-4 space-y-3 mb-6">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
-                      Entitled Benefits:
+                      <div className="border-t border-stone-200/40 pt-4 space-y-3 mb-6">
+                        <div className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
+                          Entitled Benefits:
+                        </div>
+                        <ul className="space-y-2.5 text-xs">
+                          {tier.perks.map((perk, i) => (
+                            <li key={i} className="flex items-start space-x-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                              <span className={isSelected ? 'text-emerald-100' : 'text-stone-700'}>{perk}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                    <ul className="space-y-2.5 text-xs">
-                      {TIER_DETAILS.platinum.perks.map((perk, i) => (
-                        <li key={i} className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                          <span className={selectedTier === 'platinum' ? 'text-emerald-100' : 'text-stone-700'}>{perk}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
 
-                <button
-                  onClick={() => handleSelectCorporateTier('platinum', 2000000)}
-                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
-                    selectedTier === 'platinum'
-                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
-                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
-                  }`}
-                >
-                  PAY ₦2,000,000
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectCorporateTier(tier.key, tier.contribution)}
+                      className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                          : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                      }`}
+                    >
+                      PAY {tier.formattedAmount}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 2. ALUMNI GIVING CATEGORIES (When activePillar === 'alumni_giving') */}
+        {activePillar === 'alumni_giving' && (
+          <div className="space-y-12 animate-fade-in mb-14">
+            <div className="text-center max-w-3xl mx-auto space-y-2">
+              <div className="inline-flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-blue-800 bg-blue-100/90 px-3 py-1 rounded-full uppercase tracking-wider border border-blue-300/60">
+                <Sparkles className="w-3.5 h-3.5 text-blue-700" />
+                <span>Individual Alumni Cohort Giving</span>
               </div>
+              <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
+                Alumni Giving Categories
+              </h3>
+              <p className="text-sm text-stone-600">
+                Suggested contribution tiers designed to empower every graduate to participate meaningfully in the 45th Anniversary Homecoming and lasting chapter endowment.
+              </p>
+            </div>
 
-              {/* 2. Gold Sponsor */}
-              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
-                selectedTier === 'gold'
-                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
-                  : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
-              }`}>
-                <div>
-                  <div className="flex items-center space-x-2 text-xs font-bold text-amber-600 uppercase tracking-wider mb-2">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Executive Tier</span>
-                  </div>
+            {/* 6 Giving Categories Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {ALUMNI_GIVING_CATEGORIES.map((cat) => {
+                const isSelected = selectedTier === cat.key;
+                return (
+                  <div
+                    key={cat.key}
+                    className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                      isSelected
+                        ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                        : 'border-stone-200 bg-white hover:border-emerald-700/40 text-stone-900 shadow-md'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center space-x-2 text-xs font-bold text-jubilee-gold uppercase tracking-wider mb-2">
+                        <span>{cat.badge}</span>
+                      </div>
 
-                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'gold' ? 'text-white' : 'text-emerald-950'}`}>
-                    Gold Sponsor
-                  </h3>
-                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
-                    ₦1,000,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
-                  </div>
+                      <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${isSelected ? 'text-white' : 'text-emerald-950'}`}>
+                        {cat.name}
+                      </h3>
+                      <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-3">
+                        {cat.range}
+                      </div>
 
-                  <p className={`text-xs leading-relaxed mb-6 ${selectedTier === 'gold' ? 'text-stone-300' : 'text-stone-600'}`}>
-                    Substantial executive visibility on official fellowship web pages, stage backdrops, and dedicated compendium color feature.
-                  </p>
-
-                  <div className="border-t border-stone-200/40 pt-4 space-y-3 mb-6">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
-                      Entitled Benefits:
+                      <p className={`text-xs leading-relaxed mb-6 ${isSelected ? 'text-stone-300' : 'text-stone-600'}`}>
+                        {cat.desc}
+                      </p>
                     </div>
-                    <ul className="space-y-2.5 text-xs">
-                      {TIER_DETAILS.gold.perks.map((perk, i) => (
-                        <li key={i} className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                          <span className={selectedTier === 'gold' ? 'text-emerald-100' : 'text-stone-700'}>{perk}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
 
-                <button
-                  onClick={() => handleSelectCorporateTier('gold', 1000000)}
-                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
-                    selectedTier === 'gold'
-                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
-                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
-                  }`}
-                >
-                  PAY ₦1,000,000
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectAlumniCategory(cat.key, cat.suggestedAmount)}
+                      className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                          : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                      }`}
+                    >
+                      {cat.key === 'general_support' ? 'GIVE CUSTOM AMOUNT' : `GIVE ${cat.range}`}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 3. PROPOSED SET CONTRIBUTION FRAMEWORK (When activePillar === 'set_giving') */}
+        {activePillar === 'set_giving' && (
+          <div className="space-y-12 animate-fade-in mb-14">
+            <div className="text-center max-w-3xl mx-auto space-y-2">
+              <div className="inline-flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-amber-800 bg-amber-100/90 px-3 py-1 rounded-full uppercase tracking-wider border border-amber-300/60">
+                <Users className="w-3.5 h-3.5 text-amber-700" />
+                <span>Class Sets &amp; Graduation Cohorts</span>
               </div>
+              <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
+                Proposed Set Contribution Framework
+              </h3>
+              <p className="text-sm text-stone-600">
+                Suggested target benchmarks guiding alumni sets to unite, organize class contributions, and present commemorative collective gifts during homecoming.
+              </p>
+            </div>
 
-              {/* 3. Silver Sponsor */}
-              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
-                selectedTier === 'silver'
-                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
-                  : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
-              }`}>
-                <div>
-                  <div className="flex items-center space-x-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Prominent Supporter</span>
-                  </div>
+            {/* 5 Set Categories Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {SET_CONTRIBUTION_FRAMEWORK.map((set) => {
+                const isSelected = selectedTier === set.key;
+                return (
+                  <div
+                    key={set.key}
+                    className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                      isSelected
+                        ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                        : 'border-stone-200 bg-white hover:border-emerald-700/40 text-stone-900 shadow-md'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center space-x-2 text-xs font-bold text-jubilee-gold uppercase tracking-wider mb-2">
+                        <Users className="w-4 h-4" />
+                        <span>{set.cohorts}</span>
+                      </div>
 
-                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'silver' ? 'text-white' : 'text-emerald-950'}`}>
-                    Silver Sponsor
-                  </h3>
-                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
-                    ₦500,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
-                  </div>
+                      <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${isSelected ? 'text-white' : 'text-emerald-950'}`}>
+                        {set.category}
+                      </h3>
+                      <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-3">
+                        {set.range}
+                      </div>
 
-                  <p className={`text-xs leading-relaxed mb-6 ${selectedTier === 'silver' ? 'text-stone-300' : 'text-stone-600'}`}>
-                    Featured brand presence in the souvenir magazine, public acknowledgment during plenary sessions, and digital portal recognition.
-                  </p>
-
-                  <div className="border-t border-stone-200/40 pt-4 space-y-3 mb-6">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
-                      Entitled Benefits:
+                      <p className={`text-xs leading-relaxed mb-6 ${isSelected ? 'text-stone-300' : 'text-stone-600'}`}>
+                        {set.desc}
+                      </p>
                     </div>
-                    <ul className="space-y-2.5 text-xs">
-                      {TIER_DETAILS.silver.perks.map((perk, i) => (
-                        <li key={i} className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                          <span className={selectedTier === 'silver' ? 'text-emerald-100' : 'text-stone-700'}>{perk}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
 
-                <button
-                  onClick={() => handleSelectCorporateTier('silver', 500000)}
-                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
-                    selectedTier === 'silver'
-                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
-                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
-                  }`}
-                >
-                  PAY ₦500,000
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectSetCohort(set.key, set.suggestedAmount, `${set.category} (${set.cohorts})`)}
+                      className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                          : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                      }`}
+                    >
+                      CONTRIBUTE {set.range}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 4. VENDOR/EXHIBITION OPTIONS (When activePillar === 'vendor_options') */}
+        {activePillar === 'vendor_options' && (
+          <div className="space-y-12 animate-fade-in mb-14">
+            <div className="text-center max-w-3xl mx-auto space-y-2">
+              <div className="inline-flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-amber-800 bg-amber-100/90 px-3 py-1 rounded-full uppercase tracking-wider border border-amber-300/60">
+                <Building2 className="w-3.5 h-3.5 text-amber-700" />
+                <span>On-Ground Commercial &amp; Ministry Opportunities</span>
               </div>
+              <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
+                Vendor &amp; Exhibition Options
+              </h3>
+              <p className="text-sm text-stone-600">
+                Showcase your products, services, books, and catering to over 1,500 delegates and alumni at the homecoming venue.
+              </p>
+            </div>
 
-              {/* 4. Bronze Sponsor */}
-              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
-                selectedTier === 'bronze'
-                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
-                  : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
-              }`}>
-                <div>
-                  <div className="flex items-center space-x-2 text-xs font-bold text-amber-700 uppercase tracking-wider mb-2">
-                    <Award className="w-4 h-4" />
-                    <span>Valued Partner</span>
-                  </div>
+            {/* Participation Benefits Banner */}
+            <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#051A0F] via-[#092B19] to-[#0D3821] text-white border-2 border-jubilee-gold/50 shadow-luxury">
+              <h4 className="font-retro font-bold text-sm sm:text-base text-jubilee-lightgold mb-3 flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-jubilee-gold" />
+                <span>Participation will provide an opportunity to:</span>
+              </h4>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                {VENDOR_PARTICIPATION_BENEFITS.map((benefit, idx) => (
+                  <li key={idx} className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-jubilee-gold shrink-0 mt-0.5" />
+                    <span className="text-stone-200 leading-relaxed">{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'bronze' ? 'text-white' : 'text-emerald-950'}`}>
-                    Bronze Sponsor
-                  </h3>
-                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
-                    ₦250,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
-                  </div>
-
-                  <p className={`text-xs leading-relaxed mb-6 ${selectedTier === 'bronze' ? 'text-stone-300' : 'text-stone-600'}`}>
-                    Ideal for small-to-medium businesses, professional consultancies, or alumni sets desiring dedicated inclusion.
-                  </p>
-
-                  <div className="border-t border-stone-200/40 pt-4 space-y-3 mb-6">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
-                      Entitled Benefits:
+            {/* 5 Vendor Categories Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {VENDOR_EXHIBITION_OPTIONS.map((vendor) => {
+                const isSelected = selectedTier === vendor.key;
+                return (
+                  <div
+                    key={vendor.key}
+                    className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                      isSelected
+                        ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                        : 'border-stone-200 bg-white hover:border-amber-400 text-stone-900 shadow-md'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center space-x-2 text-[11px] font-bold text-jubilee-gold uppercase tracking-wider mb-2">
+                        <Building2 className="w-3.5 h-3.5 text-jubilee-gold" />
+                        <span>{vendor.badge}</span>
+                      </div>
+                      <h3 className={`text-xl font-retro font-extrabold mb-1 ${isSelected ? 'text-white' : 'text-emerald-950'}`}>
+                        {vendor.category}
+                      </h3>
+                      <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-3">
+                        {vendor.formattedFee}
+                      </div>
+                      <p className={`text-xs leading-relaxed mb-6 ${isSelected ? 'text-stone-300' : 'text-stone-600'}`}>
+                        {vendor.desc}
+                      </p>
                     </div>
-                    <ul className="space-y-2.5 text-xs">
-                      {TIER_DETAILS.bronze.perks.map((perk, i) => (
-                        <li key={i} className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                          <span className={selectedTier === 'bronze' ? 'text-emerald-100' : 'text-stone-700'}>{perk}</span>
-                        </li>
-                      ))}
-                    </ul>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSelectVendorOption(vendor.key, vendor.proposedFee)}
+                      className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                          : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                      }`}
+                    >
+                      BOOK {vendor.formattedFee}
+                    </button>
                   </div>
-                </div>
-
-                <button
-                  onClick={() => handleSelectCorporateTier('bronze', 250000)}
-                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
-                    selectedTier === 'bronze'
-                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
-                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
-                  }`}
-                >
-                  PAY ₦250,000
-                </button>
-              </div>
-
-              {/* 5. Support Partner */}
-              <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 transition-all duration-300 flex flex-col justify-between ${
-                selectedTier === 'support'
-                  ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
-                  : 'border-stone-200 bg-white hover:border-emerald-800/40 text-stone-900 shadow-md'
-              }`}>
-                <div>
-                  <div className="flex items-center space-x-2 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">
-                    <HeartHandshake className="w-4 h-4" />
-                    <span>Community Benefactor</span>
-                  </div>
-
-                  <h3 className={`text-xl sm:text-2xl font-retro font-extrabold mb-1 ${selectedTier === 'support' ? 'text-white' : 'text-emerald-950'}`}>
-                    Support Partner
-                  </h3>
-                  <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-4">
-                    ₦100,000<span className="text-xs font-sans font-medium text-stone-400">+</span>
-                  </div>
-
-                  <p className={`text-xs leading-relaxed mb-6 ${selectedTier === 'support' ? 'text-stone-300' : 'text-stone-600'}`}>
-                    Dedicated contribution empowering student feeding, registration packages, and general operational logistics.
-                  </p>
-
-                  <div className="border-t border-stone-200/40 pt-4 space-y-3 mb-6">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
-                      Entitled Benefits:
-                    </div>
-                    <ul className="space-y-2.5 text-xs">
-                      {TIER_DETAILS.support.perks.map((perk, i) => (
-                        <li key={i} className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                          <span className={selectedTier === 'support' ? 'text-emerald-100' : 'text-stone-700'}>{perk}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => handleSelectCorporateTier('support', 100000)}
-                  className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
-                    selectedTier === 'support'
-                      ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
-                      : 'bg-emerald-950 hover:bg-emerald-900 text-white'
-                  }`}
-                >
-                  PAY ₦100,000
-                </button>
-              </div>
-
+                );
+              })}
             </div>
           </div>
         )}
@@ -996,7 +1092,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-                    Target Campaign: {FUNDRAISING_PILLARS[activePillar]?.title || 'Corporate Giving'}
+                    Target Campaign: {FUNDRAISING_PILLARS[activePillar]?.title || (activePillar === 'corporate_tiers' ? 'Sponsorship Levels' : activePillar === 'alumni_giving' ? 'Alumni Giving' : activePillar === 'set_giving' ? 'Set Contribution Framework' : activePillar === 'vendor_options' ? 'Vendor & Exhibition' : 'Corporate Giving')}
                   </span>
                   <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
                     Step 2: Donor Registration &amp; Payment

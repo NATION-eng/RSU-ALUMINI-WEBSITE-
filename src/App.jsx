@@ -117,23 +117,28 @@ export default function App() {
       startTransition(() => {
         const h = window.location.hash;
         const p = window.location.pathname;
-        setIsAdminView(isHashAdmin(h, p));
+        const admin = isHashAdmin(h, p);
         const ads = isHashAds(h, p);
         const donate = isHashDonate(h, p) && !ads;
         const media = isHashMedia(h, p);
         const accommodation = isHashAccommodation(h, p);
-        setIsAdsView(ads);
-        setIsDonateView(donate);
-        setIsMediaView(media);
-        setIsAccommodationView(accommodation);
 
-        // If navigating to an in-page section on the homepage, scroll smoothly
-        if (!isHashAdmin(h, p) && !ads && !donate && !media && !accommodation && h && h.length > 1) {
+        // Guard state updates to prevent unnecessary re-render overhead
+        setIsAdminView(prev => prev !== admin ? admin : prev);
+        setIsAdsView(prev => prev !== ads ? ads : prev);
+        setIsDonateView(prev => prev !== donate ? donate : prev);
+        setIsMediaView(prev => prev !== media ? media : prev);
+        setIsAccommodationView(prev => prev !== accommodation ? accommodation : prev);
+
+        // If navigating to an in-page section on the homepage, defer smooth scroll to next frame
+        if (!admin && !ads && !donate && !media && !accommodation && h && h.length > 1) {
           const targetId = h.replace(/^#/, '');
-          const el = document.getElementById(targetId);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-          }
+          setTimeout(() => {
+            const el = document.getElementById(targetId);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 0);
         }
       });
     };

@@ -6,21 +6,21 @@
 export const TIER_DETAILS = {
   platinum: {
     name: 'Platinum Sponsor',
-    minAmount: 2000000,
+    minAmount: 250000,
     badge: '🏆 Platinum Partner',
     color: '#D4AF37',
     leadTime: 'Immediate VIP Liaison Assignment',
     perks: [
-      'Premium, large-format logo placement on homepage portal & permanent cloud archive',
+      'Headline recognition on official portal, digital broadcast & permanent cloud archive',
       'Prominent corporate branding & dedicated banner placement at all major plenary sessions',
       'Special VIP recognition and commemorative appreciation plaque presentation',
-      'Full-page premium color advertisement in 45th Jubilee Compendium + editorial spotlight',
+      'Full-page premium color advertisement in 45th Jubilee Compendium',
       'Prime exhibition & product display booth at the homecoming venue'
     ]
   },
   gold: {
     name: 'Gold Sponsor',
-    minAmount: 1000000,
+    minAmount: 150000,
     badge: '🥇 Gold Partner',
     color: '#F59E0B',
     leadTime: 'Priority Compendium Curation',
@@ -34,7 +34,7 @@ export const TIER_DETAILS = {
   },
   silver: {
     name: 'Silver Sponsor',
-    minAmount: 500000,
+    minAmount: 100000,
     badge: '🥈 Silver Partner',
     color: '#94A3B8',
     leadTime: 'Compendium Layout Verification',
@@ -48,7 +48,7 @@ export const TIER_DETAILS = {
   },
   bronze: {
     name: 'Bronze Sponsor',
-    minAmount: 250000,
+    minAmount: 50000,
     badge: '🥉 Bronze Partner',
     color: '#CD7F32',
     leadTime: 'Digital Directory Listing',
@@ -60,18 +60,196 @@ export const TIER_DETAILS = {
   },
   support: {
     name: 'Support Partner',
-    minAmount: 100000,
+    minAmount: 20000,
     badge: '🤝 Support Partner',
     color: '#10B981',
     leadTime: 'Roll of Honour Registration',
     perks: [
       'Listing in online "Friends of the Fellowship" donor directory',
-      'Special mention and name recognition in the commemorative souvenir booklet'
+      'Special mention and name recognition in the commemorative souvenir booklet',
+      'Official digital donor certificate and pastoral blessing acknowledgment'
     ]
   },
+  // Alumni Giving Categories
+  sapphire_builder: {
+    name: 'Sapphire Builder',
+    minAmount: 100000,
+    badge: '💎 Sapphire Builder',
+    color: '#2563EB',
+    leadTime: 'Secretariat VIP Roll of Honour',
+    perks: [
+      'Distinguished alumni recognition in the permanent 45th Jubilee Hall of Fame',
+      'VIP reservation at the Sunday Legacy Awards Banquet',
+      'Special feature in the Jubilee Compendium Roll of Honour'
+    ]
+  },
+  legacy_partner: {
+    name: 'Legacy Partner',
+    minAmount: 50000,
+    badge: '🏛️ Legacy Partner',
+    color: '#D97706',
+    leadTime: 'Roll of Honour Inclusion',
+    perks: [
+      'Substantial contribution acknowledged in commemorative souvenir publication',
+      'Direct endowment towards student scholarships and welfare safety net',
+      'Digital certificate of commemorative recognition'
+    ]
+  },
+  covenant_partner: {
+    name: 'Covenant Partner',
+    minAmount: 40000,
+    badge: '🤝 Covenant Partner',
+    color: '#059669',
+    leadTime: 'Roll of Honour Registration',
+    perks: [
+      'Covenant partnership acknowledgment in fellowship cloud archives',
+      'Special mention during the 45th Homecoming consecration session'
+    ]
+  },
+  fellowship_partner: {
+    name: 'Fellowship Partner',
+    minAmount: 30000,
+    badge: '🕊️ Fellowship Partner',
+    color: '#7C3AED',
+    leadTime: 'Directory Listing',
+    perks: [
+      'Listed on digital alumni giving register',
+      'Directly supports campus outreach and musical ministry'
+    ]
+  },
+  friends_of_asf: {
+    name: 'Friends of ASF',
+    minAmount: 20000,
+    badge: '🌟 Friends of ASF',
+    color: '#0D9488',
+    leadTime: 'Directory Listing',
+    perks: [
+      'Online recognition on Friends of ASF roll',
+      'Commemorative digital blessing certificate'
+    ]
+  },
+  general_support: {
+    name: 'General Support',
+    minAmount: 1000,
+    badge: '🌱 General Support',
+    color: '#57534E',
+    leadTime: 'Secretariat Acknowledgment',
+    perks: [
+      'Sacrificial gift contributing to 45th Jubilee operations'
+    ]
+  },
+  // Set Contribution Framework
+  pioneer_senior: {
+    name: 'Pioneer / Senior Sets Contribution',
+    minAmount: 100000,
+    badge: '👑 Pioneer / Senior Sets',
+    color: '#D4AF37',
+    leadTime: 'Set Presentation Ceremony',
+    perks: [
+      'Official set recognition during the Sabbath Homecoming plenary service',
+      'Featured cohort profile in the 45th Jubilee Souvenir Compendium'
+    ]
+  },
+  established_sets: {
+    name: 'Established Alumni Sets Contribution',
+    minAmount: 75000,
+    badge: '⭐ Established Alumni Sets',
+    color: '#F59E0B',
+    leadTime: 'Set Presentation Ceremony',
+    perks: [
+      'Cohort commendation in official souvenir publication',
+      'Set listing on legacy donor wall'
+    ]
+  },
+  mid_level_sets: {
+    name: 'Mid-Level Sets Contribution',
+    minAmount: 50000,
+    badge: '🚀 Mid-Level Sets',
+    color: '#3B82F6',
+    leadTime: 'Set Acknowledgment',
+    perks: [
+      'Cohort mention and appreciation during plenary ceremonies'
+    ]
+  },
+  recent_graduates: {
+    name: 'Recent Graduates Contribution',
+    minAmount: 25000,
+    badge: '🎓 Recent Graduates',
+    color: '#10B981',
+    leadTime: 'Set Acknowledgment',
+    perks: [
+      'Cohort mention on digital diaspora & alumni portals'
+    ]
+  },
+  young_alumni: {
+    name: 'Young Alumni Contribution',
+    minAmount: 10000,
+    badge: '🌱 Young Alumni',
+    color: '#14B8A6',
+    leadTime: 'Set Acknowledgment',
+    perks: [
+      'Cohort appreciation on alumni platforms'
+    ]
+  },
+  // Vendor & Exhibition Options
+  vendor_corporate_booth: {
+    name: 'Corporate Exhibition Booth',
+    minAmount: 15000,
+    badge: '🏢 Corporate Exhibition Booth',
+    color: '#0284C7',
+    leadTime: 'On-Ground Booth Allocation',
+    perks: [
+      'Showcase your products and services',
+      'Engage directly with alumni and conference participants',
+      'Increase brand awareness and generate business relationships'
+    ]
+  },
+  vendor_small_business: {
+    name: 'Small Business Booth',
+    minAmount: 10000,
+    badge: '💼 Small Business Booth',
+    color: '#6366F1',
+    leadTime: 'On-Ground Booth Allocation',
+    perks: [
+      'Dedicated SME booth table space at homecoming venue',
+      'Engage directly with alumni and delegates'
+    ]
+  },
+  vendor_food: {
+    name: 'Food Vendor',
+    minAmount: 50000,
+    badge: '🍽️ Food & Catering Vendor',
+    color: '#EA580C',
+    leadTime: 'Catering Concession Allotment',
+    perks: [
+      'Designated on-ground food and refreshment selling pavilion space',
+      'Access to 1,500+ attendees across 3-day anniversary weekend'
+    ]
+  },
+  vendor_book_literature: {
+    name: 'Book / Literature Vendor',
+    minAmount: 20000,
+    badge: '📚 Book & Literature Vendor',
+    color: '#8B5CF6',
+    leadTime: 'Literature Table Allotment',
+    perks: [
+      'Prime book and publication display table in fellowship courtyard'
+    ]
+  },
+  vendor_ngo_ministry: {
+    name: 'NGO / Ministry Exhibition',
+    minAmount: 10000,
+    badge: '🕊️ NGO & Ministry Booth',
+    color: '#059669',
+    leadTime: 'Ministry Display Allotment',
+    perks: [
+      'Showcase charitable initiatives and mission outreaches to alumni'
+    ]
+  },
+  // Advertisement Rates
   ad_back_cover: {
     name: 'Back Cover (Premium Space)',
-    minAmount: 500000,
+    minAmount: 100000,
     badge: '🌟 Back Cover (Premium)',
     color: '#D4AF37',
     leadTime: 'Immediate Reservation & Placement',
@@ -84,7 +262,7 @@ export const TIER_DETAILS = {
   },
   ad_inside_front: {
     name: 'Inside Front Cover',
-    minAmount: 350000,
+    minAmount: 75000,
     badge: '💎 Inside Front Cover',
     color: '#0284C7',
     leadTime: 'Priority Placement Verification',
@@ -97,7 +275,7 @@ export const TIER_DETAILS = {
   },
   ad_inside_back: {
     name: 'Inside Back Cover',
-    minAmount: 300000,
+    minAmount: 60000,
     badge: '✨ Inside Back Cover',
     color: '#8B5CF6',
     leadTime: 'Priority Placement Verification',
@@ -107,9 +285,20 @@ export const TIER_DETAILS = {
       'High-resolution archival finish in print and permanent cloud repository'
     ]
   },
+  ad_center_spread: {
+    name: 'Center Spread (Double Page)',
+    minAmount: 80000,
+    badge: '📖 Center Spread (Double Page)',
+    color: '#F59E0B',
+    leadTime: 'Two-Page Centerfold Layout',
+    dimensions: '420mm × 297mm (+3mm bleed)',
+    perks: [
+      'Panoramic two-page horizontal layout for major corporate partners and large alumni cohorts'
+    ]
+  },
   ad_full: {
     name: 'Full Page Advert',
-    minAmount: 150000,
+    minAmount: 40000,
     badge: '📖 Full Page Advert',
     color: '#3B82F6',
     leadTime: 'Artwork Submission within 7 days',
@@ -122,7 +311,7 @@ export const TIER_DETAILS = {
   },
   ad_half: {
     name: 'Half Page Advert',
-    minAmount: 75000,
+    minAmount: 20000,
     badge: '📄 Half Page Advert',
     color: '#6366F1',
     leadTime: 'Artwork Submission within 7 days',
@@ -134,7 +323,7 @@ export const TIER_DETAILS = {
   },
   ad_quarter: {
     name: 'Quarter Page Advert',
-    minAmount: 40000,
+    minAmount: 10000,
     badge: '📇 Quarter Page Advert',
     color: '#10B981',
     leadTime: 'Artwork Submission within 7 days',

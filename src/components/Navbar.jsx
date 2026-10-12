@@ -37,6 +37,48 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
     { name: 'Compendium Ads', href: '#compendium-ads', icon: BookOpen },
   ];
 
+  const handleNavClick = (e, href) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isOpen) setIsOpen(false);
+
+    if (href === '#compendium-ads' && onOpenSponsors) {
+      onOpenSponsors('ads');
+      return;
+    }
+    if (href === '#donate' && onOpenSponsors) {
+      onOpenSponsors('sponsors');
+      return;
+    }
+    if (href === '#media-hub' && onOpenMedia) {
+      onOpenMedia();
+      return;
+    }
+    if (href === '#accommodation' && onOpenAccommodation) {
+      onOpenAccommodation();
+      return;
+    }
+
+    if (href.startsWith('#')) {
+      const targetId = href.replace(/^#/, '');
+      setTimeout(() => {
+        if (targetId) {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+          if (window.location.hash !== href) {
+            window.history.replaceState(null, '', href);
+          }
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          if (window.location.hash) {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          }
+        }
+      }, 0);
+    }
+  };
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 py-2 sm:py-2.5 ${
       scrolled 
@@ -47,7 +89,11 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
         <div className="flex items-center justify-between gap-1.5 xs:gap-2 sm:gap-4">
           
           {/* Official 45th Anniversary Logo & Identity */}
-          <a href="#" className="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2.5 group min-w-0 shrink">
+          <a
+            href="#"
+            onClick={(e) => handleNavClick(e, '#')}
+            className="flex items-center space-x-1 xs:space-x-1.5 sm:space-x-2.5 group min-w-0 shrink"
+          >
             <img
               src="/official-logo.png"
               alt="ASF RSU 45th Anniversary Logo"
@@ -81,18 +127,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
               <a
                 key={link.name}
                 href={link.href}
-                onClick={(e) => {
-                  if (link.href === '#compendium-ads' && onOpenSponsors) {
-                    e.preventDefault();
-                    onOpenSponsors('ads');
-                  } else if (link.href === '#media-hub' && onOpenMedia) {
-                    e.preventDefault();
-                    onOpenMedia();
-                  } else if (link.href === '#accommodation' && onOpenAccommodation) {
-                    e.preventDefault();
-                    onOpenAccommodation();
-                  }
-                }}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="px-2 xl:px-3 py-1.5 xl:py-2 text-[11px] xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
               >
                 {link.name}
@@ -106,12 +141,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
             {/* Donate / Support Button */}
             <a
               href="#donate"
-              onClick={(e) => {
-                if (onOpenSponsors) {
-                  e.preventDefault();
-                  onOpenSponsors('sponsors');
-                }
-              }}
+              onClick={(e) => handleNavClick(e, '#donate')}
               title="Donate / Support Tiers & Support Matrix"
               className="inline-flex items-center space-x-1 px-2 py-1.5 xs:px-2.5 xs:py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[10px] xs:text-[11px] sm:text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-400 text-emerald-950 shadow-luxury hover:shadow-gold-glow hover:scale-105 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 border border-amber-300 touch-manipulation"
             >
@@ -122,12 +152,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
             {/* Compendium Ad Booking - Available on mobile/tablet and ultra-wide screens */}
             <a
               href="#compendium-ads"
-              onClick={(e) => {
-                if (onOpenSponsors) {
-                  e.preventDefault();
-                  onOpenSponsors('ads');
-                }
-              }}
+              onClick={(e) => handleNavClick(e, '#compendium-ads')}
               title="Compendium Advertising Rates & Space Booking"
               className="inline-flex lg:hidden 2xl:inline-flex items-center space-x-1 px-2 py-1.5 xs:px-2.5 xs:py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[10px] xs:text-[11px] sm:text-xs font-bold text-jubilee-lightgold border border-jubilee-gold/50 bg-white/[0.08] hover:border-jubilee-gold hover:bg-white/[0.15] transition-all hover:scale-105 active:scale-95 shrink-0 touch-manipulation"
             >
@@ -139,6 +164,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
             {/* Quick QR Code Shortcut - Wide desktop only */}
             <a
               href="#qr-share"
+              onClick={(e) => handleNavClick(e, '#qr-share')}
               title="Share & Download Official QR Code"
               className="hidden 2xl:inline-flex items-center space-x-1 p-2 sm:px-2.5 sm:py-1.5 rounded-full bg-white/[0.08] hover:bg-white/15 text-jubilee-lightgold border border-jubilee-gold/30 hover:border-jubilee-gold text-xs font-semibold transition-all hover:scale-105 shrink-0 touch-manipulation active:scale-95"
             >
@@ -149,6 +175,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
             {/* RSVP & Census CTA Button - Desktop only (>= 1024px) */}
             <a
               href="#census-rsvp"
+              onClick={(e) => handleNavClick(e, '#census-rsvp')}
               className="hidden lg:inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-full text-xs font-extrabold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all duration-200 font-sans tracking-tight shrink-0 touch-manipulation hover:border-jubilee-gold/50"
             >
               <UserCheck className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
@@ -178,19 +205,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
               <a
                 key={link.name}
                 href={link.href}
-                onClick={(e) => {
-                  setIsOpen(false);
-                  if (link.href === '#compendium-ads' && onOpenSponsors) {
-                    e.preventDefault();
-                    onOpenSponsors('ads');
-                  } else if (link.href === '#media-hub' && onOpenMedia) {
-                    e.preventDefault();
-                    onOpenMedia();
-                  } else if (link.href === '#accommodation' && onOpenAccommodation) {
-                    e.preventDefault();
-                    onOpenAccommodation();
-                  }
-                }}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="flex items-center space-x-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:bg-white/10 hover:text-white font-sans active:bg-emerald-900/50 transition-colors"
               >
                 <Icon className="w-4 h-4 text-jubilee-gold shrink-0" />
@@ -202,13 +217,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
           <div className="pt-3 border-t border-white/10 space-y-2">
             <a
               href="#donate"
-              onClick={(e) => {
-                setIsOpen(false);
-                if (onOpenSponsors) {
-                  e.preventDefault();
-                  onOpenSponsors('sponsors');
-                }
-              }}
+              onClick={(e) => handleNavClick(e, '#donate')}
               className="w-full flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury font-sans touch-manipulation active:scale-95"
             >
               <HeartHandshake className="w-4 h-4 text-emerald-950 shrink-0" />
@@ -217,13 +226,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
 
             <a
               href="#compendium-ads"
-              onClick={(e) => {
-                setIsOpen(false);
-                if (onOpenSponsors) {
-                  e.preventDefault();
-                  onOpenSponsors('ads');
-                }
-              }}
+              onClick={(e) => handleNavClick(e, '#compendium-ads')}
               className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white/10 text-jubilee-lightgold border border-jubilee-gold/30 font-sans touch-manipulation active:scale-95"
             >
               <BookOpen className="w-4 h-4 text-jubilee-gold shrink-0" />
@@ -232,7 +235,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
 
             <a
               href="#census-rsvp"
-              onClick={() => setIsOpen(false)}
+              onClick={(e) => handleNavClick(e, '#census-rsvp')}
               className="w-full flex items-center justify-center space-x-2 px-5 py-3 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-jubilee-gold/40 shadow-sm font-sans touch-manipulation active:scale-95 transition-all"
             >
               <UserCheck className="w-4 h-4 text-jubilee-gold" />
@@ -241,7 +244,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
 
             <a
               href="#qr-share"
-              onClick={() => setIsOpen(false)}
+              onClick={(e) => handleNavClick(e, '#qr-share')}
               className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/10 text-stone-300 hover:text-white border border-white/10 font-sans"
             >
               <QrCode className="w-4 h-4 text-jubilee-gold" />

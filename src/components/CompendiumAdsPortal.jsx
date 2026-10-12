@@ -10,10 +10,11 @@ import { supabase } from '../lib/supabase';
 import { TIER_DETAILS } from '../lib/emailTemplates';
 import { sendSponsorAcknowledgmentEmail } from '../lib/emailService';
 import { COMPENDIUM_AD_TIERS } from '../lib/adSpecs';
+import { VENDOR_EXHIBITION_OPTIONS, VENDOR_PARTICIPATION_BENEFITS } from '../data/givingData';
 
 export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
   const [selectedTier, setSelectedTier] = useState('ad_back_cover');
-  const [customAmount, setCustomAmount] = useState('500000');
+  const [customAmount, setCustomAmount] = useState('100000');
   const [copiedAccount, setCopiedAccount] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
@@ -536,7 +537,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Outer Back Cover
                 </h3>
                 <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-3">
-                  ₦500,000
+                  ₦100,000
                 </div>
 
                 <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_back_cover' ? 'text-stone-300' : 'text-stone-600'}`}>
@@ -551,14 +552,14 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
               </div>
 
               <button
-                onClick={() => handleSelectSlot('ad_back_cover', 500000)}
+                onClick={() => handleSelectSlot('ad_back_cover', 100000)}
                 className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                   selectedTier === 'ad_back_cover'
                     ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                     : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                 }`}
               >
-                PAY ₦500,000
+                PAY ₦100,000
               </button>
             </div>
 
@@ -580,7 +581,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Inside Front Cover
                 </h3>
                 <div className="text-2xl sm:text-3xl font-retro font-black text-sky-700 mb-3">
-                  ₦350,000
+                  ₦75,000
                 </div>
                 <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_inside_front' ? 'text-stone-300' : 'text-stone-600'}`}>
                   High-impact initial placement immediately inside the front cover for top-tier sponsors and businesses.
@@ -592,14 +593,14 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 </div>
               </div>
               <button
-                onClick={() => handleSelectSlot('ad_inside_front', 350000)}
+                onClick={() => handleSelectSlot('ad_inside_front', 75000)}
                 className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                   selectedTier === 'ad_inside_front'
                     ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                     : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                 }`}
               >
-                PAY ₦350,000
+                PAY ₦75,000
               </button>
             </div>
 
@@ -621,7 +622,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Inside Back Cover
                 </h3>
                 <div className="text-2xl sm:text-3xl font-retro font-black text-purple-700 mb-3">
-                  ₦300,000
+                  ₦60,000
                 </div>
                 <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_inside_back' ? 'text-stone-300' : 'text-stone-600'}`}>
                   Premium interior placement facing the final pages; excellent visibility for established brands and set tributes.
@@ -633,14 +634,14 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 </div>
               </div>
               <button
-                onClick={() => handleSelectSlot('ad_inside_back', 300000)}
+                onClick={() => handleSelectSlot('ad_inside_back', 60000)}
                 className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                   selectedTier === 'ad_inside_back'
                     ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                     : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                 }`}
               >
-                PAY ₦300,000
+                PAY ₦60,000
               </button>
             </div>
 
@@ -662,7 +663,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Center Spread (Double Page)
                 </h3>
                 <div className="text-2xl sm:text-3xl font-retro font-black text-amber-600 mb-3">
-                  ₦400,000
+                  ₦80,000
                 </div>
                 <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_center_spread' ? 'text-stone-300' : 'text-stone-600'}`}>
                   Panoramic two-page horizontal layout for major corporate partners, institutions, and large alumni cohorts.
@@ -674,14 +675,14 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 </div>
               </div>
               <button
-                onClick={() => handleSelectSlot('ad_center_spread', 400000)}
+                onClick={() => handleSelectSlot('ad_center_spread', 80000)}
                 className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                   selectedTier === 'ad_center_spread'
                     ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                     : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                 }`}
               >
-                PAY ₦400,000
+                PAY ₦80,000
               </button>
             </div>
 
@@ -703,7 +704,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Full Page Advert
                 </h3>
                 <div className="text-2xl sm:text-3xl font-retro font-black text-blue-700 mb-3">
-                  ₦150,000
+                  ₦40,000
                 </div>
                 <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_full' ? 'text-stone-300' : 'text-stone-600'}`}>
                   Full-page colorful editorial layout, business feature, or commemorative set tribute.
@@ -715,18 +716,18 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 </div>
               </div>
               <button
-                onClick={() => handleSelectSlot('ad_full', 150000)}
+                onClick={() => handleSelectSlot('ad_full', 40000)}
                 className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                   selectedTier === 'ad_full'
                     ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                     : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                 }`}
               >
-                PAY ₦150,000
+                PAY ₦40,000
               </button>
             </div>
 
-            {/* 5. Half Page */}
+            {/* 6. Half Page */}
             <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
               selectedTier === 'ad_half'
                 ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
@@ -744,7 +745,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Half Page Advert
                 </h3>
                 <div className="text-2xl sm:text-3xl font-retro font-black text-indigo-700 mb-3">
-                  ₦75,000
+                  ₦20,000
                 </div>
                 <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_half' ? 'text-stone-300' : 'text-stone-600'}`}>
                   Standard half-page display ad for medium-scale businesses, professional services, or group shout-outs.
@@ -756,18 +757,18 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 </div>
               </div>
               <button
-                onClick={() => handleSelectSlot('ad_half', 75000)}
+                onClick={() => handleSelectSlot('ad_half', 20000)}
                 className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                   selectedTier === 'ad_half'
                     ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                     : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                 }`}
               >
-                PAY ₦75,000
+                PAY ₦20,000
               </button>
             </div>
 
-            {/* 6. Quarter Page */}
+            {/* 7. Quarter Page */}
             <div className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
               selectedTier === 'ad_quarter'
                 ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
@@ -785,7 +786,7 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                   Quarter Page Advert
                 </h3>
                 <div className="text-2xl sm:text-3xl font-retro font-black text-emerald-700 mb-3">
-                  ₦40,000
+                  ₦10,000
                 </div>
                 <p className={`text-xs leading-relaxed mb-4 ${selectedTier === 'ad_quarter' ? 'text-stone-300' : 'text-stone-600'}`}>
                   Compact quarter-page layout suitable for individual business card listings and personal congratulatory notes.
@@ -797,17 +798,94 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
                 </div>
               </div>
               <button
-                onClick={() => handleSelectSlot('ad_quarter', 40000)}
+                onClick={() => handleSelectSlot('ad_quarter', 10000)}
                 className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
                   selectedTier === 'ad_quarter'
                     ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
                     : 'bg-emerald-950 hover:bg-emerald-900 text-white'
                 }`}
               >
-                PAY ₦40,000
+                PAY ₦10,000
               </button>
             </div>
 
+          </div>
+
+          {/* Dedicated Vendor & Exhibition Options Section */}
+          <div className="pt-10 border-t border-stone-200 space-y-8 animate-fade-in">
+            <div className="text-center max-w-3xl mx-auto space-y-2">
+              <div className="inline-flex items-center space-x-2 text-[10px] sm:text-xs font-bold text-amber-800 bg-amber-100/90 px-3 py-1 rounded-full uppercase tracking-wider border border-amber-300/60">
+                <Building2 className="w-3.5 h-3.5 text-amber-700" />
+                <span>On-Ground Commercial &amp; Ministry Opportunities</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950">
+                Vendor &amp; Exhibition Options
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600">
+                Engage directly with thousands of returning alumni, conference delegates, and university leadership during the 45th Anniversary Homecoming weekend.
+              </p>
+            </div>
+
+            {/* Participation Benefits Banner */}
+            <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#051A0F] via-[#092B19] to-[#0D3821] text-white border-2 border-jubilee-gold/50 shadow-luxury">
+              <h4 className="font-retro font-bold text-sm sm:text-base text-jubilee-lightgold mb-3 flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-jubilee-gold" />
+                <span>Participation will provide an opportunity to:</span>
+              </h4>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                {VENDOR_PARTICIPATION_BENEFITS.map((benefit, idx) => (
+                  <li key={idx} className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-jubilee-gold shrink-0 mt-0.5" />
+                    <span className="text-stone-200 leading-relaxed">{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 5 Vendor Categories Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {VENDOR_EXHIBITION_OPTIONS.map((vendor) => {
+                const isSelected = selectedTier === vendor.key;
+                return (
+                  <div
+                    key={vendor.key}
+                    className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                      isSelected
+                        ? 'border-jubilee-gold bg-gradient-to-b from-[#062113] to-[#0A331D] text-white shadow-2xl scale-[1.02]'
+                        : 'border-stone-200 bg-white hover:border-amber-400 text-stone-900 shadow-md'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center space-x-2 text-[11px] font-bold text-jubilee-gold uppercase tracking-wider mb-2">
+                        <Building2 className="w-3.5 h-3.5 text-jubilee-gold" />
+                        <span>{vendor.badge}</span>
+                      </div>
+                      <h3 className={`text-xl font-retro font-extrabold mb-1 ${isSelected ? 'text-white' : 'text-emerald-950'}`}>
+                        {vendor.category}
+                      </h3>
+                      <div className="text-2xl sm:text-3xl font-retro font-black text-amber-500 mb-3">
+                        {vendor.formattedFee}
+                      </div>
+                      <p className={`text-xs leading-relaxed mb-6 ${isSelected ? 'text-stone-300' : 'text-stone-600'}`}>
+                        {vendor.desc}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSelectSlot(vendor.key, vendor.proposedFee)}
+                      className={`w-full py-3 sm:py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-luxury'
+                          : 'bg-emerald-950 hover:bg-emerald-900 text-white'
+                      }`}
+                    >
+                      BOOK {vendor.formattedFee}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Ad Submission Guidelines & Specifications Callout Box */}
