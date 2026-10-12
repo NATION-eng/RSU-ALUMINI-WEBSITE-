@@ -6,7 +6,7 @@ import {
   Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2,
   Video, Play, Sparkles, Building2, ExternalLink, AlertTriangle, X,
   BookOpen, FileText, Palette, UploadCloud, Layers, Image as ImageIcon,
-  Printer
+  Printer, FileSpreadsheet
 } from 'lucide-react';
 import { getMailtoLink } from '../lib/emailService';
 import { COMPENDIUM_AD_TIERS, AD_EDITORIAL_STATUSES } from '../lib/adSpecs';
@@ -15,6 +15,11 @@ import {
   generateFinancialExecutiveReport, 
   generateAdManifestExecutiveReport 
 } from '../lib/executiveReports';
+import {
+  exportRegistrationsSpreadsheet,
+  exportSponsorshipsSpreadsheet,
+  exportAdManifestSpreadsheet
+} from '../lib/spreadsheetExport';
 
 export default function AdminDashboard({ onBackToSite }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -1236,6 +1241,45 @@ export default function AdminDashboard({ onBackToSite }) {
     }, 0);
   };
 
+  // Trigger Enterprise Formatted Spreadsheet Download for Current Tab View (Non-blocking)
+  const handleTriggerSpreadsheetExport = () => {
+    setTimeout(() => {
+      if (activeAdminTab === 'SPONSORSHIPS') {
+        if (sponsorships.length === 0) {
+          showToast('No sponsorship records loaded to export.', 'info');
+          return;
+        }
+        exportSponsorshipsSpreadsheet(filteredSponsorships, { 
+          sponsorshipFilterType, 
+          sponsorshipFilterChannel 
+        });
+        showToast(`Exported ${filteredSponsorships.length} financial records to Spreadsheet.`, 'success');
+      } else if (activeAdminTab === 'ADS') {
+        if (adBookings.length === 0) {
+          showToast('No compendium ad bookings loaded to export.', 'info');
+          return;
+        }
+        exportAdManifestSpreadsheet(filteredAdBookings, { 
+          adFilterTier, 
+          adFilterStatus, 
+          adFilterPayment 
+        });
+        showToast(`Exported ${filteredAdBookings.length} advert bookings to Spreadsheet.`, 'success');
+      } else {
+        if (registrations.length === 0) {
+          showToast('No alumni registration records loaded to export.', 'info');
+          return;
+        }
+        exportRegistrationsSpreadsheet(filteredRegistrations, { 
+          filterMode, 
+          filterCheckin, 
+          filterSupport 
+        });
+        showToast(`Exported ${filteredRegistrations.length} alumni records to Spreadsheet.`, 'success');
+      }
+    }, 0);
+  };
+
   // LOGIN SCREEN
   if (!isAuthenticated) {
     return (
@@ -1337,15 +1381,32 @@ export default function AdminDashboard({ onBackToSite }) {
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-jubilee-gold' : ''}`} />
             </button>
 
-            <button
-              type="button"
-              onClick={handleTriggerExecutiveReport}
-              title="Generate Official Executive PDF Report"
-              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 border border-jubilee-gold/40 text-jubilee-lightgold transition-all touch-manipulation active:scale-95"
-            >
-              <Printer className="w-3.5 h-3.5 text-jubilee-gold pointer-events-none" />
-              <span className="pointer-events-none">Official Executive PDF</span>
-            </button>
+            {/* Top Bar Export Options (PDF & Spreadsheet) */}
+            <div className="hidden sm:inline-flex items-center rounded-xl bg-white/10 border border-jubilee-gold/40 p-0.5 shadow-sm">
+              <span className="text-[11px] font-bold text-stone-300 px-2 flex items-center space-x-1">
+                <Download className="w-3 h-3 text-jubilee-gold shrink-0 pointer-events-none" />
+                <span>Export:</span>
+              </span>
+              <button
+                type="button"
+                onClick={handleTriggerExecutiveReport}
+                title="Generate Official Executive PDF Report"
+                className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-jubilee-lightgold hover:bg-white/15 transition-all touch-manipulation active:scale-95"
+              >
+                <Printer className="w-3.5 h-3.5 text-jubilee-gold pointer-events-none" />
+                <span className="pointer-events-none">PDF</span>
+              </button>
+              <div className="w-[1px] h-3.5 bg-white/20 mx-0.5"></div>
+              <button
+                type="button"
+                onClick={handleTriggerSpreadsheetExport}
+                title="Export Current View as Excel / Google Sheets compatible Spreadsheet"
+                className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-emerald-300 hover:bg-white/15 transition-all touch-manipulation active:scale-95"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 pointer-events-none" />
+                <span className="pointer-events-none">Spreadsheet</span>
+              </button>
+            </div>
 
             <button
               type="button"
@@ -1589,23 +1650,45 @@ export default function AdminDashboard({ onBackToSite }) {
               <option value="PENDING">Pending</option>
             </select>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (registrations.length === 0) {
-                  showToast('No alumni registrations to report.', 'info');
-                  return;
-                }
-                setTimeout(() => {
-                  generateCensusExecutiveReport(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
-                }, 0);
-              }}
-              className="w-full sm:w-auto px-3 py-2.5 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm touch-manipulation"
-              title="Generate Official Census Executive PDF Report"
-            >
-              <Printer className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
-              <span className="pointer-events-none">Print / Save Census PDF</span>
-            </button>
+            {/* Export Options (PDF & Spreadsheet) */}
+            <div className="col-span-2 sm:col-span-1 w-full sm:w-auto inline-flex items-center rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 p-0.5 shadow-sm">
+              <button
+                type="button"
+                onClick={() => {
+                  if (registrations.length === 0) {
+                    showToast('No alumni registrations to report.', 'info');
+                    return;
+                  }
+                  setTimeout(() => {
+                    generateCensusExecutiveReport(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
+                  }, 0);
+                }}
+                className="flex-1 sm:flex-initial px-2.5 sm:px-3 py-2 rounded-lg text-emerald-950 font-extrabold text-xs flex items-center justify-center space-x-1.5 hover:bg-black/10 active:scale-95 transition-all touch-manipulation"
+                title="Generate Official Census Executive PDF Report"
+              >
+                <Printer className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
+                <span className="pointer-events-none">Export PDF</span>
+              </button>
+              <div className="w-[1px] h-4 bg-emerald-950/30"></div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (registrations.length === 0) {
+                    showToast('No alumni registrations to export.', 'info');
+                    return;
+                  }
+                  setTimeout(() => {
+                    exportRegistrationsSpreadsheet(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
+                    showToast(`Exported ${filteredRegistrations.length} alumni records to Spreadsheet.`, 'success');
+                  }, 0);
+                }}
+                className="flex-1 sm:flex-initial px-2.5 sm:px-3 py-2 rounded-lg text-emerald-950 font-extrabold text-xs flex items-center justify-center space-x-1.5 hover:bg-black/10 active:scale-95 transition-all touch-manipulation"
+                title="Export Alumni Census as Excel / Sheets Spreadsheet"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
+                <span className="pointer-events-none">Spreadsheet</span>
+              </button>
+            </div>
 
             <button
               type="button"
@@ -1993,26 +2076,51 @@ export default function AdminDashboard({ onBackToSite }) {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (sponsorships.length === 0) {
-                        showToast('No sponsorship records to report.', 'info');
-                        return;
-                      }
-                      setTimeout(() => {
-                        generateFinancialExecutiveReport(filteredSponsorships, { 
-                          sponsorshipFilterType, 
-                          sponsorshipFilterChannel 
-                        });
-                      }, 0);
-                    }}
-                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-jubilee-gold/30 active:scale-95 transition-all touch-manipulation"
-                    title="Generate Official Financial Audit PDF Report"
-                  >
-                    <Printer className="w-3.5 h-3.5 text-jubilee-gold pointer-events-none" />
-                    <span className="pointer-events-none">Print / Save Audit PDF</span>
-                  </button>
+                  {/* Export Options (PDF & Spreadsheet) */}
+                  <div className="inline-flex items-center rounded-xl bg-white/10 border border-jubilee-gold/30 p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sponsorships.length === 0) {
+                          showToast('No sponsorship records to report.', 'info');
+                          return;
+                        }
+                        setTimeout(() => {
+                          generateFinancialExecutiveReport(filteredSponsorships, { 
+                            sponsorshipFilterType, 
+                            sponsorshipFilterChannel 
+                          });
+                        }, 0);
+                      }}
+                      className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold text-jubilee-lightgold hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                      title="Generate Official Financial Audit PDF Report"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-jubilee-gold pointer-events-none" />
+                      <span className="pointer-events-none">Export PDF</span>
+                    </button>
+                    <div className="w-[1px] h-3.5 bg-white/20"></div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sponsorships.length === 0) {
+                          showToast('No sponsorship records to export.', 'info');
+                          return;
+                        }
+                        setTimeout(() => {
+                          exportSponsorshipsSpreadsheet(filteredSponsorships, { 
+                            sponsorshipFilterType, 
+                            sponsorshipFilterChannel 
+                          });
+                          showToast(`Exported ${filteredSponsorships.length} financial records to Spreadsheet.`, 'success');
+                        }, 0);
+                      }}
+                      className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-300 hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                      title="Export Financial Ledger as Excel / Sheets Spreadsheet"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 pointer-events-none" />
+                      <span className="pointer-events-none">Spreadsheet</span>
+                    </button>
+                  </div>
 
                   <button
                     type="button"
@@ -2324,27 +2432,53 @@ export default function AdminDashboard({ onBackToSite }) {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (adBookings.length === 0) {
-                      showToast('No compendium ad bookings to report.', 'info');
-                      return;
-                    }
-                    setTimeout(() => {
-                      generateAdManifestExecutiveReport(filteredAdBookings, { 
-                        adFilterTier, 
-                        adFilterStatus, 
-                        adFilterPayment 
-                      });
-                    }, 0);
-                  }}
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl bg-jubilee-gold/20 hover:bg-jubilee-gold/30 text-jubilee-lightgold border border-jubilee-gold/40 text-xs font-bold transition-all touch-manipulation active:scale-95"
-                  title="Generate Official Ad Production Order Manifest PDF"
-                >
-                  <Printer className="w-3.5 h-3.5 pointer-events-none" />
-                  <span className="pointer-events-none">Print / Save Production PDF</span>
-                </button>
+                {/* Export Options (PDF & Spreadsheet) */}
+                <div className="flex-1 sm:flex-none inline-flex items-center rounded-xl bg-jubilee-gold/20 border border-jubilee-gold/40 p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (adBookings.length === 0) {
+                        showToast('No compendium ad bookings to report.', 'info');
+                        return;
+                      }
+                      setTimeout(() => {
+                        generateAdManifestExecutiveReport(filteredAdBookings, { 
+                          adFilterTier, 
+                          adFilterStatus, 
+                          adFilterPayment 
+                        });
+                      }, 0);
+                    }}
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-lg text-jubilee-lightgold hover:bg-white/15 text-xs font-bold transition-all touch-manipulation active:scale-95"
+                    title="Generate Official Ad Production Order Manifest PDF"
+                  >
+                    <Printer className="w-3.5 h-3.5 pointer-events-none" />
+                    <span className="pointer-events-none">Export PDF</span>
+                  </button>
+                  <div className="w-[1px] h-4 bg-jubilee-gold/40"></div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (adBookings.length === 0) {
+                        showToast('No compendium ad bookings to export.', 'info');
+                        return;
+                      }
+                      setTimeout(() => {
+                        exportAdManifestSpreadsheet(filteredAdBookings, { 
+                          adFilterTier, 
+                          adFilterStatus, 
+                          adFilterPayment 
+                        });
+                        showToast(`Exported ${filteredAdBookings.length} advert bookings to Spreadsheet.`, 'success');
+                      }, 0);
+                    }}
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-lg text-emerald-300 hover:bg-white/15 text-xs font-bold transition-all touch-manipulation active:scale-95"
+                    title="Export Ad Production Manifest as Excel / Sheets Spreadsheet"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 pointer-events-none" />
+                    <span className="pointer-events-none">Spreadsheet</span>
+                  </button>
+                </div>
 
                 <button
                   type="button"
