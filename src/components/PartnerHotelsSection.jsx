@@ -3,7 +3,7 @@ import {
   Building2, MapPin, Clock, Phone, MessageSquare, ExternalLink, 
   Copy, Check, Star, ShieldCheck, Plane, Car, Sparkles, Tag, ChevronRight, Info, Mail
 } from 'lucide-react';
-import { PARTNER_HOTELS, PARTNER_DISCOUNT_CODE, TRAVEL_LOGISTICS_ADVISORY } from '../data/partnerHotels';
+import { PARTNER_HOTELS, PARTNER_DISCOUNT_CODE, TRAVEL_LOGISTICS_ADVISORY, HOTEL_PRICE_DISCLAIMER } from '../data/partnerHotels';
 
 export default function PartnerHotelsSection() {
   const [copiedCode, setCopiedCode] = useState(false);
@@ -17,9 +17,9 @@ export default function PartnerHotelsSection() {
 
   const filteredHotels = PARTNER_HOTELS.filter(hotel => {
     if (filterCategory === 'ALL') return true;
-    if (filterCategory === '5STAR') return hotel.stars === 5;
-    if (filterCategory === 'GRA') return hotel.address.toLowerCase().includes('g.r.a') || hotel.stars === 4;
-    if (filterCategory === 'CAMPUS') return hotel.id === 'campus-edge-suites';
+    if (filterCategory === 'NEARBY') return hotel.isNearby || hotel.distanceKm <= 2.0;
+    if (filterCategory === 'BUDGET') return hotel.isBudget || hotel.startingRate <= 35000;
+    if (filterCategory === 'LUXURY') return hotel.isLuxury || hotel.startingRate >= 60000;
     return true;
   });
 
@@ -125,18 +125,31 @@ export default function PartnerHotelsSection() {
           </div>
         </div>
 
+        {/* Official Price Accuracy & Booking Advisory */}
+        <div className="max-w-4xl mx-auto mb-8 p-4 sm:p-5 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-950 text-xs flex items-start space-x-3 shadow-sm">
+          <Info className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-bold text-amber-900 uppercase tracking-wider text-[11px] block">
+              Official Price Accuracy &amp; Direct Booking Notice
+            </span>
+            <p className="text-amber-800 leading-relaxed text-[11px] sm:text-xs">
+              {HOTEL_PRICE_DISCLAIMER}
+            </p>
+          </div>
+        </div>
+
         {/* Filter Category Tabs */}
         <div className="flex items-center justify-start sm:justify-center space-x-2 sm:space-x-3 mb-8 overflow-x-auto pb-2 scrollbar-none px-1">
           {[
-            { key: 'ALL', label: 'All Partner Hotels' },
-            { key: '5STAR', label: '5-Star Luxury Host' },
-            { key: 'GRA', label: 'Executive G.R.A.' },
-            { key: 'CAMPUS', label: 'Closest to RSU Campus' }
+            { key: 'ALL', label: `All Verified Hotels (${PARTNER_HOTELS.length})` },
+            { key: 'NEARBY', label: 'Closest to Campus (~1.5 km)' },
+            { key: 'BUDGET', label: 'Budget-Friendly (< ₦35k)' },
+            { key: 'LUXURY', label: 'Executive & Luxury (₦60k+)' }
           ].map(tab => (
             <button
               key={tab.key}
               onClick={() => setFilterCategory(tab.key)}
-              className={`px-3 xs:px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation shrink-0 ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap touch-manipulation shrink-0 ${
                 filterCategory === tab.key
                   ? 'bg-emerald-950 text-white shadow-md'
                   : 'bg-white hover:bg-stone-100 text-stone-700 border border-stone-200'
@@ -151,7 +164,7 @@ export default function PartnerHotelsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
           {filteredHotels.map(hotel => {
             const encodedWaMessage = encodeURIComponent(
-              `Hello ${hotel.name}! I am an alumnus attending the ASF RSU 45th Anniversary Jubilee Homecoming (Nov 13–15, 2026). I would like to reserve a room using the delegate conference promo code: ${PARTNER_DISCOUNT_CODE}.`
+              `Hello ${hotel.name}! I am an alumnus attending the ASF RSU 45th Anniversary Jubilee Homecoming (Nov 13–15, 2026). I would like to inquire about room reservations with delegate conference promo code: ${PARTNER_DISCOUNT_CODE}.`
             );
 
             return (
@@ -203,15 +216,15 @@ export default function PartnerHotelsSection() {
                     </div>
                   </div>
 
-                  {/* Pricing Comparison */}
+                  {/* Published Price Range */}
                   <div className="border-t border-stone-100 pt-3">
-                    <div className="text-[10px] text-stone-400 uppercase tracking-wider font-semibold">Special Delegate Rate</div>
+                    <div className="text-[10px] text-stone-400 uppercase tracking-wider font-semibold">Published Rate Overview</div>
                     <div className="flex items-baseline space-x-2 mt-0.5">
                       <span className="text-xl sm:text-2xl font-retro font-black text-emerald-950">
                         {hotel.discountedRate}
                       </span>
-                      <span className="text-xs text-stone-400 line-through">
-                        {hotel.standardRate}
+                      <span className="text-xs text-stone-500 font-medium">
+                        ({hotel.standardRate})
                       </span>
                     </div>
                     <div className="text-[11px] text-emerald-700 font-bold flex items-center space-x-1 mt-0.5">
@@ -219,6 +232,23 @@ export default function PartnerHotelsSection() {
                       <span>{hotel.savings}</span>
                     </div>
                   </div>
+
+                  {/* Published Room Rates Breakdown */}
+                  {hotel.roomCategories && hotel.roomCategories.length > 0 && (
+                    <div className="space-y-1.5 pt-2 border-t border-stone-100">
+                      <div className="text-[10px] uppercase font-bold text-stone-500 tracking-wider">
+                        Published Room Categories &amp; Rates:
+                      </div>
+                      <div className="space-y-1">
+                        {hotel.roomCategories.map((rm, idx) => (
+                          <div key={idx} className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-stone-50 border border-stone-200/70 text-xs">
+                            <span className="text-[11px] text-stone-700 truncate pr-2 font-medium">• {rm.name}</span>
+                            <span className="font-mono font-bold text-emerald-950 shrink-0">{rm.rate}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Amenities List */}
                   <div className="space-y-1.5 pt-2">
@@ -256,7 +286,7 @@ export default function PartnerHotelsSection() {
                   <a
                     href={`tel:${hotel.phone.replace(/[^0-9+]/g, '')}`}
                     className="p-2.5 rounded-xl bg-white hover:bg-stone-200 border border-stone-300 text-stone-800 transition-colors touch-manipulation active:scale-95 shrink-0"
-                    title={`Call ${hotel.name}`}
+                    title={`Call ${hotel.name}: ${hotel.phone}${hotel.secondaryPhone ? ' / ' + hotel.secondaryPhone : ''}`}
                   >
                     <Phone className="w-4 h-4 text-emerald-900" />
                   </a>

@@ -38,7 +38,7 @@ export default function HomeAccommodationTeaser({ onOpenAccommodation }) {
               </h2>
 
               <p className="text-xs sm:text-sm text-emerald-100/80 font-light leading-relaxed">
-                Enjoy negotiated delegate discounts (up to 20% off) across verified partner hotels including Hotel Presidential, Golden Tulip, Novotel, Swiss Spirit, Genesis Castle, and Mascot Suites near campus.
+                Explore published room rates and direct contacts across verified hotels near RSU, including Golden Tulip Evergreen, Oak Haven, Villa Toscana Luxe, Bougainvillea, Christine Apartments, Servy, Shabach, and Tocville Gardens.
               </p>
 
               {/* Coordinator Chip */}

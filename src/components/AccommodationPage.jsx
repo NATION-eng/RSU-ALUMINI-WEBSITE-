@@ -4,7 +4,7 @@ import {
   Copy, Check, Star, ShieldCheck, Plane, Car, Sparkles, Tag, 
   ChevronRight, Info, ArrowLeft, Mail, UserCheck
 } from 'lucide-react';
-import { PARTNER_HOTELS, PARTNER_DISCOUNT_CODE, TRAVEL_LOGISTICS_ADVISORY } from '../data/partnerHotels';
+import { PARTNER_HOTELS, PARTNER_DISCOUNT_CODE, TRAVEL_LOGISTICS_ADVISORY, HOTEL_PRICE_DISCLAIMER } from '../data/partnerHotels';
 import Footer from './Footer';
 
 export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSponsors }) {
@@ -19,9 +19,9 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
 
   const filteredHotels = PARTNER_HOTELS.filter(hotel => {
     if (filterCategory === 'ALL') return true;
-    if (filterCategory === '5STAR') return hotel.stars === 5;
-    if (filterCategory === 'GRA') return hotel.address.toLowerCase().includes('g.r.a') || hotel.stars === 4;
-    if (filterCategory === 'CAMPUS') return hotel.id === 'campus-edge-suites';
+    if (filterCategory === 'NEARBY') return hotel.isNearby || hotel.distanceKm <= 2.0;
+    if (filterCategory === 'BUDGET') return hotel.isBudget || hotel.startingRate <= 35000;
+    if (filterCategory === 'LUXURY') return hotel.isLuxury || hotel.startingRate >= 60000;
     return true;
   });
 
@@ -191,6 +191,19 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
           </div>
         </section>
 
+        {/* Official Price Accuracy & Booking Advisory */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-950 text-xs flex items-start space-x-3 shadow-sm">
+          <Info className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-bold text-amber-900 uppercase tracking-wider text-[11px] block">
+              Official Price Accuracy &amp; Direct Booking Notice
+            </span>
+            <p className="text-amber-800 leading-relaxed text-[11px] sm:text-xs">
+              {HOTEL_PRICE_DISCLAIMER}
+            </p>
+          </div>
+        </div>
+
         {/* Filter Category Tabs */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -204,10 +217,10 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
 
           <div className="flex items-center justify-start space-x-2 sm:space-x-3 overflow-x-auto pb-2 scrollbar-none">
             {[
-              { key: 'ALL', label: 'All Partner Hotels' },
-              { key: '5STAR', label: '5-Star Luxury Host' },
-              { key: 'GRA', label: 'Executive G.R.A.' },
-              { key: 'CAMPUS', label: 'Closest to RSU Campus' }
+              { key: 'ALL', label: `All Verified Hotels (${PARTNER_HOTELS.length})` },
+              { key: 'NEARBY', label: 'Closest to Campus (~1.5 km)' },
+              { key: 'BUDGET', label: 'Budget-Friendly (< ₦35k)' },
+              { key: 'LUXURY', label: 'Executive & Luxury (₦60k+)' }
             ].map(tab => (
               <button
                 key={tab.key}
@@ -228,7 +241,7 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredHotels.map(hotel => {
             const encodedWaMessage = encodeURIComponent(
-              `Hello! I am an alumnus attending the ASF RSU 45th Anniversary Jubilee Homecoming (Nov 13–15, 2026). I would like to reserve a room at ${hotel.name} with delegate promo code: ${PARTNER_DISCOUNT_CODE}.`
+              `Hello ${hotel.name}! I am an alumnus attending the ASF RSU 45th Anniversary Jubilee Homecoming (Nov 13–15, 2026). I would like to inquire about room reservations with delegate conference promo code: ${PARTNER_DISCOUNT_CODE}.`
             );
 
             return (
@@ -272,11 +285,11 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
                   {/* Pricing Matrix */}
                   <div className="p-3.5 rounded-2xl bg-[#051A0F] text-white border border-jubilee-gold/30 space-y-1">
                     <div className="flex items-center justify-between text-[11px] text-stone-300">
-                      <span>Standard Rate:</span>
-                      <span className="line-through text-stone-400">{hotel.standardRate}</span>
+                      <span>Rate Overview:</span>
+                      <span className="text-stone-300 font-mono text-[11px]">{hotel.standardRate}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-jubilee-lightgold">Jubilee Delegate:</span>
+                      <span className="text-xs font-bold text-jubilee-lightgold">Starting Rate:</span>
                       <span className="text-base sm:text-lg font-retro font-black text-jubilee-gold">
                         {hotel.discountedRate}
                       </span>
@@ -286,9 +299,26 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
                     </div>
                   </div>
 
+                  {/* Published Room Rates Matrix */}
+                  {hotel.roomCategories && hotel.roomCategories.length > 0 && (
+                    <div className="space-y-1.5 pt-2 border-t border-stone-100">
+                      <span className="text-[10px] uppercase font-bold text-stone-500 block tracking-wider">
+                        Published Room Categories &amp; Rates:
+                      </span>
+                      <div className="space-y-1">
+                        {hotel.roomCategories.map((rm, idx) => (
+                          <div key={idx} className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-stone-50 border border-stone-200/70 text-xs">
+                            <span className="text-[11px] text-stone-700 truncate pr-2 font-medium">• {rm.name}</span>
+                            <span className="font-mono font-bold text-emerald-950 shrink-0">{rm.rate}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Amenities */}
                   <div className="space-y-1.5 pt-1">
-                    <span className="text-[11px] font-bold text-stone-700 block uppercase tracking-wider">
+                    <span className="text-[10px] font-bold text-stone-500 block uppercase tracking-wider">
                       Hotel Amenities:
                     </span>
                     <ul className="space-y-1 text-xs text-stone-600">
@@ -311,25 +341,35 @@ export default function AccommodationPage({ onBackToSite, onOpenAdmin, onOpenSpo
                 {/* Bottom Booking CTAs */}
                 <div className="p-4 sm:p-5 bg-stone-50 border-t border-stone-100 space-y-2">
                   <div className="grid grid-cols-2 gap-2">
-                    {/* Hotel Direct Liaison or Coordinator */}
                     <a
-                      href={`https://wa.me/2347063836336?text=${encodedWaMessage}`}
+                      href={`https://wa.me/${hotel.whatsapp.replace(/[^0-9]/g, '')}?text=${encodedWaMessage}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 rounded-xl bg-emerald-950 text-white hover:bg-emerald-900 font-bold text-xs transition-all active:scale-95 touch-manipulation text-center"
+                      className="inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 rounded-xl bg-emerald-950 text-white hover:bg-emerald-900 font-bold text-xs transition-all active:scale-95 touch-manipulation text-center truncate"
                     >
                       <MessageSquare className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
-                      <span>Reserve via Desk</span>
+                      <span>WhatsApp</span>
                     </a>
 
                     <a
-                      href={`tel:+2347063836336`}
-                      className="inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 rounded-xl bg-white border border-stone-300 text-stone-800 hover:bg-stone-100 font-bold text-xs transition-all active:scale-95 touch-manipulation text-center"
+                      href={`tel:${hotel.phone.replace(/[^0-9+]/g, '')}`}
+                      className="inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 rounded-xl bg-white border border-stone-300 text-stone-800 hover:bg-stone-100 font-bold text-xs transition-all active:scale-95 touch-manipulation text-center truncate"
+                      title={`Call ${hotel.name}: ${hotel.phone}${hotel.secondaryPhone ? ' / ' + hotel.secondaryPhone : ''}`}
                     >
                       <Phone className="w-3.5 h-3.5 text-emerald-800 shrink-0" />
-                      <span>Call Coordinator</span>
+                      <span>Call Hotel</span>
                     </a>
                   </div>
+
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${hotel.mapQuery}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center space-x-1 text-[11px] font-semibold text-emerald-900 hover:text-emerald-700 transition-colors pt-1"
+                  >
+                    <span>View Directions on Google Maps</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
 
                   {hotel.website && (
                     <a

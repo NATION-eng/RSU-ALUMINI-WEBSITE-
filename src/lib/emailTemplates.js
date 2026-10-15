@@ -248,9 +248,9 @@ export const TIER_DETAILS = {
   },
   // Advertisement Rates
   ad_back_cover: {
-    name: 'Back Cover (Premium Space)',
-    minAmount: 100000,
-    badge: '🌟 Back Cover (Premium)',
+    name: 'Outer Back Cover (Premium Space)',
+    minAmount: 150000,
+    badge: '🌟 Outer Back Cover (Premium)',
     color: '#D4AF37',
     leadTime: 'Immediate Reservation & Placement',
     dimensions: '210mm × 297mm (+3mm bleed)',
@@ -262,7 +262,7 @@ export const TIER_DETAILS = {
   },
   ad_inside_front: {
     name: 'Inside Front Cover',
-    minAmount: 75000,
+    minAmount: 112000,
     badge: '💎 Inside Front Cover',
     color: '#0284C7',
     leadTime: 'Priority Placement Verification',
@@ -275,7 +275,7 @@ export const TIER_DETAILS = {
   },
   ad_inside_back: {
     name: 'Inside Back Cover',
-    minAmount: 60000,
+    minAmount: 90000,
     badge: '✨ Inside Back Cover',
     color: '#8B5CF6',
     leadTime: 'Priority Placement Verification',
@@ -287,7 +287,7 @@ export const TIER_DETAILS = {
   },
   ad_center_spread: {
     name: 'Center Spread (Double Page)',
-    minAmount: 80000,
+    minAmount: 130000,
     badge: '📖 Center Spread (Double Page)',
     color: '#F59E0B',
     leadTime: 'Two-Page Centerfold Layout',
@@ -298,7 +298,7 @@ export const TIER_DETAILS = {
   },
   ad_full: {
     name: 'Full Page Advert',
-    minAmount: 40000,
+    minAmount: 65000,
     badge: '📖 Full Page Advert',
     color: '#3B82F6',
     leadTime: 'Artwork Submission within 7 days',
@@ -311,7 +311,7 @@ export const TIER_DETAILS = {
   },
   ad_half: {
     name: 'Half Page Advert',
-    minAmount: 20000,
+    minAmount: 35000,
     badge: '📄 Half Page Advert',
     color: '#6366F1',
     leadTime: 'Artwork Submission within 7 days',
@@ -323,7 +323,7 @@ export const TIER_DETAILS = {
   },
   ad_quarter: {
     name: 'Quarter Page Advert',
-    minAmount: 10000,
+    minAmount: 18000,
     badge: '📇 Quarter Page Advert',
     color: '#10B981',
     leadTime: 'Artwork Submission within 7 days',

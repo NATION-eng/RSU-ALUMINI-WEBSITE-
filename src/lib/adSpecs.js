@@ -3,10 +3,10 @@
 export const COMPENDIUM_AD_TIERS = {
   ad_back_cover: {
     key: 'ad_back_cover',
-    name: 'Outside Back Cover (Premium Gloss)',
+    name: 'Outer Back Cover (Premium Gloss)',
     dimensions: '210mm × 297mm (+3mm bleed)',
     aspectRatio: 'A4 Portrait',
-    rate: 100000,
+    rate: 150000,
     specs: 'A4 Full Bleed, 300 DPI CMYK, High-Gloss Laminated Outer Cover',
     description: 'The premier back cover spot seen by all readers and VIP delegates worldwide.',
     badge: 'Exclusive 1 Slot Only'
@@ -16,7 +16,7 @@ export const COMPENDIUM_AD_TIERS = {
     name: 'Inside Front Cover (Prime Spread)',
     dimensions: '210mm × 297mm (+3mm bleed)',
     aspectRatio: 'A4 Portrait',
-    rate: 75000,
+    rate: 112000,
     specs: 'A4 Full Bleed, 300 DPI CMYK, Inside Front Facing Opening Page',
     description: 'The highest-visibility inner page immediately facing the President & VC Welcome addresses.',
     badge: 'Prime Placement'
@@ -26,7 +26,7 @@ export const COMPENDIUM_AD_TIERS = {
     name: 'Inside Back Cover (Feature Display)',
     dimensions: '210mm × 297mm (+3mm bleed)',
     aspectRatio: 'A4 Portrait',
-    rate: 60000,
+    rate: 90000,
     specs: 'A4 Full Bleed, 300 DPI CMYK, Inside Back Facing Closing Page',
     description: 'Prominent closing position with guaranteed maximum visibility for alumni and corporate features.',
     badge: 'High Visibility'
@@ -36,7 +36,7 @@ export const COMPENDIUM_AD_TIERS = {
     name: 'Center Spread (Double Page Feature)',
     dimensions: '420mm × 297mm (+3mm bleed)',
     aspectRatio: 'Double A4 Landscape',
-    rate: 80000,
+    rate: 130000,
     specs: 'Double A4 Panoramic Spread, 300 DPI CMYK, Center Fold Binding',
     description: 'Panoramic two-page horizontal layout for major corporate partners and large alumni cohorts.',
     badge: 'Panoramic Spread'
@@ -46,7 +46,7 @@ export const COMPENDIUM_AD_TIERS = {
     name: 'Full Page Color Editorial (A4)',
     dimensions: '210mm × 297mm (+3mm bleed)',
     aspectRatio: 'A4 Portrait',
-    rate: 40000,
+    rate: 65000,
     specs: '210mm × 297mm, 300 DPI CMYK High-Res Layout',
     description: 'Standard single full-page color feature for corporate brands, alumni sets, or family tributes.',
     badge: 'Top Seller'
@@ -56,7 +56,7 @@ export const COMPENDIUM_AD_TIERS = {
     name: 'Half Page Standard Display',
     dimensions: '210mm × 148mm (+3mm bleed)',
     aspectRatio: 'Half A4 Landscape',
-    rate: 20000,
+    rate: 35000,
     specs: '210mm × 148mm, 300 DPI CMYK High-Res Layout',
     description: 'Half-page display ad for medium-scale businesses, professional practices, or group shout-outs.',
     badge: 'Popular Choice'
@@ -66,7 +66,7 @@ export const COMPENDIUM_AD_TIERS = {
     name: 'Quarter Page Compact Advert',
     dimensions: '105mm × 148mm',
     aspectRatio: 'Quarter A4 Portrait',
-    rate: 10000,
+    rate: 18000,
     specs: '105mm × 148mm, 300 DPI CMYK High-Res Layout',
     description: 'Compact quarter-page slot for individual business card listings and personal congratulatory notes.',
     badge: 'Entry Slot'
