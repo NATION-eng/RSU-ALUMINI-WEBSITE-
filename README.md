@@ -1,8 +1,8 @@
 # Adventist Students’ Fellowship (RSU) 45th Anniversary & Alumni Homecoming Portal
 
 > **Theme:** *"Rooted to Rise: Honouring our Heritage, Igniting our Future"* (Isaiah 61:3)  
-> **Celebration Dates:** November 13th – 15th, 2026  
-> **Grand Jubilee Sabbath:** Saturday, November 14th, 2026  
+> **Celebration Dates:** November 20th – 22nd, 2026  
+> **Grand Jubilee Sabbath:** Saturday, November 21st, 2026  
 > **Venue:** Rivers State University (RSU), Port Harcourt, Nigeria  
 > **Technical Partner:** Developed by M-CEL TECH HUB with direct engineering support from the Adventists in Tech Organization  
 
@@ -15,7 +15,7 @@ This repository contains the official, high-performance web portal for the **Adv
 ### ✨ Features & Deliverables
 
 1. **Hero & Grand Jubilee Countdown:**
-   * Live countdown clock synchronized to Saturday, November 14, 2026 (Grand Jubilee Sabbath).
+   * Live countdown clock synchronized to Saturday, November 21, 2026 (Grand Jubilee Sabbath).
    * Scriptural and theme showcase (*Rooted to Rise*).
 2. **Interactive 45-Year Milestone Journey (1981–2026):**
    * Chronological milestones across 4 distinct eras (Pioneers, Growth, Consolidation, and Digital Horizon).

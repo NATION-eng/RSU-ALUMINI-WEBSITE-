@@ -164,7 +164,7 @@ export default function PartnerHotelsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
           {filteredHotels.map(hotel => {
             const encodedWaMessage = encodeURIComponent(
-              `Hello ${hotel.name}! I am an alumnus attending the ASF RSU 45th Anniversary Jubilee Homecoming (Nov 13–15, 2026). I would like to inquire about room reservations with delegate conference promo code: ${PARTNER_DISCOUNT_CODE}.`
+              `Hello ${hotel.name}! I am an alumnus attending the ASF RSU 45th Anniversary Jubilee Homecoming (Nov 20–22, 2026). I would like to inquire about room reservations with delegate conference promo code: ${PARTNER_DISCOUNT_CODE}.`
             );
 
             return (

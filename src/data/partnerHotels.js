@@ -336,7 +336,7 @@ export const TRAVEL_LOGISTICS_ADVISORY = {
   airport: {
     name: 'Port Harcourt International Airport (Omagwa - PHC)',
     distance: 'Approx. 32 km from RSU campus (35–45 mins via Airport Road & Port Harcourt Express).',
-    protocol: 'The Central Planning Committee (CPC) Protocol Directorate will operate a dedicated Welcome Liaison Desk at the arrivals terminal on Friday, Nov 13, 2026.'
+    protocol: 'The Central Planning Committee (CPC) Protocol Directorate will operate a dedicated Welcome Liaison Desk at the arrivals terminal on Friday, Nov 20, 2026.'
   },
   campusParking: {
     venue: 'RSU Main Campus, Nkpolu-Oroworukwo, Port Harcourt',

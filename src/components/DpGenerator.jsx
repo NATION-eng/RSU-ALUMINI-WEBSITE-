@@ -359,7 +359,7 @@ export default function DpGenerator() {
       ctx.fillStyle = '#D4AF37'; // Gold
       ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif';
       ctx.letterSpacing = '2px';
-      ctx.fillText('ISAIAH 61:3 • NOV 13–15, 2026 • GRAND JUBILEE: SATURDAY, NOV 14', size / 2, bottomCardY + 218);
+      ctx.fillText('ISAIAH 61:3 • NOV 20–22, 2026 • GRAND JUBILEE: SATURDAY, NOV 21', size / 2, bottomCardY + 218);
 
       ctx.restore();
 

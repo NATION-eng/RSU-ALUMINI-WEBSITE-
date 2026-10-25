@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Building2 } from 'lucide-react';
 
 export default function Hero({ onOpenSponsors, onOpenAccommodation }) {
-  // Target date: Saturday November 14, 2026 (Grand Jubilee Sabbath)
-  const targetDate = new Date('2026-11-14T08:30:00');
+  // Target date: Saturday November 21, 2026 (Grand Jubilee Sabbath)
+  const targetDate = new Date('2026-11-21T08:30:00');
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -94,7 +94,7 @@ export default function Hero({ onOpenSponsors, onOpenAccommodation }) {
         <div className="inline-flex items-center space-x-1.5 xs:space-x-2 px-3 xs:px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl bg-emerald-900/60 border border-jubilee-gold/40 text-jubilee-lightgold text-[10px] xs:text-[11px] sm:text-xs font-bold shadow-lg mb-6 sm:mb-8 backdrop-blur-sm max-w-full text-center">
           <Calendar className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
           <span className="tracking-wide leading-tight">
-            NOV 13–15, 2026 • GRAND JUBILEE: SATURDAY, NOV 14
+            NOV 20–22, 2026 • GRAND JUBILEE: SATURDAY, NOV 21
           </span>
         </div>
 

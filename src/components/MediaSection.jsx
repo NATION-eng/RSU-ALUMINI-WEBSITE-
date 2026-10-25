@@ -193,7 +193,7 @@ export default function MediaSection() {
                     <Play className="w-8 h-8 ml-1 text-emerald-950 fill-current" />
                   </div>
                   <span className="inline-block px-3 py-1 rounded-full bg-emerald-900/90 text-jubilee-lightgold text-[10px] font-bold uppercase tracking-widest mb-2 border border-jubilee-gold/30">
-                    Broadcast Horizon • Nov 13–15, 2026
+                    Broadcast Horizon • Nov 20–22, 2026
                   </span>
                   <h3 className="text-xl sm:text-2xl font-retro font-bold text-white">
                     45th Anniversary Teaser Trailer
@@ -435,7 +435,7 @@ export default function MediaSection() {
             </h3>
 
             <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
-              The official multi-camera high-definition livestream will broadcast live from the RSU Amphitheatre starting <strong>Friday, November 13, 2026</strong>.
+              The official multi-camera high-definition livestream will broadcast live from the RSU Amphitheatre starting <strong>Friday, November 20, 2026</strong>.
             </p>
 
             <div className="bg-black/50 p-4 rounded-2xl border border-white/10 text-left text-xs space-y-2 font-sans">
@@ -444,10 +444,10 @@ export default function MediaSection() {
                 <span>Streaming Schedule (Port Harcourt Local Time):</span>
               </div>
               <ul className="text-stone-300 space-y-1 pl-6 list-disc text-[11px]">
-                <li><strong>Nov 13 (6:00 PM):</strong> Opening Sunset Vespers</li>
-                <li><strong>Nov 14 (8:30 AM):</strong> Grand Jubilee Sabbath Service &amp; Roll Call</li>
-                <li><strong>Nov 14 (4:00 PM):</strong> Combined 4-Decade Mass Choir Cantata</li>
-                <li><strong>Nov 15 (10:00 AM):</strong> Alumni Legacy Banquet &amp; Awards</li>
+                <li><strong>Nov 20 (6:00 PM):</strong> Opening Sunset Vespers</li>
+                <li><strong>Nov 21 (8:30 AM):</strong> Grand Jubilee Sabbath Service &amp; Roll Call</li>
+                <li><strong>Nov 21 (4:00 PM):</strong> Combined 4-Decade Mass Choir Cantata</li>
+                <li><strong>Nov 22 (10:00 AM):</strong> Alumni Legacy Banquet &amp; Awards</li>
               </ul>
             </div>
 

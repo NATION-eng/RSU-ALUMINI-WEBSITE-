@@ -33,7 +33,7 @@ export default function ScheduleSection() {
   const schedule = [
     {
       day: 'Friday',
-      date: 'Nov 13, 2026',
+      date: 'Nov 20, 2026',
       badge: 'Day 1: Sunset Welcome',
       title: 'The Gathering & Revival Vespers',
       theme: 'Consecration & Heritage Remembrance',
@@ -60,7 +60,7 @@ export default function ScheduleSection() {
     },
     {
       day: 'Sabbath Morning',
-      date: 'Nov 14, 2026',
+      date: 'Nov 21, 2026',
       badge: 'Day 2: Grand Jubilee Day',
       title: 'Grand Jubilee Divine Worship & Roll Call',
       theme: 'Praise, Thanksgiving & Divine Commissioning',
@@ -87,7 +87,7 @@ export default function ScheduleSection() {
     },
     {
       day: 'Sabbath Afternoon',
-      date: 'Nov 14, 2026',
+      date: 'Nov 21, 2026',
       badge: 'Day 2: Sacred Cantata',
       title: 'Sacred Music Concert & Mass Choir Cantata',
       theme: 'Harmony of the Ages (45 Voices United)',
@@ -108,7 +108,7 @@ export default function ScheduleSection() {
     },
     {
       day: 'Sunday',
-      date: 'Nov 15, 2026',
+      date: 'Nov 22, 2026',
       badge: 'Day 3: Thanksgiving Banquet',
       title: 'Alumni Banquet & Compendium Launch',
       theme: 'Igniting the Future & Legacy Endowment',
@@ -144,7 +144,7 @@ export default function ScheduleSection() {
               Celebration Program
             </h2>
             <p className="text-stone-600 text-sm sm:text-base mt-2 font-light">
-              November 13th – 15th, 2026 • Rivers State University, Port Harcourt
+              November 20th – 22nd, 2026 • Rivers State University, Port Harcourt
             </p>
           </div>
 

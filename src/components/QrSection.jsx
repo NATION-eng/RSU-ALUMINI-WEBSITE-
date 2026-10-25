@@ -45,7 +45,7 @@ export default function QrSection() {
 
   const handleShareWhatsApp = () => {
     const text = encodeURIComponent(
-      `Adventist Students' Fellowship (RSU) 45th Anniversary & Alumni Homecoming (1981–2026)!\n\nTheme: "Rooted to Rise: Honouring our Heritage, Igniting our Future"\nDates: November 13–15, 2026\n\nScan QR Code or visit: ${siteUrl}`
+      `Adventist Students' Fellowship (RSU) 45th Anniversary & Alumni Homecoming (1981–2026)!\n\nTheme: "Rooted to Rise: Honouring our Heritage, Igniting our Future"\nDates: November 20–22, 2026\n\nScan QR Code or visit: ${siteUrl}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -117,7 +117,7 @@ export default function QrSection() {
 
         ctx.fillStyle = '#34D399';
         ctx.font = 'bold 22px "Plus Jakarta Sans", sans-serif';
-        ctx.fillText("NOVEMBER 13–15, 2026 • RSU PORT HARCOURT", width / 2, 1070);
+        ctx.fillText("NOVEMBER 20–22, 2026 • RSU PORT HARCOURT", width / 2, 1070);
 
         ctx.fillStyle = '#092B19';
         ctx.beginPath();

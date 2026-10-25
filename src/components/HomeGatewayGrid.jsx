@@ -29,7 +29,7 @@ export default function HomeGatewayGrid({ onNavigate }) {
       id: 'program',
       hash: '#program',
       title: 'Program & Schedule',
-      badge: 'Nov 13–15, 2026',
+      badge: 'Nov 20–22, 2026',
       tagline: 'Full 3-day jubilee weekend schedule, Grand Jubilee Sabbath cantata, banqueting, and timezone converter.',
       icon: Calendar,
       actionText: 'View 3-Day Program'
@@ -183,7 +183,7 @@ export default function HomeGatewayGrid({ onNavigate }) {
               Join the Official 45th Jubilee WhatsApp Community
             </h3>
             <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
-              Never miss an update. Connect directly with fellow alumni across graduating sets, receive travel advisory bulletins, and stay informed ahead of November 13–15, 2026.
+              Never miss an update. Connect directly with fellow alumni across graduating sets, receive travel advisory bulletins, and stay informed ahead of November 20–22, 2026.
             </p>
           </div>
 

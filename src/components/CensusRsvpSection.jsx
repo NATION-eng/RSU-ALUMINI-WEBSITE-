@@ -18,7 +18,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
     city: '',
     country: 'Nigeria',
     attendanceMode: 'PHYSICAL', // 'PHYSICAL' | 'VIRTUAL'
-    arrivalDate: '2026-11-13',
+    arrivalDate: '2026-11-20',
     tributeQuote: ''
   });
 
@@ -352,7 +352,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                   2
                 </span>
                 <h3 className="text-base sm:text-lg font-retro font-bold text-emerald-950">
-                  Homecoming Attendance (Nov 13–15, 2026)
+                  Homecoming Attendance (Nov 20–22, 2026)
                 </h3>
               </div>
 

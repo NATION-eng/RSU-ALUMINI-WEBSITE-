@@ -89,7 +89,7 @@ async function generateOgImage() {
     <g transform="translate(260, 474)">
       <rect width="680" height="48" rx="14" fill="#062314" fill-opacity="0.95" stroke="#D4AF37" stroke-opacity="0.6" stroke-width="1.2"/>
       <text x="340" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">
-        GRAND JUBILEE HOMECOMING: <tspan fill="#F59E0B">NOV 13–15, 2026</tspan>
+        GRAND JUBILEE HOMECOMING: <tspan fill="#F59E0B">NOV 20–22, 2026</tspan>
       </text>
     </g>
 

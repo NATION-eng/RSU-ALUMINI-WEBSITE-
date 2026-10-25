@@ -19,7 +19,7 @@ export default function DiasporaHub({ onOpenSponsors }) {
     {
       icon: Tv,
       title: 'Interactive Sanctuary Broadcast',
-      tag: 'November 13–15, 2026',
+      tag: 'November 20–22, 2026',
       description: 'Multi-camera 1080p live transmission of all main events directly from Rivers State University.',
       details: [
         'Live Friday Opening Vespers & Praise',
@@ -157,7 +157,7 @@ export default function DiasporaHub({ onOpenSponsors }) {
                 <span>Grand Jubilee Sabbath Broadcast Guide</span>
               </div>
               <h4 className="text-lg sm:text-2xl font-retro font-bold text-white">
-                Saturday, November 14, 2026 • Divine Worship Service
+                Saturday, November 21, 2026 • Divine Worship Service
               </h4>
             </div>
             <p className="text-xs text-stone-300 max-w-sm font-light">
