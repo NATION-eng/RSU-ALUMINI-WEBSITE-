@@ -22,9 +22,9 @@ export default function DiasporaHub({ onOpenSponsors }) {
       tag: 'November 20–22, 2026',
       description: 'Multi-camera 1080p live transmission of all main events directly from Rivers State University.',
       details: [
-        'Live Friday Opening Vespers & Praise',
+        'Friday Accreditation & Sabbath Consecration',
         'Grand Sabbath School & Divine Worship',
-        'Combined Mass Choir 45th Cantata',
+        'Combined Mass Choir Ministration & Dedication',
         'Auditorium stage LED projection of overseas attendees'
       ]
     },
@@ -32,10 +32,10 @@ export default function DiasporaHub({ onOpenSponsors }) {
       icon: MessageSquare,
       title: '30-Second Video Goodwill Messages',
       tag: 'Grand Gala Feature',
-      description: 'Record and submit a brief video congratulation with your family or chapter to be broadcast during the Sunday Jubilee Banquet.',
+      description: 'Record and submit a brief video congratulation with your family or chapter to be broadcast during the Saturday Night Alumni Fellowship Dinner.',
       details: [
         'State your name, graduation year & current city',
-        'Featured during the Alumni Gala Dinner',
+        'Featured during the Saturday Night Gala Dinner',
         'Preserved in the permanent 45th Digital Archive',
         'Direct WhatsApp Secretariat submission'
       ],

@@ -30,7 +30,7 @@ export default function HomeGatewayGrid({ onNavigate }) {
       hash: '#program',
       title: 'Program & Schedule',
       badge: 'Nov 20–22, 2026',
-      tagline: 'Full 3-day jubilee weekend schedule, Grand Jubilee Sabbath cantata, banqueting, and timezone converter.',
+      tagline: 'Official 45th Jubilee program outline, Divine Worship, Intergenerational Mentorship, Saturday Gala Dinner, and timezone converter.',
       icon: Calendar,
       actionText: 'View 3-Day Program'
     },

@@ -444,10 +444,10 @@ export default function MediaSection() {
                 <span>Streaming Schedule (Port Harcourt Local Time):</span>
               </div>
               <ul className="text-stone-300 space-y-1 pl-6 list-disc text-[11px]">
-                <li><strong>Nov 20 (6:00 PM):</strong> Opening Sunset Vespers</li>
-                <li><strong>Nov 21 (8:30 AM):</strong> Grand Jubilee Sabbath Service &amp; Roll Call</li>
-                <li><strong>Nov 21 (4:00 PM):</strong> Combined 4-Decade Mass Choir Cantata</li>
-                <li><strong>Nov 22 (10:00 AM):</strong> Alumni Legacy Banquet &amp; Awards</li>
+                <li><strong>Nov 20 (10:00 AM – 6:00 PM):</strong> Registration, Accreditation &amp; Community Service</li>
+                <li><strong>Nov 21 (8:00 AM – 1:00 PM):</strong> 45th Jubilee Divine Worship &amp; Dedication Service</li>
+                <li><strong>Nov 21 (3:00 PM – 6:00 PM):</strong> Compendium Presentation, Mentorship &amp; Reflections</li>
+                <li><strong>Nov 21 (7:30 PM):</strong> Alumni Fellowship Dinner &amp; Integration</li>
               </ul>
             </div>
 
