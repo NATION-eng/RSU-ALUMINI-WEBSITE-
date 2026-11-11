@@ -6,7 +6,7 @@ import {
   Calendar, Phone, Mail, MapPin, Award, Check, Globe, Trash2,
   Video, Play, Sparkles, Building2, ExternalLink, AlertTriangle, X,
   BookOpen, FileText, Palette, UploadCloud, Layers, Image as ImageIcon,
-  Printer, FileSpreadsheet
+  Printer, FileSpreadsheet, Plus, Clock, CreditCard, CheckCircle2
 } from 'lucide-react';
 import { getMailtoLink } from '../lib/emailService';
 import { COMPENDIUM_AD_TIERS, AD_EDITORIAL_STATUSES } from '../lib/adSpecs';
@@ -101,6 +101,21 @@ export default function AdminDashboard({ onBackToSite }) {
   const [sponsorshipSearch, setSponsorshipSearch] = useState('');
   const [sponsorshipFilterType, setSponsorshipFilterType] = useState('ALL'); // 'ALL' | 'DONATION' | 'AD'
   const [sponsorshipFilterChannel, setSponsorshipFilterChannel] = useState('ALL'); // 'ALL' | 'PAYSTACK' | 'TRANSFER'
+
+  // Manual Offline Bank Transfer Entry Modal State
+  const [showAddTransferModal, setShowAddTransferModal] = useState(false);
+  const [manualTransfer, setManualTransfer] = useState({
+    donor_name: '',
+    organization: '',
+    amount: '',
+    tier_name: 'Gold Sponsor (₦150,000)',
+    email: '',
+    phone: '',
+    payment_method: 'Direct Bank Transfer (Ecobank)',
+    status: 'VERIFIED',
+    reference: '',
+    message_note: ''
+  });
 
   // Search & Filter for Compendium Ads
   const [adSearch, setAdSearch] = useState('');
@@ -199,18 +214,84 @@ export default function AdminDashboard({ onBackToSite }) {
 
   const fetchSponsorships = async () => {
     try {
-      const { data, error } = await supabase
-        .from('sponsorship_payments')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const combined = [];
+      const seenRefs = new Set();
 
+      // 1. Fetch from primary sponsorship_payments table
+      try {
+        const { data, error } = await supabase
+          .from('sponsorship_payments')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!error && Array.isArray(data)) {
+          data.forEach(item => {
+            if (item.reference && !seenRefs.has(item.reference)) {
+              seenRefs.add(item.reference);
+              combined.push(item);
+            }
+          });
+        }
+      } catch (sbErr) {
+        console.warn('sponsorship_payments fetch note:', sbErr);
+      }
+
+      // 2. Cloud Fallback: Fetch from alumni_registrations where willing_to_support is true
+      // or registration_tag starts with ECO- or ASF45TH- or tribute_quote contains SPONSORSHIP_RECORD
+      try {
+        const { data: regData } = await supabase
+          .from('alumni_registrations')
+          .select('*')
+          .or('willing_to_support.eq.true,registration_tag.ilike.ECO-%,registration_tag.ilike.ASF45TH-%');
+
+        if (Array.isArray(regData)) {
+          regData.forEach(reg => {
+            const ref = reg.registration_tag || `PLEDGE-${reg.id}`;
+            if (!seenRefs.has(ref)) {
+              const cleanAmt = String(reg.support_pledge || '0').replace(/[^0-9.]/g, '');
+              const numAmt = parseFloat(cleanAmt) || 0;
+              if (numAmt > 0 || reg.support_category) {
+                seenRefs.add(ref);
+                const isVerified = reg.tribute_quote?.includes('Status: VERIFIED');
+                const isPaystack = reg.tribute_quote?.includes('Paystack');
+                combined.push({
+                  reference: ref,
+                  amount: numAmt,
+                  currency: 'NGN',
+                  pillar_key: 'celebration',
+                  pillar_name: '45th Jubilee Support',
+                  tier_key: reg.support_category || 'sponsorship',
+                  tier_name: reg.support_category || 'Jubilee Sponsor',
+                  donor_name: reg.full_name,
+                  organization: reg.department || null,
+                  email: reg.email,
+                  phone: reg.phone,
+                  alumni_set: reg.grad_year ? String(reg.grad_year) : null,
+                  is_anonymous: false,
+                  message_note: reg.tribute_quote || null,
+                  payment_method: isPaystack ? 'Paystack Online Gateway' : 'Direct Bank Transfer (Ecobank)',
+                  status: isVerified ? 'VERIFIED' : 'PENDING_BANK_RECONCILIATION',
+                  created_at: reg.created_at || new Date().toISOString()
+                });
+              }
+            }
+          });
+        }
+      } catch (regErr) {
+        console.warn('alumni_registrations sync note:', regErr);
+      }
+
+      // 3. Merge LocalStorage records
       const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
-      const combined = [...(data || [])];
       local.forEach(item => {
-        if (!combined.some(c => c.reference === item.reference)) {
+        if (item.reference && !seenRefs.has(item.reference)) {
+          seenRefs.add(item.reference);
           combined.push(item);
         }
       });
+
+      // Sort by created_at descending
+      combined.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
       setSponsorships(combined);
     } catch (e) {
       const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
@@ -605,6 +686,198 @@ export default function AdminDashboard({ onBackToSite }) {
         }
       }
     });
+  };
+
+  // Toggle sponsorship payment verification status (Pending Bank Rec <-> Cleared & Verified)
+  const toggleSponsorshipStatus = (record) => {
+    const isCurrentlyVerified = record.status === 'VERIFIED';
+    const newStatus = isCurrentlyVerified ? 'PENDING_BANK_RECONCILIATION' : 'VERIFIED';
+    const donorName = record.donor_name || 'Contributor';
+
+    openConfirmModal({
+      title: isCurrentlyVerified ? 'Revert Payment to Pending' : 'Verify & Clear Bank Transfer',
+      message: isCurrentlyVerified 
+        ? `Are you sure you want to revert the payment of ₦${Number(record.amount || 0).toLocaleString()} from ${donorName} back to "Pending Bank Reconciliation"?`
+        : `Have you verified the incoming transfer of ₦${Number(record.amount || 0).toLocaleString()} from ${donorName} on the Ecobank statement? This will mark the record as "Cleared & Verified".`,
+      details: [
+        { label: 'Contributor', value: donorName },
+        { label: 'Amount', value: `₦${Number(record.amount || 0).toLocaleString()}` },
+        { label: 'Reference Code', value: record.reference || 'N/A' },
+        { label: 'Current Status', value: isCurrentlyVerified ? 'Cleared & Verified' : 'Pending Bank Rec' },
+        { label: 'New Status', value: isCurrentlyVerified ? 'Pending Bank Rec' : 'Cleared & Verified' }
+      ],
+      confirmText: isCurrentlyVerified ? 'Revert to Pending' : 'Verify & Clear Payment',
+      isDanger: isCurrentlyVerified,
+      onConfirm: async () => {
+        setUpdatingId(record.reference);
+        try {
+          // 1. Supabase update: sponsorship_payments
+          try {
+            await supabase
+              .from('sponsorship_payments')
+              .update({ status: newStatus })
+              .eq('reference', record.reference);
+          } catch (sbErr) {
+            console.warn('Supabase status update note:', sbErr);
+          }
+
+          // 1b. Supabase update: alumni_registrations fallback if stored there
+          try {
+            await supabase
+              .from('alumni_registrations')
+              .update({ 
+                tribute_quote: `[SPONSORSHIP_RECORD] Method: ${record.payment_method || 'Direct Bank Transfer (Ecobank)'} | Status: ${newStatus} | Ref: ${record.reference}` 
+              })
+              .eq('registration_tag', record.reference);
+          } catch (regErr) {
+            console.warn('alumni_registrations update note:', regErr);
+          }
+
+          // 2. LocalStorage update
+          try {
+            const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+            const updatedLocal = local.map(s => s.reference === record.reference ? { ...s, status: newStatus } : s);
+            localStorage.setItem('asf_sponsorship_payments', JSON.stringify(updatedLocal));
+          } catch (lsErr) {
+            console.warn('LocalStorage status update note:', lsErr);
+          }
+
+          // 3. React state update
+          startTransition(() => {
+            setSponsorships(prev => prev.map(s => s.reference === record.reference ? { ...s, status: newStatus } : s));
+          });
+
+          // 4. Dispatch event for live progress calculation
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('asf-donation-recorded', { 
+              detail: { ...record, status: newStatus } 
+            }));
+          }
+
+          showToast(
+            newStatus === 'VERIFIED'
+              ? `Payment from ${donorName} verified and marked as Cleared!`
+              : `Payment from ${donorName} reverted to Pending.`,
+            'success'
+          );
+        } catch (err) {
+          console.error('Status update error:', err);
+          showToast('Error updating status: ' + err.message, 'error');
+        } finally {
+          setUpdatingId(null);
+        }
+      }
+    });
+  };
+
+  // Save manual offline bank transfer record logged by Secretariat
+  const handleSaveManualTransfer = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+
+    if (!manualTransfer.donor_name.trim()) {
+      showToast('Please enter the contributor or donor name.', 'error');
+      return;
+    }
+
+    const cleanAmt = String(manualTransfer.amount).replace(/[^0-9.]/g, '');
+    const numAmt = parseFloat(cleanAmt) || 0;
+    if (numAmt <= 0) {
+      showToast('Please enter a valid contribution amount in Naira.', 'error');
+      return;
+    }
+
+    const ref = manualTransfer.reference.trim() || `ECO-MANUAL-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const newRecord = {
+      reference: ref,
+      amount: numAmt,
+      currency: 'NGN',
+      pillar_key: 'celebration',
+      pillar_name: '45th Jubilee Sponsorship',
+      tier_key: manualTransfer.tier_name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+      tier_name: manualTransfer.tier_name,
+      donor_name: manualTransfer.donor_name.trim(),
+      organization: manualTransfer.organization.trim() || null,
+      email: manualTransfer.email.trim() || 'secretary@asfrsualumni.org',
+      phone: manualTransfer.phone.trim() || null,
+      alumni_set: null,
+      is_anonymous: false,
+      message_note: manualTransfer.message_note.trim() || 'Manual offline bank transfer logged by Admin Secretariat',
+      payment_method: manualTransfer.payment_method || 'Direct Bank Transfer (Ecobank)',
+      status: manualTransfer.status || 'VERIFIED',
+      created_at: new Date().toISOString()
+    };
+
+    setUpdatingId(ref);
+    try {
+      // 1. Save to Supabase: sponsorship_payments
+      try {
+        await supabase.from('sponsorship_payments').insert([newRecord]);
+      } catch (sbErr) {
+        console.warn('Supabase manual write note:', sbErr);
+      }
+
+      // 1b. Fallback save to Supabase: alumni_registrations
+      try {
+        await supabase.from('alumni_registrations').insert([{
+          registration_tag: ref,
+          full_name: newRecord.donor_name,
+          email: newRecord.email,
+          phone: newRecord.phone || '+2340000000000',
+          department: newRecord.organization || 'Manual Offline Sponsor',
+          city: 'Nigeria',
+          country: 'Nigeria',
+          grad_year: 2026,
+          cohort_era: '45th Jubilee Supporter',
+          attendance_mode: 'VIRTUAL',
+          willing_to_support: true,
+          support_category: newRecord.tier_name,
+          support_pledge: `₦${numAmt.toLocaleString()}`,
+          tribute_quote: `[SPONSORSHIP_RECORD] Method: ${newRecord.payment_method} | Status: ${newRecord.status} | Ref: ${ref} | Note: ${newRecord.message_note}`
+        }]);
+      } catch (fbErr) {
+        console.warn('alumni_registrations manual sync note:', fbErr);
+      }
+
+      // 2. Save to LocalStorage
+      try {
+        const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+        local.unshift(newRecord);
+        localStorage.setItem('asf_sponsorship_payments', JSON.stringify(local));
+      } catch (lsErr) {
+        console.warn('LocalStorage manual write error:', lsErr);
+      }
+
+      // 3. Update React state
+      startTransition(() => {
+        setSponsorships(prev => [newRecord, ...prev.filter(s => s.reference !== ref)]);
+      });
+
+      // 4. Dispatch event for live progress calculation
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('asf-donation-recorded', { detail: newRecord }));
+      }
+
+      showToast(`Successfully recorded ₦${numAmt.toLocaleString()} bank transfer from ${newRecord.donor_name}!`, 'success');
+      setShowAddTransferModal(false);
+      setManualTransfer({
+        donor_name: '',
+        organization: '',
+        amount: '',
+        tier_name: 'Gold Sponsor (₦150,000)',
+        email: '',
+        phone: '',
+        payment_method: 'Direct Bank Transfer (Ecobank)',
+        status: 'VERIFIED',
+        reference: '',
+        message_note: ''
+      });
+    } catch (err) {
+      console.error('Error saving manual transfer:', err);
+      showToast('Error saving record: ' + err.message, 'error');
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
   // Purge test / all sponsorship records
@@ -2124,6 +2397,16 @@ export default function AdminDashboard({ onBackToSite }) {
 
                   <button
                     type="button"
+                    onClick={() => setShowAddTransferModal(true)}
+                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-jubilee-gold via-amber-400 to-amber-300 text-emerald-950 shadow-luxury hover:brightness-110 active:scale-95 transition-all touch-manipulation cursor-pointer"
+                    title="Manually Record an Offline Bank Transfer Sponsorship"
+                  >
+                    <Plus className="w-3.5 h-3.5 pointer-events-none stroke-[3]" />
+                    <span className="pointer-events-none">Record Bank Transfer</span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => purgeSponsorships('TEST_ONLY')}
                     className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 active:scale-95 transition-all"
                     title="Purge Test Donations & Ad Bookings"
@@ -2239,13 +2522,29 @@ export default function AdminDashboard({ onBackToSite }) {
                               <div className="font-mono text-[10px] text-stone-400">{s.reference}</div>
                             </td>
                             <td className="p-3.5">
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                                s.status === 'VERIFIED'
-                                  ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40'
-                                  : 'bg-amber-950/40 text-amber-300 border-amber-800/40'
-                              }`}>
-                                {s.status === 'VERIFIED' ? 'Cleared' : 'Pending Bank Rec'}
-                              </span>
+                              <button
+                                type="button"
+                                onClick={() => toggleSponsorshipStatus(s)}
+                                disabled={updatingId === s.reference}
+                                title={s.status === 'VERIFIED' ? 'Click to revert to Pending' : 'Click to verify and clear bank transfer'}
+                                className={`text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all active:scale-95 inline-flex items-center space-x-1 cursor-pointer disabled:opacity-50 ${
+                                  s.status === 'VERIFIED'
+                                    ? 'bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border-emerald-600/50 shadow-sm'
+                                    : 'bg-amber-950/60 hover:bg-amber-900 text-amber-300 border-amber-600/50 hover:border-amber-400 shadow-sm animate-pulse'
+                                }`}
+                              >
+                                {s.status === 'VERIFIED' ? (
+                                  <>
+                                    <CheckCircle2 className="w-3 h-3 text-emerald-400 pointer-events-none" />
+                                    <span>Cleared &amp; Verified</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Clock className="w-3 h-3 text-amber-400 pointer-events-none" />
+                                    <span>Pending Rec (Click to Clear)</span>
+                                  </>
+                                )}
+                              </button>
                             </td>
                             <td className="p-3.5">
                               <div className="flex items-center space-x-1.5">
@@ -2309,13 +2608,29 @@ export default function AdminDashboard({ onBackToSite }) {
                               <div className="text-[11px] text-jubilee-lightgold">{s.organization}</div>
                             )}
                           </div>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                            s.status === 'VERIFIED'
-                              ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40'
-                              : 'bg-amber-950/40 text-amber-300 border-amber-800/40'
-                          }`}>
-                            {s.status === 'VERIFIED' ? 'Cleared' : 'Pending Bank Rec'}
-                          </span>
+                          <button
+                            type="button"
+                            onClick={() => toggleSponsorshipStatus(s)}
+                            disabled={updatingId === s.reference}
+                            title={s.status === 'VERIFIED' ? 'Tap to revert to Pending' : 'Tap to verify and clear bank transfer'}
+                            className={`text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all active:scale-95 inline-flex items-center space-x-1 cursor-pointer disabled:opacity-50 shrink-0 ${
+                              s.status === 'VERIFIED'
+                                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-600/50'
+                                : 'bg-amber-950/60 text-amber-300 border-amber-600/50'
+                            }`}
+                          >
+                            {s.status === 'VERIFIED' ? (
+                              <>
+                                <CheckCircle2 className="w-3 h-3 text-emerald-400 pointer-events-none" />
+                                <span>Cleared</span>
+                              </>
+                            ) : (
+                              <>
+                                <Clock className="w-3 h-3 text-amber-400 pointer-events-none" />
+                                <span>Pending (Tap to Clear)</span>
+                              </>
+                            )}
+                          </button>
                         </div>
 
                         <div className="flex items-center justify-between text-xs pt-1 border-t border-white/5">
@@ -3873,7 +4188,235 @@ export default function AdminDashboard({ onBackToSite }) {
         </div>
       )}
 
-      {/* 5. IN-APP TOAST NOTIFICATION (Non-blocking, Replaces alert) */}
+      {/* 5. MANUAL BANK TRANSFER ENTRY MODAL */}
+      {showAddTransferModal && (
+        <div className="fixed inset-0 z-[105] flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
+          <div className="luxury-glass max-w-xl w-full rounded-2xl p-4 sm:p-6 border border-jubilee-gold/40 shadow-2xl space-y-4 my-8 text-left">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 rounded-xl bg-jubilee-gold/20 text-jubilee-gold border border-jubilee-gold/40">
+                  <CreditCard className="w-5 h-5 pointer-events-none" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-retro font-bold text-white">Record Offline Bank Transfer</h3>
+                  <p className="text-[11px] text-stone-400">Log an incoming transfer to Ecobank (0570076237)</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddTransferModal(false)}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-stone-400 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4 pointer-events-none" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveManualTransfer} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Contributor / Donor Full Name <span className="text-rose-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={manualTransfer.donor_name}
+                    onChange={(e) => setManualTransfer(prev => ({ ...prev, donor_name: e.target.value }))}
+                    placeholder="e.g. Bro. Tamuno Prince"
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-500 text-xs focus:outline-none focus:border-jubilee-gold"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Organization / Chapter / Set
+                  </label>
+                  <input
+                    type="text"
+                    value={manualTransfer.organization}
+                    onChange={(e) => setManualTransfer(prev => ({ ...prev, organization: e.target.value }))}
+                    placeholder="e.g. 1999 Alumni Set / PH Chapter"
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-500 text-xs focus:outline-none focus:border-jubilee-gold"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Category / Tier <span className="text-rose-400">*</span>
+                  </label>
+                  <select
+                    value={manualTransfer.tier_name}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      let suggestedAmt = manualTransfer.amount;
+                      if (!manualTransfer.amount) {
+                        const match = val.match(/₦([0-9,]+)/);
+                        if (match) suggestedAmt = match[1].replace(/,/g, '');
+                      }
+                      setManualTransfer(prev => ({ ...prev, tier_name: val, amount: suggestedAmt }));
+                    }}
+                    className="w-full px-2.5 py-2 rounded-xl bg-black/80 border border-white/20 text-white text-xs focus:outline-none focus:border-jubilee-gold"
+                  >
+                    <optgroup label="Sponsorship Levels">
+                      <option value="Platinum Sponsor (₦250,000)">Platinum Sponsor (₦250,000)</option>
+                      <option value="Gold Sponsor (₦150,000)">Gold Sponsor (₦150,000)</option>
+                      <option value="Silver Sponsor (₦100,000)">Silver Sponsor (₦100,000)</option>
+                      <option value="Bronze Sponsor (₦50,000)">Bronze Sponsor (₦50,000)</option>
+                      <option value="Support Partner (₦20,000)">Support Partner (₦20,000)</option>
+                    </optgroup>
+                    <optgroup label="Alumni Giving Categories">
+                      <option value="Sapphire Builder (₦100,000+)">Sapphire Builder (₦100,000+)</option>
+                      <option value="Legacy Partner (₦50,000 - ₦99,000)">Legacy Partner (₦50,000 - ₦99,000)</option>
+                      <option value="Covenant Partner (₦40,000 - ₦49,000)">Covenant Partner (₦40,000 - ₦49,000)</option>
+                      <option value="Fellowship Partner (₦30,000 - ₦39,999)">Fellowship Partner (₦30,000 - ₦39,999)</option>
+                      <option value="Friends of ASF (₦20,000 - ₦29,000)">Friends of ASF (₦20,000 - ₦29,000)</option>
+                      <option value="General Support">General Support (Any amount)</option>
+                    </optgroup>
+                    <optgroup label="Proposed Set Framework">
+                      <option value="Pioneer/Senior Sets (₦100,000+)">Pioneer/Senior Sets (₦100,000+)</option>
+                      <option value="Established Alumni Sets (₦75,000)">Established Alumni Sets (₦75,000)</option>
+                      <option value="Mid-Level Sets (₦50,000)">Mid-Level Sets (₦50,000)</option>
+                      <option value="Recent Graduates (₦25,000)">Recent Graduates (₦25,000)</option>
+                      <option value="Young Alumni (₦10,000)">Young Alumni (₦10,000)</option>
+                    </optgroup>
+                    <optgroup label="Compendium Advert Bookings">
+                      <option value="Outer Back Cover Advert (₦150,000)">Outer Back Cover Advert (₦150,000)</option>
+                      <option value="Inside Front Cover Advert (₦112,000)">Inside Front Cover Advert (₦112,000)</option>
+                      <option value="Inside Back Cover Advert (₦90,000)">Inside Back Cover Advert (₦90,000)</option>
+                      <option value="Full Page Advert (₦65,000)">Full Page Advert (₦65,000)</option>
+                      <option value="Half Page Advert (₦35,000)">Half Page Advert (₦35,000)</option>
+                      <option value="Quarter Page Advert (₦18,000)">Quarter Page Advert (₦18,000)</option>
+                    </optgroup>
+                    <optgroup label="Exhibition & Vendors">
+                      <option value="Food Vendor (₦50,000)">Food Vendor (₦50,000)</option>
+                      <option value="Book/Literature Vendor (₦20,000)">Book/Literature Vendor (₦20,000)</option>
+                      <option value="Corporate Exhibition Booth (₦15,000)">Corporate Exhibition Booth (₦15,000)</option>
+                      <option value="Small Business Booth (₦10,000)">Small Business Booth (₦10,000)</option>
+                      <option value="NGO/Ministry Exhibition (₦10,000)">NGO/Ministry Exhibition (₦10,000)</option>
+                    </optgroup>
+                    <optgroup label="Other">
+                      <option value="Special Jubilee Giving">Special Jubilee Giving</option>
+                      <option value="Custom Project Contribution">Custom Project Contribution</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Amount Paid (₦) <span className="text-rose-400">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={manualTransfer.amount}
+                    onChange={(e) => setManualTransfer(prev => ({ ...prev, amount: e.target.value }))}
+                    placeholder="e.g. 150000"
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-500 text-xs focus:outline-none focus:border-jubilee-gold font-retro"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={manualTransfer.email}
+                    onChange={(e) => setManualTransfer(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="donor@example.com"
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-500 text-xs focus:outline-none focus:border-jubilee-gold"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Phone Number / WhatsApp
+                  </label>
+                  <input
+                    type="tel"
+                    value={manualTransfer.phone}
+                    onChange={(e) => setManualTransfer(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="e.g. 08031234567"
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-500 text-xs focus:outline-none focus:border-jubilee-gold"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Bank Reference / Narration
+                  </label>
+                  <input
+                    type="text"
+                    value={manualTransfer.reference}
+                    onChange={(e) => setManualTransfer(prev => ({ ...prev, reference: e.target.value }))}
+                    placeholder="Auto-generated if left blank"
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-500 text-xs focus:outline-none focus:border-jubilee-gold font-mono text-[11px]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-medium block">
+                    Verification Status
+                  </label>
+                  <select
+                    value={manualTransfer.status}
+                    onChange={(e) => setManualTransfer(prev => ({ ...prev, status: e.target.value }))}
+                    className="w-full px-2.5 py-2 rounded-xl bg-black/80 border border-white/20 text-white text-xs focus:outline-none focus:border-jubilee-gold"
+                  >
+                    <option value="VERIFIED">Cleared &amp; Verified on Ecobank Statement</option>
+                    <option value="PENDING_BANK_RECONCILIATION">Pending Bank Reconciliation</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-stone-300 font-medium block">
+                  Remarks / Internal Note
+                </label>
+                <textarea
+                  rows="2"
+                  value={manualTransfer.message_note}
+                  onChange={(e) => setManualTransfer(prev => ({ ...prev, message_note: e.target.value }))}
+                  placeholder="e.g. Confirmed on Secretariat statement by Bro. John"
+                  className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/20 text-white placeholder-stone-500 text-xs focus:outline-none focus:border-jubilee-gold resize-none"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/40 text-[11px] text-emerald-200 flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 pointer-events-none" />
+                <span>
+                  Destination: <strong>ECOBANK NIGERIA (0570076237) - NAAS RSU ALUMNI PROJECT</strong>
+                </span>
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-2 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setShowAddTransferModal(false)}
+                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-stone-300 text-xs font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-jubilee-gold to-amber-400 text-emerald-950 text-xs font-bold shadow-luxury hover:brightness-110 active:scale-95 transition-all"
+                >
+                  Save Bank Transfer Record
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 6. IN-APP TOAST NOTIFICATION (Non-blocking, Replaces alert) */}
       {toast.show && (
         <div className="fixed bottom-6 right-6 z-[110] max-w-sm w-full animate-fade-in pointer-events-auto">
           <div className={`p-4 rounded-2xl shadow-2xl border flex items-center justify-between space-x-3 backdrop-blur-xl ${

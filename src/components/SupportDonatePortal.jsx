@@ -265,7 +265,7 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
       created_at: new Date().toISOString()
     };
 
-    // 1. Supabase write
+    // 1. Supabase write: sponsorship_payments
     try {
       const { error } = await supabase
         .from('sponsorship_payments')
@@ -273,6 +273,30 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
       if (error) console.info('Supabase donation write note:', error.message);
     } catch (dbErr) {
       console.warn('Supabase write error:', dbErr);
+    }
+
+    // 1b. Fallback cloud synchronization to alumni_registrations for instant cross-device admin visibility
+    try {
+      await supabase
+        .from('alumni_registrations')
+        .insert([{
+          registration_tag: reference,
+          full_name: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || '+2340000000000',
+          department: formData.organization.trim() || '45th Jubilee Partner',
+          city: 'Nigeria',
+          country: 'Nigeria',
+          grad_year: formData.alumniSet ? (parseInt(formData.alumniSet, 10) || 2026) : 2026,
+          cohort_era: '45th Jubilee Supporter',
+          attendance_mode: 'VIRTUAL',
+          willing_to_support: true,
+          support_category: tierName,
+          support_pledge: `₦${Number(amount).toLocaleString()}`,
+          tribute_quote: `[SPONSORSHIP_RECORD] Method: ${paymentMethod} | Status: ${status} | Ref: ${reference} | Note: ${formData.messageNote.trim() || 'None'}`
+        }]);
+    } catch (fallbackErr) {
+      console.warn('Cloud sync to alumni_registrations note:', fallbackErr);
     }
 
     // 2. Offline LocalStorage Backup
@@ -1315,6 +1339,45 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                     </div>
                   </label>
                 </div>
+
+                {/* Prominent Bank Transfer Details Card (When TRANSFER is selected) */}
+                {formData.paymentMethod === 'TRANSFER' && (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/60 border-2 border-amber-300/80 text-amber-950 text-xs space-y-3 mb-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 font-black text-amber-950 uppercase tracking-wider text-xs">
+                        <Building2 className="w-4 h-4 text-amber-800 shrink-0" />
+                        <span>Official Ecobank Account for Direct Transfer:</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyAccount}
+                        className="px-3 py-1.5 rounded-xl bg-amber-900 text-white hover:bg-amber-800 text-[11px] font-bold flex items-center space-x-1.5 transition-all shadow-sm active:scale-95"
+                      >
+                        {copiedAccount ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-jubilee-lightgold" />}
+                        <span>{copiedAccount ? 'Account Copied!' : 'Copy Account'}</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 bg-white/80 p-3.5 rounded-xl border border-amber-200/80 font-mono text-xs">
+                      <div>
+                        <span className="text-[10px] text-stone-500 uppercase font-sans block">Bank Name</span>
+                        <strong className="text-emerald-950 font-bold text-xs">ECOBANK NIGERIA</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-stone-500 uppercase font-sans block">Account Name</span>
+                        <strong className="text-emerald-950 font-bold text-xs">NAAS RSU ALUMNI PROJECT</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-stone-500 uppercase font-sans block">Account Number</span>
+                        <strong className="text-amber-800 font-black text-sm tracking-widest">0570076237</strong>
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] text-stone-600 leading-relaxed font-light">
+                      💡 <em>Please make your transfer directly from your banking app. Use your <strong>Full Name</strong> or <strong>Phone Number</strong> as the transfer remark/narration, then click below to submit your record to the Jubilee Admin Ledger.</em>
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Submit CTA */}
@@ -1322,13 +1385,15 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full sm:w-auto px-8 py-4 rounded-full text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow active:scale-95 transition-all font-sans flex items-center justify-center space-x-2 disabled:opacity-50"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow active:scale-95 transition-all font-sans flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
                   <ShieldCheck className="w-5 h-5 text-emerald-950" />
                   <span>
                     {isProcessing 
-                      ? 'Processing...' 
-                      : `PLEDGE ₦${Number(customAmount || 0).toLocaleString()} NOW`
+                      ? 'Logging Record...' 
+                      : formData.paymentMethod === 'TRANSFER'
+                        ? `RECORD BANK TRANSFER (₦${Number(customAmount || 0).toLocaleString()})`
+                        : `PAY ₦${Number(customAmount || 0).toLocaleString()} VIA PAYSTACK`
                     }
                   </span>
                 </button>
@@ -1471,6 +1536,20 @@ export default function SupportDonatePortal({ onBackToSite, onOpenAds }) {
 
             {/* Action Buttons */}
             <div className="space-y-2.5">
+              {receiptData.payment_method?.includes('Transfer') && (
+                <a
+                  href={`https://wa.me/2347063836336?text=${encodeURIComponent(
+                    `Hello 45th Jubilee Secretariat! I have completed my bank transfer sponsorship of ₦${Number(receiptData.amount || 0).toLocaleString()} for ${receiptData.tier_name || '45th Jubilee Support'}.\n\nReference: ${receiptData.reference}\nDonor: ${receiptData.donor_name}\nEmail: ${receiptData.email}\nPhone: ${receiptData.phone || 'N/A'}\n\nKindly verify and record in the official Jubilee Ledger. Thank you!`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 rounded-full text-xs font-bold bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-lg transition-all flex items-center justify-center space-x-2 touch-manipulation active:scale-95"
+                >
+                  <MessageSquare className="w-4 h-4 fill-current" />
+                  <span>Notify Secretariat via WhatsApp</span>
+                </a>
+              )}
+
               <button
                 type="button"
                 onClick={() => window.print()}

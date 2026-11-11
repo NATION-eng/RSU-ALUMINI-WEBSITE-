@@ -332,6 +332,30 @@ export default function CompendiumAdsPortal({ onBackToSite, onOpenDonate }) {
       console.warn('Supabase sponsorship_payments write error:', dbErr);
     }
 
+    // 2b. Fallback cloud synchronization to alumni_registrations
+    try {
+      await supabase
+        .from('alumni_registrations')
+        .insert([{
+          registration_tag: reference,
+          full_name: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || '+2340000000000',
+          department: formData.organization.trim() || 'Compendium Advertiser',
+          city: 'Nigeria',
+          country: 'Nigeria',
+          grad_year: formData.alumniSet ? (parseInt(formData.alumniSet, 10) || 2026) : 2026,
+          cohort_era: '45th Jubilee Advertiser',
+          attendance_mode: 'VIRTUAL',
+          willing_to_support: true,
+          support_category: adTierName,
+          support_pledge: `₦${Number(amount).toLocaleString()}`,
+          tribute_quote: `[COMPENDIUM_AD_RECORD] Method: ${paymentMethod} | Status: ${status} | Ref: ${reference} | Note: ${formData.messageNote.trim() || 'None'}`
+        }]);
+    } catch (fallbackErr) {
+      console.warn('Cloud sync to alumni_registrations note:', fallbackErr);
+    }
+
     // 3. Offline LocalStorage: asf_compendium_ad_bookings
     try {
       const existingAds = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
