@@ -2067,55 +2067,67 @@ export default function AdminDashboard({ onBackToSite }) {
               <option value="PENDING">Pending</option>
             </select>
 
-            {/* Export Options (PDF & Spreadsheet) */}
-            <div className="col-span-2 sm:col-span-1 w-full sm:w-auto inline-flex items-center rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 p-0.5 shadow-sm">
+            {/* Export & Actions (Clean Icons) */}
+            <div className="col-span-2 sm:col-span-1 flex items-center justify-end space-x-1.5 shrink-0">
+              <div className="inline-flex items-center rounded-xl bg-white/10 border border-jubilee-gold/30 p-1 space-x-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (registrations.length === 0) {
+                      showToast('No alumni registrations to report.', 'info');
+                      return;
+                    }
+                    setTimeout(() => {
+                      generateCensusExecutiveReport(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
+                    }, 0);
+                  }}
+                  className="p-2 rounded-lg text-jubilee-lightgold hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                  title="Export Census PDF Report"
+                  aria-label="Export Census PDF Report"
+                >
+                  <Printer className="w-4 h-4 text-jubilee-gold pointer-events-none" />
+                </button>
+                <div className="w-[1px] h-4 bg-white/20"></div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (registrations.length === 0) {
+                      showToast('No alumni registrations to export.', 'info');
+                      return;
+                    }
+                    setTimeout(() => {
+                      exportRegistrationsSpreadsheet(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
+                      showToast(`Exported ${filteredRegistrations.length} alumni records to Spreadsheet.`, 'success');
+                    }, 0);
+                  }}
+                  className="p-2 rounded-lg text-emerald-300 hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                  title="Export Census as Spreadsheet"
+                  aria-label="Export Census as Spreadsheet"
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-400 pointer-events-none" />
+                </button>
+              </div>
+
               <button
                 type="button"
-                onClick={() => {
-                  if (registrations.length === 0) {
-                    showToast('No alumni registrations to report.', 'info');
-                    return;
-                  }
-                  setTimeout(() => {
-                    generateCensusExecutiveReport(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
-                  }, 0);
-                }}
-                className="flex-1 sm:flex-initial px-2.5 sm:px-3 py-2 rounded-lg text-emerald-950 font-extrabold text-xs flex items-center justify-center space-x-1.5 hover:bg-black/10 active:scale-95 transition-all touch-manipulation"
-                title="Generate Official Census Executive PDF Report"
+                onClick={() => purgeRegistrations('TEST_ONLY')}
+                className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 active:scale-95 transition-all touch-manipulation"
+                title="Purge Test Registrations"
+                aria-label="Purge Test Registrations"
               >
-                <Printer className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
-                <span className="pointer-events-none">Export PDF</span>
+                <Trash2 className="w-4 h-4 pointer-events-none" />
               </button>
-              <div className="w-[1px] h-4 bg-emerald-950/30"></div>
+
               <button
                 type="button"
-                onClick={() => {
-                  if (registrations.length === 0) {
-                    showToast('No alumni registrations to export.', 'info');
-                    return;
-                  }
-                  setTimeout(() => {
-                    exportRegistrationsSpreadsheet(filteredRegistrations, { filterMode, filterCheckin, filterSupport });
-                    showToast(`Exported ${filteredRegistrations.length} alumni records to Spreadsheet.`, 'success');
-                  }, 0);
-                }}
-                className="flex-1 sm:flex-initial px-2.5 sm:px-3 py-2 rounded-lg text-emerald-950 font-extrabold text-xs flex items-center justify-center space-x-1.5 hover:bg-black/10 active:scale-95 transition-all touch-manipulation"
-                title="Export Alumni Census as Excel / Sheets Spreadsheet"
+                onClick={fetchRegistrations}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors touch-manipulation active:scale-95"
+                title="Refresh Registrations"
+                aria-label="Refresh Registrations"
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
-                <span className="pointer-events-none">Spreadsheet</span>
+                <RefreshCw className="w-4 h-4 pointer-events-none" />
               </button>
             </div>
-
-            <button
-              type="button"
-              onClick={() => purgeRegistrations('TEST_ONLY')}
-              className="w-full sm:w-auto px-2.5 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all"
-              title="Purge Test Registrations"
-            >
-              <Trash2 className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
-              <span className="pointer-events-none">Purge Test</span>
-            </button>
           </div>
 
         </div>
@@ -2492,9 +2504,9 @@ export default function AdminDashboard({ onBackToSite }) {
                   </p>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
                   {/* Export Options (PDF & Spreadsheet) */}
-                  <div className="inline-flex items-center rounded-xl bg-white/10 border border-jubilee-gold/30 p-0.5">
+                  <div className="inline-flex items-center rounded-xl bg-white/10 border border-jubilee-gold/30 p-1 space-x-1">
                     <button
                       type="button"
                       onClick={() => {
@@ -2509,13 +2521,13 @@ export default function AdminDashboard({ onBackToSite }) {
                           });
                         }, 0);
                       }}
-                      className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold text-jubilee-lightgold hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
-                      title="Generate Official Financial Audit PDF Report"
+                      className="p-2 rounded-lg text-jubilee-lightgold hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                      title="Export Financial PDF Report"
+                      aria-label="Export Financial PDF Report"
                     >
-                      <Printer className="w-3.5 h-3.5 text-jubilee-gold pointer-events-none" />
-                      <span className="pointer-events-none">Export PDF</span>
+                      <Printer className="w-4 h-4 text-jubilee-gold pointer-events-none" />
                     </button>
-                    <div className="w-[1px] h-3.5 bg-white/20"></div>
+                    <div className="w-[1px] h-4 bg-white/20"></div>
                     <button
                       type="button"
                       onClick={() => {
@@ -2531,40 +2543,42 @@ export default function AdminDashboard({ onBackToSite }) {
                           showToast(`Exported ${filteredSponsorships.length} financial records to Spreadsheet.`, 'success');
                         }, 0);
                       }}
-                      className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-300 hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
-                      title="Export Financial Ledger as Excel / Sheets Spreadsheet"
+                      className="p-2 rounded-lg text-emerald-300 hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                      title="Export Financial Spreadsheet"
+                      aria-label="Export Financial Spreadsheet"
                     >
-                      <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 pointer-events-none" />
-                      <span className="pointer-events-none">Spreadsheet</span>
+                      <FileSpreadsheet className="w-4 h-4 text-emerald-400 pointer-events-none" />
                     </button>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setShowAddTransferModal(true)}
-                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-jubilee-gold via-amber-400 to-amber-300 text-emerald-950 shadow-luxury hover:brightness-110 active:scale-95 transition-all touch-manipulation cursor-pointer"
-                    title="Manually Record an Offline Bank Transfer Sponsorship"
+                    className="p-2 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-400 to-amber-300 text-emerald-950 shadow-luxury hover:brightness-110 active:scale-95 transition-all touch-manipulation cursor-pointer"
+                    title="Record Offline Bank Transfer"
+                    aria-label="Record Offline Bank Transfer"
                   >
-                    <Plus className="w-3.5 h-3.5 pointer-events-none stroke-[3]" />
-                    <span className="pointer-events-none">Record Bank Transfer</span>
+                    <Plus className="w-4 h-4 pointer-events-none stroke-[3]" />
                   </button>
 
                   <button
                     type="button"
                     onClick={() => purgeSponsorships('TEST_ONLY')}
-                    className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 active:scale-95 transition-all"
-                    title="Purge Test Donations & Ad Bookings"
+                    className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 active:scale-95 transition-all touch-manipulation"
+                    title="Purge Test Records"
+                    aria-label="Purge Test Records"
                   >
-                    <Trash2 className="w-3.5 h-3.5 pointer-events-none shrink-0" />
-                    <span className="pointer-events-none">Purge Test</span>
+                    <Trash2 className="w-4 h-4 pointer-events-none shrink-0" />
                   </button>
 
                   <button
+                    type="button"
                     onClick={fetchSponsorships}
-                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300"
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors touch-manipulation active:scale-95"
                     title="Refresh Ledger"
+                    aria-label="Refresh Ledger"
                   >
-                    <RefreshCw className="w-4 h-4" />
+                    <RefreshCw className="w-4 h-4 pointer-events-none" />
                   </button>
                 </div>
               </div>
@@ -2796,7 +2810,7 @@ export default function AdminDashboard({ onBackToSite }) {
                           <span className="text-[10px] text-stone-500">
                             {new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                           </span>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-1.5">
                             <a
                               href={getMailtoLink({
                                 email: s.email,
@@ -2806,19 +2820,21 @@ export default function AdminDashboard({ onBackToSite }) {
                                 reference: s.reference,
                                 isAd: Boolean(s.tier_key?.startsWith('ad_') || s.reference?.includes('-AD-'))
                               })}
-                              className="px-2.5 py-1.5 rounded-lg bg-white/10 text-jubilee-lightgold text-xs font-semibold flex items-center space-x-1"
+                              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-jubilee-lightgold transition-all"
+                              title="Send Email"
+                              aria-label="Send Email"
                             >
-                              <Mail className="w-3 h-3" />
-                              <span>Email</span>
+                              <Mail className="w-3.5 h-3.5 pointer-events-none" />
                             </a>
                             <button
                               type="button"
                               onClick={() => deleteSponsorship(s)}
                               disabled={updatingId === s.reference}
-                              className="px-2.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold flex items-center space-x-1 disabled:opacity-50"
+                              className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 transition-all disabled:opacity-50"
+                              title="Delete Record"
+                              aria-label="Delete Record"
                             >
-                              <Trash2 className="w-3 h-3 pointer-events-none" />
-                              <span className="pointer-events-none">Delete</span>
+                              <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
                             </button>
                           </div>
                         </div>
@@ -2890,9 +2906,9 @@ export default function AdminDashboard({ onBackToSite }) {
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
                 {/* Export Options (PDF & Spreadsheet) */}
-                <div className="flex-1 sm:flex-none inline-flex items-center rounded-xl bg-jubilee-gold/20 border border-jubilee-gold/40 p-0.5">
+                <div className="inline-flex items-center rounded-xl bg-white/10 border border-jubilee-gold/30 p-1 space-x-1">
                   <button
                     type="button"
                     onClick={() => {
@@ -2908,13 +2924,13 @@ export default function AdminDashboard({ onBackToSite }) {
                         });
                       }, 0);
                     }}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-lg text-jubilee-lightgold hover:bg-white/15 text-xs font-bold transition-all touch-manipulation active:scale-95"
-                    title="Generate Official Ad Production Order Manifest PDF"
+                    className="p-2 rounded-lg text-jubilee-lightgold hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                    title="Export PDF Ad Manifest"
+                    aria-label="Export PDF Ad Manifest"
                   >
-                    <Printer className="w-3.5 h-3.5 pointer-events-none" />
-                    <span className="pointer-events-none">Export PDF</span>
+                    <Printer className="w-4 h-4 text-jubilee-gold pointer-events-none" />
                   </button>
-                  <div className="w-[1px] h-4 bg-jubilee-gold/40"></div>
+                  <div className="w-[1px] h-4 bg-white/20"></div>
                   <button
                     type="button"
                     onClick={() => {
@@ -2931,31 +2947,32 @@ export default function AdminDashboard({ onBackToSite }) {
                         showToast(`Exported ${filteredAdBookings.length} advert bookings to Spreadsheet.`, 'success');
                       }, 0);
                     }}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-lg text-emerald-300 hover:bg-white/15 text-xs font-bold transition-all touch-manipulation active:scale-95"
-                    title="Export Ad Production Manifest as Excel / Sheets Spreadsheet"
+                    className="p-2 rounded-lg text-emerald-300 hover:bg-white/15 active:scale-95 transition-all touch-manipulation"
+                    title="Export Spreadsheet"
+                    aria-label="Export Spreadsheet"
                   >
-                    <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 pointer-events-none" />
-                    <span className="pointer-events-none">Spreadsheet</span>
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-400 pointer-events-none" />
                   </button>
                 </div>
 
                 <button
                   type="button"
-                  onClick={fetchAdBookings}
-                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors touch-manipulation active:scale-95 shrink-0"
-                  title="Refresh Compendium Ads"
+                  onClick={() => purgeAdBookings('TEST_ONLY')}
+                  className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 active:scale-95 transition-all touch-manipulation"
+                  title="Purge Test Records"
+                  aria-label="Purge Test Records"
                 >
-                  <RefreshCw className="w-4 h-4 pointer-events-none" />
+                  <Trash2 className="w-4 h-4 pointer-events-none shrink-0" />
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => purgeAdBookings('TEST_ONLY')}
-                  className="inline-flex items-center space-x-1.5 px-3 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-semibold transition-all touch-manipulation active:scale-95 shrink-0"
-                  title="Purge Sample / Test Ad Bookings"
+                  onClick={fetchAdBookings}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 transition-colors touch-manipulation active:scale-95 shrink-0"
+                  title="Refresh Compendium Ads"
+                  aria-label="Refresh Compendium Ads"
                 >
-                  <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
-                  <span>Purge Test Ads</span>
+                  <RefreshCw className="w-4 h-4 pointer-events-none" />
                 </button>
               </div>
             </div>
@@ -3408,14 +3425,15 @@ export default function AdminDashboard({ onBackToSite }) {
                           </div>
 
                           {/* Touch-Friendly Action Bar */}
-                          <div className="flex items-center space-x-2 pt-2.5 border-t border-white/[0.06]">
+                          <div className="flex items-center justify-end space-x-2 pt-2.5 border-t border-white/[0.06]">
                             <button
                               type="button"
                               onClick={() => setSelectedAdBooking(ad)}
-                              className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-white/10 flex items-center justify-center space-x-1.5 transition-all touch-manipulation active:scale-95"
+                              className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-jubilee-lightgold border border-white/10 transition-all touch-manipulation active:scale-95 shrink-0"
+                              title="View Full Dossier"
+                              aria-label="View Full Dossier"
                             >
-                              <Eye className="w-3.5 h-3.5 pointer-events-none" />
-                              <span>View Full Dossier</span>
+                              <Eye className="w-4 h-4 pointer-events-none" />
                             </button>
 
                             {ad.phone && (
