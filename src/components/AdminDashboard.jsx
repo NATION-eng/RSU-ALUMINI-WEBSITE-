@@ -161,24 +161,88 @@ export default function AdminDashboard({ onBackToSite }) {
 
   const fetchAdBookings = async () => {
     try {
-      const { data, error } = await supabase
-        .from('compendium_ad_bookings')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const combined = [];
+      const seenAdRefs = new Set();
 
+      // 1. Fetch from primary compendium_ad_bookings table
+      try {
+        const { data, error } = await supabase
+          .from('compendium_ad_bookings')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!error && Array.isArray(data)) {
+          data.forEach(item => {
+            const ref = item.booking_reference || item.reference;
+            if (ref && !seenAdRefs.has(ref)) {
+              seenAdRefs.add(ref);
+              combined.push(item);
+            }
+          });
+        }
+      } catch (sbErr) {
+        console.warn('compendium_ad_bookings fetch note:', sbErr);
+      }
+
+      // 1b. Cloud fallback: Fetch from alumni_registrations where registration_tag starts with AD- or tribute_quote has COMPENDIUM_AD
+      try {
+        const { data: regAdData } = await supabase
+          .from('alumni_registrations')
+          .select('*')
+          .or('registration_tag.ilike.AD-%,tribute_quote.ilike.%COMPENDIUM_AD%');
+
+        if (Array.isArray(regAdData)) {
+          regAdData.forEach(reg => {
+            const ref = reg.registration_tag;
+            if (ref && !seenAdRefs.has(ref)) {
+              seenAdRefs.add(ref);
+              const cleanAmt = String(reg.support_pledge || '0').replace(/[^0-9.]/g, '');
+              combined.push({
+                booking_reference: ref,
+                advertiser_name: reg.full_name,
+                company_name: reg.department || null,
+                brand_headline: null,
+                ad_tier_key: 'ad_full',
+                ad_tier_name: reg.support_category || 'Compendium Advert',
+                ad_dimensions: 'A4 Standard',
+                amount: parseFloat(cleanAmt) || 0,
+                currency: 'NGN',
+                email: reg.email,
+                phone: reg.phone,
+                alumni_set: reg.grad_year ? String(reg.grad_year) : null,
+                artwork_option: 'UPLOAD_READY',
+                artwork_url: null,
+                artwork_file_name: null,
+                message_note: reg.tribute_quote,
+                payment_method: reg.tribute_quote?.includes('Paystack') ? 'PAYSTACK' : 'Direct Bank Transfer (Ecobank)',
+                payment_status: reg.tribute_quote?.includes('Status: VERIFIED') ? 'VERIFIED' : 'PENDING_BANK_RECONCILIATION',
+                editorial_status: 'RECEIVED',
+                assigned_page_number: null,
+                created_at: reg.created_at || new Date().toISOString()
+              });
+            }
+          });
+        }
+      } catch (regAdErr) {
+        console.warn('alumni_registrations ad fallback note:', regAdErr);
+      }
+
+      // 2. LocalStorage merge
       const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
-      const combined = [...(data || [])];
       local.forEach(item => {
-        if (!combined.some(c => c.booking_reference === item.booking_reference || (c.id && c.id === item.id))) {
+        const ref = item.booking_reference || item.reference;
+        if (ref && !seenAdRefs.has(ref)) {
+          seenAdRefs.add(ref);
           combined.push(item);
         }
       });
 
-      // Also backfill from sponsorship records if any were previously booked under sponsorship_payments
+      // 3. Also backfill from sponsorship records if any were previously booked under sponsorship_payments
       const sponsorshipRecords = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
       sponsorshipRecords.forEach(s => {
         const isAd = Boolean(s.tier_key?.startsWith('ad_') || s.reference?.includes('-AD-'));
-        if (isAd && !combined.some(c => c.booking_reference === s.reference || c.reference === s.reference)) {
+        if (isAd && s.reference && !seenAdRefs.has(s.reference)) {
+          seenAdRefs.add(s.reference);
           combined.push({
             booking_reference: s.reference,
             advertiser_name: s.donor_name || s.organization || 'Advertiser',
@@ -236,41 +300,56 @@ export default function AdminDashboard({ onBackToSite }) {
         console.warn('sponsorship_payments fetch note:', sbErr);
       }
 
-      // 2. Cloud Fallback: Fetch from alumni_registrations where willing_to_support is true
-      // or registration_tag starts with ECO- or ASF45TH- or tribute_quote contains SPONSORSHIP_RECORD
+      // 2. Cloud Fallback: Fetch from alumni_registrations
       try {
         const { data: regData } = await supabase
           .from('alumni_registrations')
           .select('*')
-          .or('willing_to_support.eq.true,registration_tag.ilike.ECO-%,registration_tag.ilike.ASF45TH-%');
+          .or('willing_to_support.eq.true,support_pledge.not.is.null,support_category.not.is.null,registration_tag.ilike.ECO-%,registration_tag.ilike.SPONSOR-%,registration_tag.ilike.PAY-%,registration_tag.ilike.ASF45TH-%');
 
         if (Array.isArray(regData)) {
           regData.forEach(reg => {
-            const ref = reg.registration_tag || `PLEDGE-${reg.id}`;
-            if (!seenRefs.has(ref)) {
-              const cleanAmt = String(reg.support_pledge || '0').replace(/[^0-9.]/g, '');
-              const numAmt = parseFloat(cleanAmt) || 0;
-              if (numAmt > 0 || reg.support_category) {
+            const rawRef = reg.registration_tag || `PLEDGE-${reg.id}`;
+            const cleanAmt = String(reg.support_pledge || '0').replace(/[^0-9.]/g, '');
+            const numAmt = parseFloat(cleanAmt) || 0;
+
+            if (numAmt > 0 || reg.support_category || reg.willing_to_support) {
+              let tributeData = null;
+              if (reg.tribute_quote && reg.tribute_quote.trim().startsWith('{')) {
+                try {
+                  tributeData = JSON.parse(reg.tribute_quote);
+                } catch (e) {}
+              }
+
+              const ref = tributeData?.reference || rawRef;
+              if (!seenRefs.has(ref)) {
                 seenRefs.add(ref);
-                const isVerified = reg.tribute_quote?.includes('Status: VERIFIED');
-                const isPaystack = reg.tribute_quote?.includes('Paystack');
+                const isVerified = Boolean(
+                  tributeData?.status === 'VERIFIED' || 
+                  reg.tribute_quote?.includes('Status: VERIFIED')
+                );
+                const isPaystack = Boolean(
+                  tributeData?.payment_method?.toLowerCase().includes('paystack') ||
+                  reg.tribute_quote?.toLowerCase().includes('paystack')
+                );
+
                 combined.push({
                   reference: ref,
-                  amount: numAmt,
+                  amount: tributeData?.amount || numAmt,
                   currency: 'NGN',
-                  pillar_key: 'celebration',
-                  pillar_name: '45th Jubilee Support',
-                  tier_key: reg.support_category || 'sponsorship',
-                  tier_name: reg.support_category || 'Jubilee Sponsor',
-                  donor_name: reg.full_name,
+                  pillar_key: tributeData?.pillar_key || 'celebration',
+                  pillar_name: tributeData?.pillar_name || '45th Jubilee Support',
+                  tier_key: tributeData?.tier_key || reg.support_category || 'sponsorship',
+                  tier_name: tributeData?.tier_name || reg.support_category || 'Jubilee Sponsor',
+                  donor_name: tributeData?.donor_name || reg.full_name,
                   organization: reg.department || null,
-                  email: reg.email,
-                  phone: reg.phone,
+                  email: tributeData?.email || reg.email,
+                  phone: tributeData?.phone || reg.phone,
                   alumni_set: reg.grad_year ? String(reg.grad_year) : null,
                   is_anonymous: false,
-                  message_note: reg.tribute_quote || null,
-                  payment_method: isPaystack ? 'Paystack Online Gateway' : 'Direct Bank Transfer (Ecobank)',
-                  status: isVerified ? 'VERIFIED' : 'PENDING_BANK_RECONCILIATION',
+                  message_note: tributeData?.narration || tributeData?.message_note || reg.tribute_quote || null,
+                  payment_method: tributeData?.payment_method || (isPaystack ? 'Paystack Online Gateway' : 'Direct Bank Transfer (Ecobank)'),
+                  status: tributeData?.status || (isVerified ? 'VERIFIED' : 'PENDING_BANK_RECONCILIATION'),
                   created_at: reg.created_at || new Date().toISOString()
                 });
               }
