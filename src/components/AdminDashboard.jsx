@@ -174,7 +174,10 @@ export default function AdminDashboard({ onBackToSite }) {
         if (!error && Array.isArray(data)) {
           data.forEach(item => {
             const ref = item.booking_reference || item.reference;
-            if (ref && !seenAdRefs.has(ref)) {
+            const name = (item.advertiser_name || item.company_name || '').toLowerCase();
+            const email = (item.email || '').toLowerCase();
+            const isTest = name.includes('test') || (ref && ref.toLowerCase().includes('test')) || email.includes('test');
+            if (!isTest && ref && !seenAdRefs.has(ref)) {
               seenAdRefs.add(ref);
               combined.push(item);
             }
@@ -194,6 +197,13 @@ export default function AdminDashboard({ onBackToSite }) {
         if (Array.isArray(regAdData)) {
           regAdData.forEach(reg => {
             const ref = reg.registration_tag;
+            const isTest = (
+              (reg.full_name && reg.full_name.toLowerCase().includes('test')) ||
+              (reg.email && reg.email.toLowerCase().includes('test')) ||
+              (ref && ref.toLowerCase().includes('test'))
+            );
+            if (isTest) return;
+
             if (ref && !seenAdRefs.has(ref)) {
               seenAdRefs.add(ref);
               const cleanAmt = String(reg.support_pledge || '0').replace(/[^0-9.]/g, '');
@@ -227,8 +237,18 @@ export default function AdminDashboard({ onBackToSite }) {
         console.warn('alumni_registrations ad fallback note:', regAdErr);
       }
 
-      // 2. LocalStorage merge
-      const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+      // 2. LocalStorage merge (excluding any test entries)
+      const rawAdLocal = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
+      const local = Array.isArray(rawAdLocal) ? rawAdLocal.filter(item => {
+        const name = (item.advertiser_name || item.company_name || '').toLowerCase();
+        const ref = (item.booking_reference || item.reference || '').toLowerCase();
+        const email = (item.email || '').toLowerCase();
+        return !name.includes('test') && !ref.includes('test') && !email.includes('test');
+      }) : [];
+      if (rawAdLocal.length !== local.length) {
+        try { localStorage.setItem('asf_compendium_ad_bookings', JSON.stringify(local)); } catch (e) {}
+      }
+
       local.forEach(item => {
         const ref = item.booking_reference || item.reference;
         if (ref && !seenAdRefs.has(ref)) {
@@ -238,7 +258,14 @@ export default function AdminDashboard({ onBackToSite }) {
       });
 
       // 3. Also backfill from sponsorship records if any were previously booked under sponsorship_payments
-      const sponsorshipRecords = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      const rawSponsorshipRecords = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      const sponsorshipRecords = Array.isArray(rawSponsorshipRecords) ? rawSponsorshipRecords.filter(s => {
+        const name = (s.donor_name || s.organization || '').toLowerCase();
+        const ref = (s.reference || '').toLowerCase();
+        const email = (s.email || '').toLowerCase();
+        return !name.includes('test') && !ref.includes('test') && !email.includes('test');
+      }) : [];
+
       sponsorshipRecords.forEach(s => {
         const isAd = Boolean(s.tier_key?.startsWith('ad_') || s.reference?.includes('-AD-'));
         if (isAd && s.reference && !seenAdRefs.has(s.reference)) {
@@ -271,8 +298,7 @@ export default function AdminDashboard({ onBackToSite }) {
 
       setAdBookings(combined);
     } catch (e) {
-      const local = JSON.parse(localStorage.getItem('asf_compendium_ad_bookings') || '[]');
-      setAdBookings(local);
+      setAdBookings([]);
     }
   };
 
@@ -290,7 +316,12 @@ export default function AdminDashboard({ onBackToSite }) {
 
         if (!error && Array.isArray(data)) {
           data.forEach(item => {
-            if (item.reference && !seenRefs.has(item.reference)) {
+            const isTest = (
+              (item.donor_name && item.donor_name.toLowerCase().includes('test')) ||
+              (item.email && item.email.toLowerCase().includes('test')) ||
+              (item.reference && item.reference.toLowerCase().includes('test'))
+            );
+            if (!isTest && item.reference && !seenRefs.has(item.reference)) {
               seenRefs.add(item.reference);
               combined.push(item);
             }
@@ -320,6 +351,15 @@ export default function AdminDashboard({ onBackToSite }) {
                   tributeData = JSON.parse(reg.tribute_quote);
                 } catch (e) {}
               }
+
+              const isTest = (
+                (reg.full_name && reg.full_name.toLowerCase().includes('test')) ||
+                (reg.email && reg.email.toLowerCase().includes('test')) ||
+                (rawRef && rawRef.toLowerCase().includes('test')) ||
+                (tributeData?.donor_name && tributeData.donor_name.toLowerCase().includes('test')) ||
+                (tributeData?.reference && tributeData.reference.toLowerCase().includes('test'))
+              );
+              if (isTest) return;
 
               const ref = tributeData?.reference || rawRef;
               if (!seenRefs.has(ref)) {
@@ -360,8 +400,18 @@ export default function AdminDashboard({ onBackToSite }) {
         console.warn('alumni_registrations sync note:', regErr);
       }
 
-      // 3. Merge LocalStorage records
-      const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      // 3. Merge LocalStorage records (keeping strictly real-life records)
+      const rawLocal = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
+      const local = Array.isArray(rawLocal) ? rawLocal.filter(item => {
+        const name = (item.donor_name || item.organization || '').toLowerCase();
+        const ref = (item.reference || '').toLowerCase();
+        const email = (item.email || '').toLowerCase();
+        return !name.includes('test') && !ref.includes('test') && !email.includes('test');
+      }) : [];
+      if (rawLocal.length !== local.length) {
+        try { localStorage.setItem('asf_sponsorship_payments', JSON.stringify(local)); } catch (e) {}
+      }
+
       local.forEach(item => {
         if (item.reference && !seenRefs.has(item.reference)) {
           seenRefs.add(item.reference);
@@ -373,8 +423,7 @@ export default function AdminDashboard({ onBackToSite }) {
       combined.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
       setSponsorships(combined);
     } catch (e) {
-      const local = JSON.parse(localStorage.getItem('asf_sponsorship_payments') || '[]');
-      setSponsorships(local);
+      setSponsorships([]);
     }
   };
 
@@ -542,8 +591,25 @@ export default function AdminDashboard({ onBackToSite }) {
         console.info('Supabase registrations note:', error.message);
       }
       
-      const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
-      const combined = [...(data || [])];
+      const rawLocal = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
+      const local = Array.isArray(rawLocal) ? rawLocal.filter(item => {
+        const name = (item.full_name || '').toLowerCase();
+        const email = (item.email || '').toLowerCase();
+        const tag = (item.registration_tag || '').toLowerCase();
+        return !name.includes('test') && !email.includes('test') && !tag.includes('test');
+      }) : [];
+      if (rawLocal.length !== local.length) {
+        try { localStorage.setItem('asf_census_submissions', JSON.stringify(local)); } catch (e) {}
+      }
+
+      const rawCombined = [...(data || [])];
+      const combined = rawCombined.filter(item => {
+        const name = (item.full_name || '').toLowerCase();
+        const email = (item.email || '').toLowerCase();
+        const tag = (item.registration_tag || '').toLowerCase();
+        return !name.includes('test') && !email.includes('test') && !tag.includes('test');
+      });
+
       local.forEach(item => {
         if (!combined.some(c => (c.id && c.id === item.id) || (c.registration_tag && c.registration_tag === item.registration_tag))) {
           combined.push(item);
@@ -551,8 +617,7 @@ export default function AdminDashboard({ onBackToSite }) {
       });
       setRegistrations(combined);
     } catch (err) {
-      const local = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
-      setRegistrations(local);
+      setRegistrations([]);
     } finally {
       setLoading(false);
     }

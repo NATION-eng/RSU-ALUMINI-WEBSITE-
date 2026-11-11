@@ -85,6 +85,11 @@ export async function calculateLivePillars() {
     if (!dbErr && Array.isArray(dbPayments)) {
       dbPayments.forEach((p) => {
         if (!p.reference || processedReferences.has(p.reference)) return;
+        const isTest = (
+          (p.donor_name && p.donor_name.toLowerCase().includes('test')) ||
+          (p.reference && p.reference.toLowerCase().includes('test'))
+        );
+        if (isTest) return;
         processedReferences.add(p.reference);
 
         const pillarKey = (p.pillar_key || '').toLowerCase();
@@ -108,6 +113,12 @@ export async function calculateLivePillars() {
 
     if (!regErr && Array.isArray(dbRegistrations)) {
       dbRegistrations.forEach((reg) => {
+        const isTest = (
+          (reg.full_name && reg.full_name.toLowerCase().includes('test')) ||
+          (reg.registration_tag && reg.registration_tag.toLowerCase().includes('test'))
+        );
+        if (isTest) return;
+
         if (reg.willing_to_support && reg.support_pledge) {
           const ref = `pledge_${reg.registration_tag}`;
           if (processedReferences.has(ref)) return;
@@ -133,6 +144,11 @@ export async function calculateLivePillars() {
       if (Array.isArray(localPayments)) {
         localPayments.forEach((p) => {
           if (!p.reference || processedReferences.has(p.reference)) return;
+          const isTest = (
+            (p.donor_name && p.donor_name.toLowerCase().includes('test')) ||
+            (p.reference && p.reference.toLowerCase().includes('test'))
+          );
+          if (isTest) return;
           processedReferences.add(p.reference);
 
           const pillarKey = (p.pillar_key || '').toLowerCase();
@@ -148,6 +164,12 @@ export async function calculateLivePillars() {
       const localCensus = JSON.parse(localStorage.getItem('asf_census_submissions') || '[]');
       if (Array.isArray(localCensus)) {
         localCensus.forEach((reg) => {
+          const isTest = (
+            (reg.full_name && reg.full_name.toLowerCase().includes('test')) ||
+            (reg.registration_tag && reg.registration_tag.toLowerCase().includes('test'))
+          );
+          if (isTest) return;
+
           if (reg.willing_to_support && reg.support_pledge) {
             const ref = `local_pledge_${reg.registration_tag || Math.random()}`;
             if (processedReferences.has(ref)) return;
