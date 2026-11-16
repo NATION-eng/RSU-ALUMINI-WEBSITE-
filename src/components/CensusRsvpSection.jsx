@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Award, HeartHandshake, BookOpen, MessageCircle } from 'lucide-react';
+import { UserCheck, CheckCircle, Database, Send, ShieldCheck, AlertCircle, Award, HeartHandshake, BookOpen, MessageCircle, GraduationCap } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
 import { WORLD_COUNTRIES } from '../data/countries';
 import CountrySelect from './CountrySelect';
 
 export default function CensusRsvpSection({ onOpenSponsors }) {
+  const [isStudent, setIsStudent] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     maidenName: '',
@@ -27,7 +28,8 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
   const [assignedTag, setAssignedTag] = useState('');
   const [submitError, setSubmitError] = useState('');
 
-  const getCohortEra = (year) => {
+  const getCohortEra = (year, student = false) => {
+    if (student) return 'Active Student Cohort';
     const y = parseInt(year, 10);
     if (y <= 1990) return '1981–1990 Pioneer Altar';
     if (y <= 2000) return '1991–2000 Sacred Harmony';
@@ -45,25 +47,29 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
     e.preventDefault();
     setLoading(true);
     if (!formData.gradYear) {
-      setSubmitError('Please select your graduation set year.');
+      setSubmitError(isStudent ? 'Please select your expected graduation year.' : 'Please select your graduation set year.');
       setLoading(false);
       return;
     }
 
-    const tag = `ASF-45TH-${Math.floor(100000 + Math.random() * 900000)}`;
+    const tag = isStudent
+      ? `ASF-STU-${Math.floor(100000 + Math.random() * 900000)}`
+      : `ASF-45TH-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const payload = {
       registration_tag: tag,
       full_name: formData.fullName.trim(),
-      maiden_name: formData.maidenName.trim() || null,
+      maiden_name: isStudent ? 'STUDENT' : (formData.maidenName.trim() || null),
       grad_year: parseInt(formData.gradYear, 10),
-      cohort_era: getCohortEra(formData.gradYear),
+      cohort_era: isStudent ? 'Active Student Cohort' : getCohortEra(formData.gradYear),
       department: formData.department.trim(),
       phone: formData.phone.trim(),
       email: formData.email.trim(),
       city: formData.city.trim(),
       country: formData.country,
-      current_profession: formData.currentRole.trim() || null,
+      current_profession: isStudent
+        ? (formData.currentRole.trim() ? `Student (${formData.currentRole.trim()})` : 'Undergraduate Student')
+        : (formData.currentRole.trim() || null),
       fellowship_roles: formData.fellowshipRoles.trim() || null,
       attendance_mode: formData.attendanceMode,
       arrival_date: formData.attendanceMode === 'PHYSICAL' && formData.arrivalDate ? formData.arrivalDate : null,
@@ -119,7 +125,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
         <div className="text-center max-w-2xl mx-auto mb-14">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-bold uppercase tracking-widest mb-3 border border-emerald-900/15">
             <Database className="w-3.5 h-3.5 text-emerald-800" />
-            <span>Alumni Directory & Homecoming RSVP</span>
+            <span>Alumni &amp; Student Directory • Homecoming RSVP</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-retro font-bold text-emerald-950 tracking-tight mb-3">
             The Reunion Roll Call
@@ -135,15 +141,25 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
               <CheckCircle className="w-9 h-9 text-emerald-800" />
             </div>
             <h3 className="text-2xl sm:text-3xl font-retro font-bold text-emerald-950 mb-2">
-              Record Confirmed
+              {isStudent ? 'Student Registration Confirmed' : 'Record Confirmed'}
             </h3>
             <p className="text-stone-600 text-sm leading-relaxed mb-6 font-light">
-              Welcome home, <strong className="font-semibold text-stone-900">{formData.fullName}</strong> ({formData.gradYear}). 
-              Your submission has been secured in the Permanent Fellowship Archive.
+              {isStudent ? (
+                <>
+                  Welcome, <strong className="font-semibold text-stone-900">{formData.fullName}</strong> (Expected Class of {formData.gradYear}). 
+                  Your student reservation has been confirmed for the 45th Jubilee Homecoming.
+                </>
+              ) : (
+                <>
+                  Welcome home, <strong className="font-semibold text-stone-900">{formData.fullName}</strong> ({formData.gradYear}). 
+                  Your submission has been secured in the Permanent Fellowship Archive.
+                </>
+              )}
             </p>
 
             <div className="bg-emerald-950/5 rounded-2xl p-4 text-xs text-emerald-950 border border-emerald-900/10 mb-8 text-left space-y-1.5 font-sans">
               <div><strong>Registration Tag:</strong> <span className="font-mono font-bold text-emerald-900">{assignedTag}</span></div>
+              <div><strong>Category:</strong> <span className="font-semibold">{isStudent ? 'Active Student Member' : 'Alumni Member'}</span></div>
               <div><strong>Mode:</strong> {formData.attendanceMode === 'PHYSICAL' ? 'Physical on Campus (Port Harcourt)' : 'Virtual via Global HD Livestream'}</div>
               <div><strong>Location:</strong> {formData.city}, {formData.country}</div>
             </div>
@@ -168,7 +184,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                 onClick={() => setSubmitted(false)}
                 className="w-full sm:w-auto px-6 py-3 rounded-full text-xs font-bold bg-stone-100 text-stone-700 hover:bg-stone-200 transition-colors"
               >
-                Register Another Alumnus
+                {isStudent ? 'Register Another Member' : 'Register Another Alumnus'}
               </button>
             </div>
           </div>
@@ -182,6 +198,63 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
               </div>
             )}
 
+            {/* Student or Alumnus Selection Indicator */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-stone-50 via-emerald-950/[0.02] to-amber-500/[0.04] border border-stone-200/90 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center space-x-3 text-center sm:text-left">
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                  isStudent 
+                    ? 'bg-amber-500/20 text-amber-800 border border-amber-400/40 shadow-sm' 
+                    : 'bg-emerald-950/10 text-emerald-900 border border-emerald-950/20'
+                }`}>
+                  {isStudent ? <GraduationCap className="w-5 h-5 text-amber-700" /> : <Award className="w-5 h-5 text-emerald-900" />}
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+                    Registration Category
+                  </div>
+                  <div className="text-sm font-retro font-bold text-emerald-950">
+                    Are you currently an active student at RSU?
+                  </div>
+                </div>
+              </div>
+
+              {/* Indicator Switch Buttons */}
+              <div className="inline-flex items-center p-1 rounded-xl bg-stone-200/80 border border-stone-300 w-full sm:w-auto shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isStudent) {
+                      setIsStudent(false);
+                      setFormData(prev => ({ ...prev, gradYear: '' }));
+                    }
+                  }}
+                  className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                    !isStudent
+                      ? 'bg-emerald-950 text-white shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  No, I'm an Alumnus
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isStudent) {
+                      setIsStudent(true);
+                      setFormData(prev => ({ ...prev, gradYear: '', maidenName: '' }));
+                    }
+                  }}
+                  className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                    isStudent
+                      ? 'bg-amber-600 text-white shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  Yes, I'm a Student
+                </button>
+              </div>
+            </div>
+
             {/* Step 1: Member Profile */}
             <div>
               <div className="flex items-center space-x-3 pb-3 mb-6 border-b border-stone-100">
@@ -189,7 +262,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                   1
                 </span>
                 <h3 className="text-base sm:text-lg font-retro font-bold text-emerald-950">
-                  Historical Member Profile (1981–2026)
+                  {isStudent ? 'Current Student Profile' : 'Historical Member Profile (1981–2026)'}
                 </h3>
               </div>
 
@@ -209,23 +282,25 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Maiden Name (if applicable)
-                  </label>
-                  <input
-                    type="text"
-                    name="maidenName"
-                    value={formData.maidenName}
-                    onChange={handleChange}
-                    placeholder="Optional"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
-                  />
-                </div>
+                {!isStudent && (
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Maiden Name (if applicable)
+                    </label>
+                    <input
+                      type="text"
+                      name="maidenName"
+                      value={formData.maidenName}
+                      onChange={handleChange}
+                      placeholder="Optional"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Graduation Year / Set *
+                    {isStudent ? 'Expected Graduation Year *' : 'Graduation Year / Set *'}
                   </label>
                   <select
                     required
@@ -234,10 +309,25 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                     onChange={handleChange}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none bg-white text-sm font-medium"
                   >
-                    <option value="">Select Graduation Set Year *</option>
-                    {Array.from({ length: 46 }, (_, i) => 2026 - i).map(year => (
-                      <option key={year} value={year}>{year} {year <= 1999 ? '(Pioneer Cohort)' : '(Contemporary)'}</option>
-                    ))}
+                    {isStudent ? (
+                      <>
+                        <option value="">Select Expected Graduation Year *</option>
+                        <option value="2026">2026 (Current Final Year / Graduating Set)</option>
+                        <option value="2027">2027 (Expected)</option>
+                        <option value="2028">2028 (Expected)</option>
+                        <option value="2029">2029 (Expected)</option>
+                        <option value="2030">2030 (Expected)</option>
+                        <option value="2031">2031 (Expected)</option>
+                        <option value="2032">2032 (Expected)</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="">Select Graduation Set Year *</option>
+                        {Array.from({ length: 46 }, (_, i) => 2026 - i).map(year => (
+                          <option key={year} value={year}>{year} {year <= 1999 ? '(Pioneer Cohort)' : '(Contemporary)'}</option>
+                        ))}
+                      </>
+                    )}
                   </select>
                 </div>
 
@@ -317,28 +407,28 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Current Profession / Organization
+                    {isStudent ? 'Current Level of Study (Optional)' : 'Current Profession / Organization'}
                   </label>
                   <input
                     type="text"
                     name="currentRole"
                     value={formData.currentRole}
                     onChange={handleChange}
-                    placeholder="e.g. Lead Consultant, Federal Ministry"
+                    placeholder={isStudent ? 'e.g. 100L, 200L, 300L, 400L, 500L, Final Year' : 'e.g. Lead Consultant, Federal Ministry'}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Fellowship Positions Held on Campus
+                    {isStudent ? 'Current Fellowship Unit / Role on Campus' : 'Fellowship Positions Held on Campus'}
                   </label>
                   <input
                     type="text"
                     name="fellowshipRoles"
                     value={formData.fellowshipRoles}
                     onChange={handleChange}
-                    placeholder="e.g. Choir Director, Exco President, Member"
+                    placeholder={isStudent ? 'e.g. Mass Choir, Ushering, Prayer Unit, General Member' : 'e.g. Choir Director, Exco President, Member'}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none transition-all text-sm"
                   />
                 </div>
@@ -408,22 +498,22 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                 </div>
               )}
 
-              {/* Memory Tribute */}
+              {/* Memory Tribute / Prayer */}
               <div>
                 <label className="block text-xs font-semibold text-stone-700 mb-1">
-                  Share your memories or Experience (Optional)
+                  {isStudent ? 'Fellowship Experience or Prayer for Jubilee (Optional)' : 'Share your memories or Experience (Optional)'}
                 </label>
                 <textarea
                   rows="2"
                   name="tributeQuote"
                   value={formData.tributeQuote}
                   onChange={handleChange}
-                  placeholder="Share a sentence or memory about your fellowship days at RSU."
+                  placeholder={isStudent ? 'Share your campus fellowship experience or a prayer for the 45th Jubilee.' : 'Share a sentence or memory about your fellowship days at RSU.'}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:border-emerald-800 focus:ring-1 focus:ring-emerald-800 outline-none text-sm font-sans"
                 />
               </div>
 
-              {/* Official Alumni WhatsApp Group Call-To-Action */}
+              {/* Official Community WhatsApp Group Call-To-Action */}
               <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#051A0F] via-[#092B19] to-[#0A2E1A] text-white border border-jubilee-gold/40 shadow-luxury flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="space-y-1 text-center sm:text-left">
                   <div className="flex items-center justify-center sm:justify-start space-x-2 text-jubilee-lightgold text-xs font-bold uppercase tracking-wider font-mono">
@@ -431,10 +521,12 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                     <span>Official 45th Jubilee Community</span>
                   </div>
                   <h4 className="text-sm font-retro font-bold text-white">
-                    Join the Official Alumni WhatsApp Group
+                    {isStudent ? 'Join the Student & Alumni WhatsApp Community' : 'Join the Official Alumni WhatsApp Group'}
                   </h4>
                   <p className="text-xs text-emerald-100/80 font-light max-w-lg">
-                    Connect with fellow alumni, your graduating set, and receive instant homecoming announcements and logistics updates.
+                    {isStudent 
+                      ? 'Connect with student brethren, alumni mentors, and receive instant homecoming announcements and workshop schedules.' 
+                      : 'Connect with fellow alumni, your graduating set, and receive instant homecoming announcements and logistics updates.'}
                   </p>
                 </div>
 
@@ -468,7 +560,7 @@ export default function CensusRsvpSection({ onOpenSponsors }) {
                 ) : (
                   <>
                     <Send className="w-4 h-4 text-jubilee-gold" />
-                    <span>Submit & Reserve Seat</span>
+                    <span>{isStudent ? 'Submit & Register as Student' : 'Submit & Reserve Seat'}</span>
                   </>
                 )}
               </button>

@@ -32,6 +32,7 @@ export default function AdminDashboard({ onBackToSite }) {
   const [filterMode, setFilterMode] = useState('ALL'); // 'ALL' | 'PHYSICAL' | 'VIRTUAL'
   const [filterSupport, setFilterSupport] = useState('ALL'); // 'ALL' | 'SUPPORT_ONLY'
   const [filterCheckin, setFilterCheckin] = useState('ALL'); // 'ALL' | 'CHECKED_IN' | 'PENDING'
+  const [filterMemberType, setFilterMemberType] = useState('ALL'); // 'ALL' | 'ALUMNI' | 'STUDENT'
   const [selectedAttendee, setSelectedAttendee] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
 
@@ -1444,6 +1445,7 @@ export default function AdminDashboard({ onBackToSite }) {
 
     const headers = [
       'Registration Tag',
+      'Member Type',
       'Full Name',
       'Maiden Name',
       'Grad Year',
@@ -1468,6 +1470,7 @@ export default function AdminDashboard({ onBackToSite }) {
 
     const rows = registrations.map(r => [
       `"${r.registration_tag || ''}"`,
+      Boolean(r.registration_tag?.startsWith('ASF-STU-') || r.cohort_era?.toLowerCase().includes('student') || r.maiden_name === 'STUDENT') ? 'STUDENT' : 'ALUMNUS',
       `"${r.full_name || ''}"`,
       `"${r.maiden_name || ''}"`,
       r.grad_year || '',
@@ -1525,9 +1528,20 @@ export default function AdminDashboard({ onBackToSite }) {
         (filterCheckin === 'CHECKED_IN' && r.checked_in) ||
         (filterCheckin === 'PENDING' && !r.checked_in);
 
-      return matchesSearch && matchesMode && matchesSupport && matchesCheckin;
+      const isStudentRec = Boolean(
+        r.registration_tag?.startsWith('ASF-STU-') ||
+        r.cohort_era?.toLowerCase().includes('student') ||
+        r.maiden_name === 'STUDENT'
+      );
+
+      const matchesMemberType = 
+        filterMemberType === 'ALL' ||
+        (filterMemberType === 'STUDENT' && isStudentRec) ||
+        (filterMemberType === 'ALUMNI' && !isStudentRec);
+
+      return matchesSearch && matchesMode && matchesSupport && matchesCheckin && matchesMemberType;
     });
-  }, [registrations, searchQuery, filterMode, filterSupport, filterCheckin]);
+  }, [registrations, searchQuery, filterMode, filterSupport, filterCheckin, filterMemberType]);
 
   // Filtered sponsorships & compendium ads
   const filteredSponsorships = useMemo(() => {
@@ -1604,12 +1618,19 @@ export default function AdminDashboard({ onBackToSite }) {
   // Executive Metrics
   const stats = useMemo(() => {
     const total = registrations.length;
+    const isStudentRec = (r) => Boolean(
+      r.registration_tag?.startsWith('ASF-STU-') ||
+      r.cohort_era?.toLowerCase().includes('student') ||
+      r.maiden_name === 'STUDENT'
+    );
+    const students = registrations.filter(isStudentRec).length;
+    const alumni = total - students;
     const physical = registrations.filter(r => r.attendance_mode === 'PHYSICAL').length;
     const virtual = registrations.filter(r => r.attendance_mode === 'VIRTUAL').length;
     const sponsors = registrations.filter(r => r.willing_to_support).length;
     const checkedIn = registrations.filter(r => r.checked_in).length;
 
-    return { total, physical, virtual, sponsors, checkedIn };
+    return { total, alumni, students, physical, virtual, sponsors, checkedIn };
   }, [registrations]);
 
   // High-performance tab switching with startTransition + setTimeout to prevent INP blocking
@@ -1965,13 +1986,15 @@ export default function AdminDashboard({ onBackToSite }) {
               
               <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-white/10">
             <div className="flex items-center justify-between text-xs text-stone-400 mb-1">
-              <span className="text-[11px] sm:text-xs">Total Alumni</span>
+              <span className="text-[11px] sm:text-xs">Total Roll Call</span>
               <Users className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-jubilee-gold" />
             </div>
             <div className="text-xl sm:text-3xl font-retro font-black text-white">
               {stats.total}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-stone-400 mt-0.5 truncate">Registered Worldwide</div>
+            <div className="text-[9px] sm:text-[10px] text-stone-400 mt-0.5 truncate">
+              {stats.alumni} Alumni • {stats.students} Students
+            </div>
           </div>
 
           <div className="luxury-glass rounded-2xl p-3 sm:p-4 border border-emerald-500/30 bg-emerald-950/20">
@@ -2038,6 +2061,16 @@ export default function AdminDashboard({ onBackToSite }) {
           {/* Filter Dropdowns & Export */}
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full md:w-auto text-xs">
             
+            <select
+              value={filterMemberType}
+              onChange={(e) => setFilterMemberType(e.target.value)}
+              className="w-full sm:w-auto px-2.5 sm:px-3 py-2.5 rounded-xl bg-black/60 border border-white/20 text-white text-xs focus:outline-none focus:border-jubilee-gold"
+            >
+              <option value="ALL">All Members</option>
+              <option value="ALUMNI">Alumni Only</option>
+              <option value="STUDENT">Students Only</option>
+            </select>
+
             <select
               value={filterMode}
               onChange={(e) => setFilterMode(e.target.value)}
@@ -2183,10 +2216,17 @@ export default function AdminDashboard({ onBackToSite }) {
                       >
                         {/* Name & Tag */}
                         <td className="px-4 py-3.5">
-                          <div className="font-bold text-white text-sm">
-                            {attendee.full_name}
+                          <div className="flex items-center space-x-1.5">
+                            <span className="font-bold text-white text-sm">
+                              {attendee.full_name}
+                            </span>
+                            {(attendee.registration_tag?.startsWith('ASF-STU-') || attendee.cohort_era?.toLowerCase().includes('student') || attendee.maiden_name === 'STUDENT') && (
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                Student
+                              </span>
+                            )}
                           </div>
-                          {attendee.maiden_name && (
+                          {attendee.maiden_name && attendee.maiden_name !== 'STUDENT' && (
                             <div className="text-[11px] text-stone-400">
                               née {attendee.maiden_name}
                             </div>
@@ -2199,7 +2239,9 @@ export default function AdminDashboard({ onBackToSite }) {
                         {/* Set & Era */}
                         <td className="px-4 py-3.5">
                           <div className="font-retro font-bold text-jubilee-gold text-sm">
-                            Set of {attendee.grad_year}
+                            {(attendee.registration_tag?.startsWith('ASF-STU-') || attendee.cohort_era?.toLowerCase().includes('student') || attendee.maiden_name === 'STUDENT')
+                              ? `Class of ${attendee.grad_year} (Expected)`
+                              : `Set of ${attendee.grad_year}`}
                           </div>
                           <div className="text-[11px] text-stone-400 line-clamp-1">
                             {attendee.department}
@@ -2340,14 +2382,25 @@ export default function AdminDashboard({ onBackToSite }) {
 
                     {/* Full Name & Set Info */}
                     <div>
-                      <h4 className="text-base font-bold text-white leading-tight">
-                        {attendee.full_name}
-                      </h4>
-                      {attendee.maiden_name && (
+                      <div className="flex items-center space-x-1.5">
+                        <h4 className="text-base font-bold text-white leading-tight">
+                          {attendee.full_name}
+                        </h4>
+                        {(attendee.registration_tag?.startsWith('ASF-STU-') || attendee.cohort_era?.toLowerCase().includes('student') || attendee.maiden_name === 'STUDENT') && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                            Student
+                          </span>
+                        )}
+                      </div>
+                      {attendee.maiden_name && attendee.maiden_name !== 'STUDENT' && (
                         <p className="text-xs text-stone-400 mt-0.5">née {attendee.maiden_name}</p>
                       )}
                       <div className="flex flex-wrap items-center gap-x-2 text-xs text-stone-300 mt-1">
-                        <span className="font-retro font-bold text-jubilee-gold">Set of {attendee.grad_year}</span>
+                        <span className="font-retro font-bold text-jubilee-gold">
+                          {(attendee.registration_tag?.startsWith('ASF-STU-') || attendee.cohort_era?.toLowerCase().includes('student') || attendee.maiden_name === 'STUDENT')
+                            ? `Class of ${attendee.grad_year} (Expected)`
+                            : `Set of ${attendee.grad_year}`}
+                        </span>
                         <span>•</span>
                         <span className="text-stone-300 truncate max-w-[200px]">{attendee.department}</span>
                       </div>
@@ -3855,13 +3908,20 @@ export default function AdminDashboard({ onBackToSite }) {
             
             <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
               <div className="min-w-0 pr-2">
-                <span className="text-[10px] font-mono text-jubilee-lightgold px-2 py-0.5 rounded bg-white/10 border border-white/15 font-bold">
-                  {selectedAttendee.registration_tag}
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-mono text-jubilee-lightgold px-2 py-0.5 rounded bg-white/10 border border-white/15 font-bold">
+                    {selectedAttendee.registration_tag}
+                  </span>
+                  {(selectedAttendee.registration_tag?.startsWith('ASF-STU-') || selectedAttendee.cohort_era?.toLowerCase().includes('student') || selectedAttendee.maiden_name === 'STUDENT') && (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      Active Student
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-lg sm:text-xl font-retro font-bold text-white mt-1 truncate">
                   {selectedAttendee.full_name}
                 </h3>
-                {selectedAttendee.maiden_name && (
+                {selectedAttendee.maiden_name && selectedAttendee.maiden_name !== 'STUDENT' && (
                   <p className="text-xs text-stone-400 truncate">née {selectedAttendee.maiden_name}</p>
                 )}
               </div>
@@ -3877,9 +3937,15 @@ export default function AdminDashboard({ onBackToSite }) {
             <div className="space-y-3 text-xs sm:text-sm font-sans">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-white/[0.04] p-3 sm:p-3.5 rounded-2xl border border-white/10">
                 <div>
-                  <span className="text-stone-400 text-[10px] sm:text-[11px] block">Graduation Set</span>
+                  <span className="text-stone-400 text-[10px] sm:text-[11px] block">
+                    {(selectedAttendee.registration_tag?.startsWith('ASF-STU-') || selectedAttendee.cohort_era?.toLowerCase().includes('student') || selectedAttendee.maiden_name === 'STUDENT')
+                      ? 'Expected Graduation'
+                      : 'Graduation Set'}
+                  </span>
                   <span className="font-retro font-bold text-jubilee-gold text-sm sm:text-base">
-                    Set of {selectedAttendee.grad_year}
+                    {(selectedAttendee.registration_tag?.startsWith('ASF-STU-') || selectedAttendee.cohort_era?.toLowerCase().includes('student') || selectedAttendee.maiden_name === 'STUDENT')
+                      ? `Class of ${selectedAttendee.grad_year} (Expected)`
+                      : `Set of ${selectedAttendee.grad_year}`}
                   </span>
                 </div>
                 <div>
@@ -3887,11 +3953,19 @@ export default function AdminDashboard({ onBackToSite }) {
                   <span className="font-semibold text-white break-words">{selectedAttendee.department}</span>
                 </div>
                 <div>
-                  <span className="text-stone-400 text-[10px] sm:text-[11px] block">Current Profession</span>
+                  <span className="text-stone-400 text-[10px] sm:text-[11px] block">
+                    {(selectedAttendee.registration_tag?.startsWith('ASF-STU-') || selectedAttendee.cohort_era?.toLowerCase().includes('student') || selectedAttendee.maiden_name === 'STUDENT')
+                      ? 'Study Level / Profession'
+                      : 'Current Profession'}
+                  </span>
                   <span className="text-white break-words">{selectedAttendee.current_profession || '—'}</span>
                 </div>
                 <div>
-                  <span className="text-stone-400 text-[10px] sm:text-[11px] block">Past Campus Roles</span>
+                  <span className="text-stone-400 text-[10px] sm:text-[11px] block">
+                    {(selectedAttendee.registration_tag?.startsWith('ASF-STU-') || selectedAttendee.cohort_era?.toLowerCase().includes('student') || selectedAttendee.maiden_name === 'STUDENT')
+                      ? 'Fellowship Unit / Role'
+                      : 'Past Campus Roles'}
+                  </span>
                   <span className="text-white break-words">{selectedAttendee.fellowship_roles || '—'}</span>
                 </div>
               </div>

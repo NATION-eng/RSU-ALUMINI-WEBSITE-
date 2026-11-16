@@ -93,6 +93,7 @@ export function exportRegistrationsSpreadsheet(registrations = [], filters = {})
   const headers = [
     'S/N',
     'Registration Tag',
+    'Member Type',
     'Full Name',
     'Maiden Name',
     'Graduation Year',
@@ -115,30 +116,34 @@ export function exportRegistrationsSpreadsheet(registrations = [], filters = {})
     'Tribute / Memory Note'
   ];
 
-  const rows = registrations.map((r, index) => [
-    index + 1,
-    formatExcelText(r.registration_tag || ''),
-    escapeCSV(r.full_name || ''),
-    escapeCSV(r.maiden_name || ''),
-    r.grad_year || '',
-    escapeCSV(r.cohort_era || ''),
-    escapeCSV(r.department || ''),
-    formatExcelText(r.phone || ''),
-    escapeCSV(r.email || ''),
-    escapeCSV(r.city || ''),
-    escapeCSV(r.country || ''),
-    escapeCSV(r.current_profession || ''),
-    escapeCSV(r.fellowship_roles || ''),
-    escapeCSV(r.attendance_mode || 'PHYSICAL'),
-    escapeCSV(r.arrival_date || ''),
-    r.willing_to_support ? 'YES' : 'NO',
-    escapeCSV(r.support_category || ''),
-    escapeCSV(r.support_pledge || ''),
-    r.checked_in ? 'CHECKED IN' : 'PENDING',
-    formatDateTime(r.checked_in_at),
-    formatDateTime(r.created_at),
-    escapeCSV(r.tribute_quote || '')
-  ]);
+  const rows = registrations.map((r, index) => {
+    const isStudent = Boolean(r.registration_tag?.startsWith('ASF-STU-') || r.cohort_era?.toLowerCase().includes('student') || r.maiden_name === 'STUDENT');
+    return [
+      index + 1,
+      formatExcelText(r.registration_tag || ''),
+      escapeCSV(isStudent ? 'STUDENT' : 'ALUMNUS'),
+      escapeCSV(r.full_name || ''),
+      escapeCSV((r.maiden_name === 'STUDENT' ? '' : r.maiden_name) || ''),
+      r.grad_year || '',
+      escapeCSV(r.cohort_era || ''),
+      escapeCSV(r.department || ''),
+      formatExcelText(r.phone || ''),
+      escapeCSV(r.email || ''),
+      escapeCSV(r.city || ''),
+      escapeCSV(r.country || ''),
+      escapeCSV(r.current_profession || ''),
+      escapeCSV(r.fellowship_roles || ''),
+      escapeCSV(r.attendance_mode || 'PHYSICAL'),
+      escapeCSV(r.arrival_date || ''),
+      r.willing_to_support ? 'YES' : 'NO',
+      escapeCSV(r.support_category || ''),
+      escapeCSV(r.support_pledge || ''),
+      r.checked_in ? 'CHECKED IN' : 'PENDING',
+      formatDateTime(r.checked_in_at),
+      formatDateTime(r.created_at),
+      escapeCSV(r.tribute_quote || '')
+    ];
+  });
 
   const csvContent = [
     headers.map(escapeCSV).join(','),
