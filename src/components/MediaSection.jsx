@@ -8,8 +8,8 @@ import { supabase } from '../lib/supabase';
 import CommunityPhotoUploadModal from './CommunityPhotoUploadModal';
 
 // Official YouTube Live Stream URL & Embed (Saturday, Nov 21, 2026 Grand Jubilee)
-export const YOUTUBE_LIVE_URL = 'https://www.youtube.com/live/2uRwL9Kblp4?si=bcfqiB7rGaL8a5rZ';
-export const YOUTUBE_EMBED_URL = 'https://www.youtube-nocookie.com/embed/2uRwL9Kblp4?autoplay=1&rel=0';
+export const YOUTUBE_LIVE_URL = 'https://www.youtube.com/watch?v=VMCdL5WxFsE';
+export const YOUTUBE_EMBED_URL = 'https://www.youtube-nocookie.com/embed/VMCdL5WxFsE?autoplay=1&rel=0';
 
 // Official 45th Anniversary Compendium Curated Chapters Index
 const COMPENDIUM_SECTIONS = [
@@ -390,7 +390,7 @@ export default function MediaSection() {
               <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
                 {isPlayingLiveStream ? (
                   <iframe
-                    src="https://www.youtube-nocookie.com/embed/2uRwL9Kblp4?autoplay=1&rel=0&modestbranding=1"
+                    src={YOUTUBE_EMBED_URL}
                     title="ASF RSU 45th Anniversary Official YouTube Live Stream"
                     className="w-full h-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -403,7 +403,7 @@ export default function MediaSection() {
                   >
                     {/* YouTube High-Res Thumbnail Backdrop */}
                     <img
-                      src="https://img.youtube.com/vi/2uRwL9Kblp4/hqdefault.jpg"
+                      src="https://img.youtube.com/vi/VMCdL5WxFsE/hqdefault.jpg"
                       alt="ASF RSU 45th Jubilee YouTube Live Stream Preview"
                       className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover/player:scale-105 transition-transform duration-700"
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -1040,7 +1040,7 @@ export default function MediaSection() {
             {/* Embedded Responsive 16:9 YouTube Player */}
             <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-jubilee-gold/40 bg-black shadow-2xl">
               <iframe
-                src="https://www.youtube-nocookie.com/embed/2uRwL9Kblp4?autoplay=1&rel=0&modestbranding=1"
+                src={YOUTUBE_EMBED_URL}
                 title="Official 45th Anniversary Grand Jubilee YouTube Live Stream"
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

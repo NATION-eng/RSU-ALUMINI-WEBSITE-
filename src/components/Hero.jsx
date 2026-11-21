@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Building2, Play, ExternalLink, Tv } from 'lucide-react';
 
-const YOUTUBE_LIVE_URL = 'https://www.youtube.com/live/2uRwL9Kblp4?si=bcfqiB7rGaL8a5rZ';
+const YOUTUBE_LIVE_URL = 'https://www.youtube.com/watch?v=VMCdL5WxFsE';
 
 export default function Hero({ onOpenSponsors, onOpenAccommodation }) {
   // Target date: Saturday November 21, 2026 (Grand Jubilee Sabbath)

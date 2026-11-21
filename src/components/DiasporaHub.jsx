@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Globe, Video, Clock, MessageSquare, HeartHandshake, ArrowRight, CheckCircle2, Tv, UploadCloud, Play, ExternalLink } from 'lucide-react';
 import VideoUploadModal from './VideoUploadModal';
 
-const YOUTUBE_LIVE_URL = 'https://www.youtube.com/live/2uRwL9Kblp4?si=bcfqiB7rGaL8a5rZ';
+const YOUTUBE_LIVE_URL = 'https://www.youtube.com/watch?v=VMCdL5WxFsE';
 
 export default function DiasporaHub({ onOpenSponsors }) {
   const [activeZone, setActiveZone] = useState('WAT');

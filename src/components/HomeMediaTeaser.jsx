@@ -1,7 +1,7 @@
 import React from 'react';
 import { Video, Play, Radio, UploadCloud, ArrowRight, Sparkles, BookOpen, Printer, ExternalLink, Tv } from 'lucide-react';
 
-const YOUTUBE_LIVE_URL = 'https://www.youtube.com/live/2uRwL9Kblp4?si=bcfqiB7rGaL8a5rZ';
+const YOUTUBE_LIVE_URL = 'https://www.youtube.com/watch?v=VMCdL5WxFsE';
 
 export default function HomeMediaTeaser({ onOpenMedia }) {
   const handleClick = (e) => {
