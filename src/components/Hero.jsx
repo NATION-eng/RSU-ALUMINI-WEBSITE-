@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Building2 } from 'lucide-react';
+import { Calendar, Image as ImageIcon, UserCheck, ArrowRight, Building2, Play, ExternalLink, Tv } from 'lucide-react';
+
+const YOUTUBE_LIVE_URL = 'https://www.youtube.com/live/2uRwL9Kblp4?si=bcfqiB7rGaL8a5rZ';
 
 export default function Hero({ onOpenSponsors, onOpenAccommodation }) {
   // Target date: Saturday November 21, 2026 (Grand Jubilee Sabbath)
@@ -63,6 +65,23 @@ export default function Hero({ onOpenSponsors, onOpenAccommodation }) {
 
       <div className="relative max-w-5xl mx-auto text-center z-10 w-full">
         
+        {/* Live Stream Broadcast Alert Banner */}
+        <div className="mb-4 sm:mb-5">
+          <a
+            href={YOUTUBE_LIVE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-red-600/90 hover:bg-red-600 text-white border border-red-400/50 text-[11px] sm:text-xs font-bold shadow-luxury hover:scale-105 active:scale-95 transition-all group max-w-full"
+          >
+            <span className="w-2 h-2 rounded-full bg-white animate-ping shrink-0"></span>
+            <span className="uppercase tracking-wider font-black text-[10px] sm:text-[11px] bg-black/30 px-1.5 py-0.5 rounded shrink-0">
+              🔴 LIVE NOW
+            </span>
+            <span className="truncate">45th Grand Jubilee Sabbath Worship is Live on YouTube</span>
+            <ExternalLink className="w-3.5 h-3.5 opacity-90 group-hover:translate-x-0.5 transition-transform shrink-0" />
+          </a>
+        </div>
+
         {/* Heritage Pill Tag (Mobile-optimized text & wrap) */}
         <div className="inline-flex items-center space-x-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/[0.04] backdrop-blur-md border border-jubilee-gold/30 text-jubilee-lightgold text-[10px] sm:text-xs font-semibold tracking-wider mb-5 sm:mb-7 shadow-luxury max-w-full">
           <span className="font-sans uppercase tracking-[0.15em] truncate">
@@ -134,6 +153,17 @@ export default function Hero({ onOpenSponsors, onOpenAccommodation }) {
 
         {/* Mobile Action Triggers (Full width thumb-friendly on phones) */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-3 flex-wrap">
+          <a
+            href={YOUTUBE_LIVE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-extrabold bg-red-600 hover:bg-red-700 text-white shadow-luxury hover:scale-105 active:scale-[0.98] transition-all duration-200 font-sans"
+          >
+            <Play className="w-4 h-4 fill-white text-white shrink-0" />
+            <span className="tracking-wide">Watch YouTube Live</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+
           <a
             href="#census-rsvp"
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:shadow-gold-glow active:scale-[0.98] transition-all duration-200 font-sans"

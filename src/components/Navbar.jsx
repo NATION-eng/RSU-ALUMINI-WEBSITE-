@@ -32,7 +32,7 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
     { name: 'Heritage', href: '#heritage', icon: Shield },
     { name: 'Program', href: '#program', icon: Calendar },
     { name: 'DP Generator', href: '#dp-generator', icon: ImageIcon },
-    { name: 'Media Hub', href: '#media-hub', icon: Video },
+    { name: 'Media Hub', href: '#media-hub', icon: Video, isLive: true },
     { name: 'Diaspora', href: '#diaspora', icon: Globe },
     { name: 'Compendium Ads', href: '#compendium-ads', icon: BookOpen },
   ];
@@ -128,9 +128,15 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="px-2 xl:px-3 py-1.5 xl:py-2 text-[11px] xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap"
+                className="px-2 xl:px-3 py-1.5 xl:py-2 text-[11px] xl:text-sm font-semibold tracking-wide text-emerald-100/90 hover:text-jubilee-lightgold rounded-xl hover:bg-white/[0.08] transition-all duration-200 whitespace-nowrap inline-flex items-center space-x-1"
               >
-                {link.name}
+                <span>{link.name}</span>
+                {link.isLive && (
+                  <span className="flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-bold uppercase tracking-wider animate-pulse ml-0.5">
+                    <span className="w-1 h-1 rounded-full bg-white"></span>
+                    <span>LIVE</span>
+                  </span>
+                )}
               </a>
             ))}
           </div>
@@ -206,10 +212,18 @@ export default function Navbar({ onOpenSponsors, onOpenMedia, onOpenAccommodatio
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="flex items-center space-x-3 px-3.5 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:bg-white/10 hover:text-white font-sans active:bg-emerald-900/50 transition-colors"
+                className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:bg-white/10 hover:text-white font-sans active:bg-emerald-900/50 transition-colors"
               >
-                <Icon className="w-4 h-4 text-jubilee-gold shrink-0" />
-                <span>{link.name}</span>
+                <div className="flex items-center space-x-3">
+                  <Icon className="w-4 h-4 text-jubilee-gold shrink-0" />
+                  <span>{link.name}</span>
+                </div>
+                {link.isLive && (
+                  <span className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider animate-pulse">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
+                    <span>LIVE</span>
+                  </span>
+                )}
               </a>
             );
           })}

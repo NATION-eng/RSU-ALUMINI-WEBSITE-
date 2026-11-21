@@ -47,7 +47,8 @@ const isHashMedia = (hash = '', path = '') => {
   const cleanPath = (path || '').toLowerCase().replace(/^\/+/, '').split('?')[0].replace(/\/+$/, '');
   
   const keywords = [
-    'media-hub', 'media', 'livestream', 'videos', 'living-archive', 'gallery-media',
+    'media-hub', 'media', 'livestream', 'stream', 'live', 'broadcast', 'youtube', 'youtube-live',
+    'videos', 'living-archive', 'gallery-media',
     'compendium', 'compendium-book', 'compendium-pdf', 'brochure', 'souvenir', 'jubilee-compendium'
   ];
   return keywords.includes(cleanHash) || keywords.includes(cleanPath);

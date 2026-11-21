@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Globe, Video, Clock, MessageSquare, HeartHandshake, ArrowRight, CheckCircle2, Tv, UploadCloud } from 'lucide-react';
+import { Globe, Video, Clock, MessageSquare, HeartHandshake, ArrowRight, CheckCircle2, Tv, UploadCloud, Play, ExternalLink } from 'lucide-react';
 import VideoUploadModal from './VideoUploadModal';
+
+const YOUTUBE_LIVE_URL = 'https://www.youtube.com/live/2uRwL9Kblp4?si=bcfqiB7rGaL8a5rZ';
 
 export default function DiasporaHub({ onOpenSponsors }) {
   const [activeZone, setActiveZone] = useState('WAT');
@@ -182,6 +184,24 @@ export default function DiasporaHub({ onOpenSponsors }) {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* YouTube Live Stream Quick Access Bar */}
+          <div className="mt-5 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center space-x-2 text-xs text-emerald-200 text-center sm:text-left">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shrink-0"></span>
+              <span className="font-semibold text-white">45th Grand Jubilee Sabbath Worship is broadcasting LIVE now on YouTube!</span>
+            </div>
+            <a
+              href={YOUTUBE_LIVE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all shrink-0 touch-manipulation"
+            >
+              <Play className="w-3.5 h-3.5 fill-white" />
+              <span>Watch Live on YouTube</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
 

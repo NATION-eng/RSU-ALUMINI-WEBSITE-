@@ -7,6 +7,10 @@ import {
 import { supabase } from '../lib/supabase';
 import CommunityPhotoUploadModal from './CommunityPhotoUploadModal';
 
+// Official YouTube Live Stream URL & Embed (Saturday, Nov 21, 2026 Grand Jubilee)
+export const YOUTUBE_LIVE_URL = 'https://www.youtube.com/live/2uRwL9Kblp4?si=bcfqiB7rGaL8a5rZ';
+export const YOUTUBE_EMBED_URL = 'https://www.youtube-nocookie.com/embed/2uRwL9Kblp4?autoplay=1&rel=0';
+
 // Official 45th Anniversary Compendium Curated Chapters Index
 const COMPENDIUM_SECTIONS = [
   {
@@ -130,16 +134,26 @@ export default function MediaSection() {
   const [activeMediaTab, setActiveMediaTab] = useState(() => {
     if (typeof window !== 'undefined') {
       const h = window.location.hash.toLowerCase();
+      if (h.includes('live') || h.includes('stream') || h.includes('broadcast') || h.includes('youtube')) {
+        return 'BROADCAST';
+      }
       if (h.includes('compendium') || h.includes('brochure') || h.includes('souvenir') || h.includes('print')) {
         return 'COMPENDIUM';
       }
+      if (h.includes('photo') || h.includes('archive') || h.includes('throwback')) {
+        return 'COMMUNITY_PHOTOS';
+      }
     }
-    return 'COMPENDIUM'; // Set Compendium as the featured media spotlight!
+    return 'BROADCAST'; // Default to Broadcast while YouTube live stream is ongoing!
   });
   const [approvedPhotos, setApprovedPhotos] = useState([]);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
   const [, startTransition] = useTransition();
+
+  // YouTube Live Stream States
+  const [isPlayingLiveStream, setIsPlayingLiveStream] = useState(false);
+  const [copiedStreamLink, setCopiedStreamLink] = useState(false);
 
   // Compendium Reader & Print States
   const [showReaderModal, setShowReaderModal] = useState(false);
@@ -154,6 +168,27 @@ export default function MediaSection() {
       });
     }, 0);
   }, [activeMediaTab, startTransition]);
+
+  const handleShareLiveStream = useCallback(async (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'ASF RSU 45th Jubilee Grand Sabbath Divine Service Live Stream',
+          text: 'Watch the official ASF RSU 45th Anniversary Grand Jubilee Celebration & Homecoming streaming live on YouTube now!',
+          url: YOUTUBE_LIVE_URL
+        });
+        return;
+      } catch (err) {}
+    }
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(YOUTUBE_LIVE_URL);
+        setCopiedStreamLink(true);
+        setTimeout(() => setCopiedStreamLink(false), 2500);
+      }
+    } catch (e) {}
+  }, []);
 
   const handlePrintCompendium = useCallback(() => {
     // Open the optimized printable PDF in a new window/tab for instant browser printing
@@ -194,8 +229,12 @@ export default function MediaSection() {
   useEffect(() => {
     const handleHash = () => {
       const h = window.location.hash.toLowerCase();
-      if (h.includes('compendium') || h.includes('brochure') || h.includes('souvenir') || h.includes('print')) {
+      if (h.includes('live') || h.includes('stream') || h.includes('broadcast') || h.includes('youtube')) {
+        setActiveMediaTab('BROADCAST');
+      } else if (h.includes('compendium') || h.includes('brochure') || h.includes('souvenir') || h.includes('print')) {
         setActiveMediaTab('COMPENDIUM');
+      } else if (h.includes('photo') || h.includes('archive') || h.includes('throwback')) {
+        setActiveMediaTab('COMMUNITY_PHOTOS');
       }
     };
     window.addEventListener('hashchange', handleHash);
@@ -297,12 +336,18 @@ export default function MediaSection() {
               onClick={() => handleTabChange('BROADCAST')}
               className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center space-x-2 touch-manipulation active:scale-95 ${
                 activeMediaTab === 'BROADCAST'
-                  ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
+                  ? 'bg-gradient-to-r from-red-600 via-rose-500 to-amber-400 text-white shadow-luxury'
                   : 'text-stone-300 hover:text-white hover:bg-white/5'
               }`}
             >
               <Tv className="w-3.5 h-3.5 pointer-events-none" />
-              <span className="pointer-events-none">Broadcast &amp; Documentary</span>
+              <span className="pointer-events-none">Live Stream &amp; Documentary</span>
+              <span className={`pointer-events-none flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                activeMediaTab === 'BROADCAST' ? 'bg-black/40 text-white' : 'bg-red-500/20 text-red-400 border border-red-500/40'
+              }`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping"></span>
+                <span>LIVE</span>
+              </span>
             </button>
 
             <button
@@ -340,54 +385,114 @@ export default function MediaSection() {
           {/* Media Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            {/* Main Video Showcase */}
-            <div 
-              onClick={() => setShowVideoModal(true)}
-              className="lg:col-span-8 bg-black/40 rounded-3xl overflow-hidden border border-white/10 shadow-luxury flex flex-col justify-between group cursor-pointer hover:border-jubilee-gold/40 transition-all"
-            >
-              <div className="relative aspect-video bg-[#072013] flex items-center justify-center overflow-hidden">
-                
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-                
-                <div className="relative text-center p-6 z-10">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-jubilee-gold to-amber-300 text-emerald-950 flex items-center justify-center mx-auto mb-4 shadow-luxury group-hover:scale-110 transition-transform duration-300">
-                    <Play className="w-8 h-8 ml-1 text-emerald-950 fill-current" />
-                  </div>
-                  <span className="inline-block px-3 py-1 rounded-full bg-emerald-900/90 text-jubilee-lightgold text-[10px] font-bold uppercase tracking-widest mb-2 border border-jubilee-gold/30">
-                    Broadcast Horizon • Nov 20–22, 2026
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-retro font-bold text-white">
-                    45th Anniversary Teaser Trailer
-                  </h3>
-                  <p className="text-xs sm:text-sm text-stone-300 mt-1 max-w-md mx-auto font-light font-editorial italic text-base">
-                    “45 Years of Faith at Rivers State University”
-                  </p>
-                </div>
+            {/* Main Video Showcase: YouTube Live Stream Player */}
+            <div className="lg:col-span-8 bg-black/60 rounded-3xl overflow-hidden border-2 border-jubilee-gold/40 shadow-luxury flex flex-col justify-between group">
+              <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+                {isPlayingLiveStream ? (
+                  <iframe
+                    src="https://www.youtube-nocookie.com/embed/2uRwL9Kblp4?autoplay=1&rel=0&modestbranding=1"
+                    title="ASF RSU 45th Anniversary Official YouTube Live Stream"
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div 
+                    onClick={() => setIsPlayingLiveStream(true)}
+                    className="relative w-full h-full flex items-center justify-center cursor-pointer group/player bg-[#072013]"
+                  >
+                    {/* YouTube High-Res Thumbnail Backdrop */}
+                    <img
+                      src="https://img.youtube.com/vi/2uRwL9Kblp4/hqdefault.jpg"
+                      alt="ASF RSU 45th Jubilee YouTube Live Stream Preview"
+                      className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover/player:scale-105 transition-transform duration-700"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+                    
+                    <div className="relative text-center p-6 z-10 space-y-3">
+                      {/* Live Indicator Pill */}
+                      <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-red-600/90 text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest shadow-lg border border-red-400/40 animate-pulse">
+                        <span className="w-2 h-2 rounded-full bg-white"></span>
+                        <span>Official Live Stream • Broadcasting Now</span>
+                      </div>
 
-                {/* Status footer bar */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-between text-xs text-stone-300 font-sans">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Bonded Multi-Camera Stream Feed</span>
+                      {/* Prominent Play Button */}
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-red-600 via-rose-500 to-amber-300 text-white flex items-center justify-center mx-auto shadow-2xl group-hover/player:scale-110 transition-transform duration-300 ring-4 ring-white/20">
+                        <Play className="w-8 h-8 ml-1 fill-white text-white" />
+                      </div>
+
+                      <h3 className="text-xl sm:text-2xl font-retro font-bold text-white drop-shadow-md">
+                        45th Jubilee Grand Celebration Live
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-200 font-light font-editorial italic max-w-md mx-auto">
+                        Rivers State University Amphitheatre • Multi-Camera High-Definition Feed
+                      </p>
+                    </div>
+
+                    {/* Status footer bar */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-between text-xs text-stone-300 font-sans z-10">
+                      <div className="flex items-center space-x-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+                        <span className="font-semibold text-white">Live Stream Active on YouTube</span>
+                      </div>
+                      <span className="text-[11px] text-jubilee-gold font-mono font-bold">1080p HD BONDED</span>
+                    </div>
                   </div>
-                  <span className="text-[11px] text-jubilee-gold font-mono">1080p HD</span>
-                </div>
+                )}
               </div>
 
-              {/* Video metadata row */}
-              <div className="p-5 bg-black/60 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              {/* Video metadata & action row */}
+              <div className="p-4 sm:p-5 bg-black/80 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                  <h4 className="text-sm font-bold text-white font-sans">
-                    Institutional Courtesy Visit Coverage
-                  </h4>
+                  <div className="flex items-center space-x-2">
+                    <span className="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider">
+                      YouTube Live
+                    </span>
+                    <h4 className="text-sm font-bold text-white font-sans truncate">
+                      45th Anniversary Homecoming &amp; Grand Cantata
+                    </h4>
+                  </div>
                   <p className="text-xs text-stone-400 font-light mt-0.5">
-                    ASF Alumni delegation visit to the Vice-Chancellor (VC) &amp; University Chaplaincy.
+                    Live from Port Harcourt: Sabbath Divine Service, Compendium Dedication &amp; Sacred Reunion.
                   </p>
                 </div>
 
-                <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-medium text-jubilee-lightgold shrink-0">
-                  Official Release
-                </span>
+                <div className="flex items-center space-x-2 w-full sm:w-auto shrink-0">
+                  <a
+                    href={YOUTUBE_LIVE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md active:scale-95 transition-all"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Watch on YouTube</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowVideoModal(true)}
+                    className="inline-flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-jubilee-lightgold text-xs font-medium border border-white/10 transition-all"
+                    title="Open Cinema Modal Player"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span className="hidden xs:inline">Cinema</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleShareLiveStream}
+                    className="inline-flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 text-xs font-medium border border-white/10 transition-all"
+                    title="Share Live Stream Link"
+                  >
+                    {copiedStreamLink ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Share2 className="w-3.5 h-3.5 text-jubilee-gold" />
+                    )}
+                    <span className="hidden xs:inline">{copiedStreamLink ? 'Copied' : 'Share'}</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -898,51 +1003,80 @@ export default function MediaSection() {
 
       {/* Official Media & Broadcast Schedule Modal */}
       {showVideoModal && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in overflow-y-auto">
-          <div className="bg-[#051A0F] border-2 border-jubilee-gold/50 rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-8 shadow-2xl relative text-white text-center space-y-4 max-h-[92vh] overflow-y-auto my-auto">
-            <button
-              onClick={() => setShowVideoModal(false)}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-stone-400 hover:text-white touch-manipulation"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="w-16 h-16 rounded-2xl bg-emerald-950/80 border border-jubilee-gold/40 text-jubilee-gold flex items-center justify-center mx-auto shadow-luxury">
-              <Tv className="w-8 h-8 text-jubilee-gold" />
-            </div>
-
-            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 text-xs font-bold uppercase tracking-wider">
-              <Radio className="w-3.5 h-3.5 text-jubilee-gold animate-pulse" />
-              <span>Official 45th Live Broadcast Channel</span>
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-retro font-bold text-white">
-              Live Stream &amp; Documentary Center
-            </h3>
-
-            <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
-              The official multi-camera high-definition livestream will broadcast live from the RSU Amphitheatre starting <strong>Friday, November 20, 2026</strong>.
-            </p>
-
-            <div className="bg-black/50 p-4 rounded-2xl border border-white/10 text-left text-xs space-y-2 font-sans">
-              <div className="flex items-center space-x-2 text-emerald-300 font-semibold">
-                <Bell className="w-4 h-4 text-jubilee-gold shrink-0" />
-                <span>Streaming Schedule (Port Harcourt Local Time):</span>
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto">
+          <div className="bg-[#051A0F] border-2 border-jubilee-gold/50 rounded-2xl sm:rounded-3xl max-w-4xl w-full p-4 sm:p-6 shadow-2xl relative text-white space-y-4 max-h-[95vh] overflow-y-auto my-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10 gap-2">
+              <div className="flex items-center space-x-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shrink-0"></span>
+                <span className="text-xs font-bold uppercase tracking-wider text-red-400 font-mono shrink-0">
+                  LIVE BROADCAST
+                </span>
+                <span className="text-xs text-stone-500 hidden sm:inline">|</span>
+                <span className="text-xs text-stone-300 font-sans truncate hidden sm:inline">
+                  RSU Amphitheatre, Port Harcourt
+                </span>
               </div>
-              <ul className="text-stone-300 space-y-1 pl-6 list-disc text-[11px]">
-                <li><strong>Nov 20 (10:00 AM – 6:00 PM):</strong> Registration, Accreditation &amp; Community Service</li>
-                <li><strong>Nov 21 (8:00 AM – 1:00 PM):</strong> 45th Jubilee Divine Worship &amp; Dedication Service</li>
-                <li><strong>Nov 21 (3:00 PM – 6:00 PM):</strong> Compendium Presentation, Mentorship &amp; Reflections</li>
-                <li><strong>Nov 21 (7:30 PM):</strong> Alumni Fellowship Dinner &amp; Integration</li>
-              </ul>
+
+              <div className="flex items-center space-x-2 shrink-0">
+                <a
+                  href={YOUTUBE_LIVE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md active:scale-95 transition-all"
+                >
+                  <span>Open in YouTube App</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <button
+                  onClick={() => setShowVideoModal(false)}
+                  className="p-1.5 rounded-full hover:bg-white/10 text-stone-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            <button
-              onClick={() => setShowVideoModal(false)}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs uppercase tracking-wider shadow-luxury active:scale-95 transition-all"
-            >
-              Close Window
-            </button>
+            {/* Embedded Responsive 16:9 YouTube Player */}
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-jubilee-gold/40 bg-black shadow-2xl">
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/2uRwL9Kblp4?autoplay=1&rel=0&modestbranding=1"
+                title="Official 45th Anniversary Grand Jubilee YouTube Live Stream"
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+
+            {/* Broadcast Details and Schedule */}
+            <div className="bg-black/50 p-4 rounded-2xl border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs">
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-white font-retro">
+                  ASF RSU 45th Anniversary Homecoming &amp; Grand Dedication
+                </h4>
+                <p className="text-xs text-stone-300 font-light">
+                  Theme: "Rooted to Rise" (Isaiah 61:3 • Colossians 2:7) — Connecting campus congregation &amp; global diaspora family.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2 shrink-0 w-full md:w-auto">
+                <button
+                  type="button"
+                  onClick={handleShareLiveStream}
+                  className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-jubilee-lightgold font-bold text-xs flex items-center justify-center space-x-1.5 border border-white/10 transition-all"
+                >
+                  {copiedStreamLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-jubilee-gold" />}
+                  <span>{copiedStreamLink ? 'Link Copied' : 'Share Broadcast'}</span>
+                </button>
+
+                <button
+                  onClick={() => setShowVideoModal(false)}
+                  className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs uppercase tracking-wider shadow-luxury active:scale-95 transition-all"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
