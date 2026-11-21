@@ -1,5 +1,5 @@
 import React from 'react';
-import { Video, Play, Radio, UploadCloud, ArrowRight, Sparkles } from 'lucide-react';
+import { Video, Play, Radio, UploadCloud, ArrowRight, Sparkles, BookOpen, Printer } from 'lucide-react';
 
 export default function HomeMediaTeaser({ onOpenMedia }) {
   const handleClick = (e) => {
@@ -9,6 +9,11 @@ export default function HomeMediaTeaser({ onOpenMedia }) {
     } else {
       window.location.hash = 'media-hub';
     }
+  };
+
+  const handleCompendiumClick = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    window.location.hash = 'compendium';
   };
 
   return (
@@ -22,27 +27,36 @@ export default function HomeMediaTeaser({ onOpenMedia }) {
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/30 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
-              <span>Official Media, Broadcast &amp; Throwbacks</span>
+              <span>Official Media, Compendium &amp; Archive</span>
             </div>
 
             <h3 className="text-xl sm:text-3xl font-retro font-bold text-white tracking-tight">
-              Media Hub &amp; Living Fellowship Archive
+              Media Hub &amp; 94-Page Jubilee Compendium
             </h3>
 
             <p className="text-xs sm:text-sm text-emerald-100/80 font-light leading-relaxed">
-              Experience the 45th Anniversary in high definition: 4K bonded livestream broadcast, 45-year commemorative historical documentary, studio broadcast audio jingles, and community photo repository.
+              Read, download and print the official <strong>94-Page Souvenir Compendium ("Rooted to Rise")</strong>, experience the 4K bonded livestream broadcast, 45-year historical documentary, and fellowship living archive.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto">
             <a
+              href="#compendium"
+              onClick={handleCompendiumClick}
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-105 active:scale-95 transition-all touch-manipulation"
+            >
+              <BookOpen className="w-4 h-4 text-emerald-950 shrink-0" />
+              <span>Print &amp; Read Compendium</span>
+            </a>
+
+            <a
               href="#media-hub"
               onClick={handleClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-extrabold bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury hover:scale-105 active:scale-95 transition-all touch-manipulation"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-3.5 sm:py-4 rounded-full text-xs sm:text-sm font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all touch-manipulation"
             >
-              <Play className="w-4 h-4 fill-emerald-950 text-emerald-950 shrink-0" />
-              <span>Enter Media Hub &amp; Livestream</span>
-              <ArrowRight className="w-4 h-4" />
+              <Play className="w-3.5 h-3.5 text-jubilee-gold shrink-0" />
+              <span>Media Hub</span>
+              <ArrowRight className="w-3.5 h-3.5 text-stone-400" />
             </a>
           </div>
 

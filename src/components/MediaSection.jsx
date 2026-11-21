@@ -1,10 +1,87 @@
 import React, { useState, useEffect, useTransition, useCallback } from 'react';
 import { 
   Play, Volume2, Radio, X, Tv, Bell, UploadCloud, 
-  Image as ImageIcon, Sparkles, ShieldCheck, Heart, User, Calendar, ExternalLink
+  Image as ImageIcon, Sparkles, ShieldCheck, Heart, User, Calendar, ExternalLink,
+  BookOpen, Printer, Download, FileText, CheckCircle2, ChevronRight, Share2, Maximize2, Check, ArrowDownToLine
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import CommunityPhotoUploadModal from './CommunityPhotoUploadModal';
+
+// Official 45th Anniversary Compendium Curated Chapters Index
+const COMPENDIUM_SECTIONS = [
+  {
+    id: 'cover-toc',
+    title: 'Table of Content & Welcome',
+    pageNumber: 2,
+    pageLabel: 'Pages 1–2',
+    description: 'Publication foreword, editorial index, and welcome greetings from the 45th Anniversary Directorate.',
+    thumb: '/compendium/thumb_toc.jpg',
+    tag: 'Introductory'
+  },
+  {
+    id: 'editorial',
+    title: "From the Editor's Pen",
+    pageNumber: 3,
+    pageLabel: 'Pages 3–7',
+    description: '"Rooted to Rise" theme treatise (Colossians 2:7) by Godsplan Promise and the Editorial Board.',
+    thumb: '/compendium/thumb_editors_pen.jpg',
+    tag: 'Editorial'
+  },
+  {
+    id: 'committee',
+    title: 'Anniversary Planning Committee',
+    pageNumber: 13,
+    pageLabel: 'Pages 13–14',
+    description: 'Leadership profiles of the Central Planning Committee led by Engr. S. Uchay Dapa & Egwele James.',
+    thumb: '/compendium/thumb_committee.jpg',
+    tag: 'Leadership'
+  },
+  {
+    id: 'order-of-events',
+    title: 'Official Order of Events',
+    pageNumber: 15,
+    pageLabel: 'Pages 15–22',
+    description: 'Minute-by-minute homecoming schedule: Tree Planting, Accreditation, Sabbath Worship & Grand Cantata.',
+    thumb: '/compendium/thumb_events.jpg',
+    tag: 'Program'
+  },
+  {
+    id: 'history',
+    title: 'Comprehensive 45-Year History',
+    pageNumber: 23,
+    pageLabel: 'Pages 23–43',
+    description: 'The monumental chronicle of 45 years of faith, spiritual altars, and campus evangelism (Psalm 127:1).',
+    thumb: '/compendium/thumb_history.jpg',
+    tag: 'History'
+  },
+  {
+    id: 'pastoral',
+    title: 'Pastoral Reflection & Pioneers',
+    pageNumber: 44,
+    pageLabel: 'Pages 44–49',
+    description: 'Spiritual exhortations, pioneer citations, and honours for past leaders of the fellowship.',
+    thumb: '/compendium/thumb_cover.jpg',
+    tag: 'Reflections'
+  },
+  {
+    id: 'testimonies',
+    title: 'Alumni Testimonies & Excos',
+    pageNumber: 50,
+    pageLabel: 'Pages 50–65',
+    description: 'Living testimonies of God’s faithfulness and the roster of Student Executive Presidents till date.',
+    thumb: '/compendium/thumb_testimonies.jpg',
+    tag: 'Testimonies'
+  },
+  {
+    id: 'directory-adverts',
+    title: 'Directory, Goodwill & Adverts',
+    pageNumber: 66,
+    pageLabel: 'Pages 66–94',
+    description: 'The permanent Fellowship Membership Directory, partner compendium adverts, and valediction.',
+    thumb: '/compendium/thumb_back_cover.jpg',
+    tag: 'Directory'
+  }
+];
 
 // Curated initial throwbacks if no community uploads are approved yet (module-level constant)
 const FALLBACK_THROWBACKS = [
@@ -50,11 +127,24 @@ export default function MediaSection() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [activeMediaTab, setActiveMediaTab] = useState('BROADCAST'); // 'BROADCAST' | 'COMMUNITY_PHOTOS'
+  const [activeMediaTab, setActiveMediaTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const h = window.location.hash.toLowerCase();
+      if (h.includes('compendium') || h.includes('brochure') || h.includes('souvenir') || h.includes('print')) {
+        return 'COMPENDIUM';
+      }
+    }
+    return 'COMPENDIUM'; // Set Compendium as the featured media spotlight!
+  });
   const [approvedPhotos, setApprovedPhotos] = useState([]);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
   const [, startTransition] = useTransition();
+
+  // Compendium Reader & Print States
+  const [showReaderModal, setShowReaderModal] = useState(false);
+  const [readerPage, setReaderPage] = useState(1);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const handleTabChange = useCallback((tab) => {
     if (tab === activeMediaTab) return;
@@ -64,6 +154,53 @@ export default function MediaSection() {
       });
     }, 0);
   }, [activeMediaTab, startTransition]);
+
+  const handlePrintCompendium = useCallback(() => {
+    // Open the optimized printable PDF in a new window/tab for instant browser printing
+    const printWindow = window.open('/ASF_RSU_45th_Jubilee_Compendium.pdf', '_blank');
+    if (printWindow) {
+      printWindow.focus();
+    }
+  }, []);
+
+  const handleShareCompendium = useCallback(async () => {
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/#compendium` : '';
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'ASF RSU 45th Jubilee Official Compendium',
+          text: 'Read and print the official 94-page 45th Anniversary Souvenir Compendium ("Rooted to Rise").',
+          url: url
+        });
+        return;
+      } catch (err) {
+        // Fallback to clipboard
+      }
+    }
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2500);
+      }
+    } catch (e) {}
+  }, []);
+
+  const openReaderAtPage = useCallback((pageNum = 1) => {
+    setReaderPage(pageNum);
+    setShowReaderModal(true);
+  }, []);
+
+  useEffect(() => {
+    const handleHash = () => {
+      const h = window.location.hash.toLowerCase();
+      if (h.includes('compendium') || h.includes('brochure') || h.includes('souvenir') || h.includes('print')) {
+        setActiveMediaTab('COMPENDIUM');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   const fetchApprovedPhotos = useCallback(async () => {
     setLoadingPhotos(true);
@@ -127,8 +264,30 @@ export default function MediaSection() {
           <div 
             role="tablist"
             aria-label="Media Categories"
-            className="mt-6 inline-flex p-1 rounded-full bg-black/60 border border-jubilee-gold/40 backdrop-blur-md shadow-lg max-w-full"
+            className="mt-6 inline-flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-2xl sm:rounded-full bg-black/70 border border-jubilee-gold/40 backdrop-blur-md shadow-2xl max-w-full"
           >
+            <button
+              type="button"
+              role="tab"
+              id="media-tab-compendium"
+              aria-selected={activeMediaTab === 'COMPENDIUM'}
+              aria-controls="media-tabpanel-compendium"
+              onClick={() => handleTabChange('COMPENDIUM')}
+              className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center space-x-2 touch-manipulation active:scale-95 ${
+                activeMediaTab === 'COMPENDIUM'
+                  ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
+                  : 'text-stone-300 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5 pointer-events-none" />
+              <span className="pointer-events-none">Jubilee Compendium</span>
+              <span className={`pointer-events-none px-2 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-tight ${
+                activeMediaTab === 'COMPENDIUM' ? 'bg-emerald-950/90 text-jubilee-lightgold' : 'bg-jubilee-gold/20 text-jubilee-lightgold border border-jubilee-gold/30'
+              }`}>
+                94 Pgs • Print &amp; PDF
+              </span>
+            </button>
+
             <button
               type="button"
               role="tab"
@@ -138,8 +297,8 @@ export default function MediaSection() {
               onClick={() => handleTabChange('BROADCAST')}
               className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center space-x-2 touch-manipulation active:scale-95 ${
                 activeMediaTab === 'BROADCAST'
-                  ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-md'
-                  : 'text-stone-300 hover:text-white'
+                  ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
+                  : 'text-stone-300 hover:text-white hover:bg-white/5'
               }`}
             >
               <Tv className="w-3.5 h-3.5 pointer-events-none" />
@@ -155,13 +314,15 @@ export default function MediaSection() {
               onClick={() => handleTabChange('COMMUNITY_PHOTOS')}
               className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center space-x-2 touch-manipulation active:scale-95 ${
                 activeMediaTab === 'COMMUNITY_PHOTOS'
-                  ? 'bg-gradient-to-r from-jubilee-gold to-amber-300 text-emerald-950 shadow-md'
-                  : 'text-stone-300 hover:text-white'
+                  ? 'bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 shadow-luxury'
+                  : 'text-stone-300 hover:text-white hover:bg-white/5'
               }`}
             >
               <ImageIcon className="w-3.5 h-3.5 pointer-events-none" />
-              <span className="pointer-events-none">Community Living Archive</span>
-              <span className="pointer-events-none px-1.5 py-0.5 rounded-full text-[10px] bg-white/10 text-jubilee-lightgold font-mono font-bold">
+              <span className="pointer-events-none">Living Archive</span>
+              <span className={`pointer-events-none px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                activeMediaTab === 'COMMUNITY_PHOTOS' ? 'bg-emerald-950/90 text-jubilee-lightgold' : 'bg-white/10 text-jubilee-lightgold'
+              }`}>
                 {approvedPhotos.length}
               </span>
             </button>
@@ -408,6 +569,331 @@ export default function MediaSection() {
           </div>
         </div>
 
+        {/* TAB: JUBILEE COMPENDIUM (PRINT & DOWNLOAD) */}
+        <div
+          id="media-tabpanel-compendium"
+          role="tabpanel"
+          aria-labelledby="media-tab-compendium"
+          aria-hidden={activeMediaTab !== 'COMPENDIUM'}
+          className={activeMediaTab === 'COMPENDIUM' ? 'space-y-12 animate-fade-in' : 'hidden'}
+        >
+          {/* Hero Showcase Card */}
+          <div className="relative rounded-3xl bg-gradient-to-br from-[#072415] via-[#051A0F] to-[#0A2E1C] border-2 border-jubilee-gold/40 shadow-luxury overflow-hidden p-6 sm:p-10">
+            {/* Ambient gold glow */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-jubilee-gold/15 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              
+              {/* Left Column: 3D Book Cover Presentation */}
+              <div className="lg:col-span-5 flex flex-col items-center">
+                <div 
+                  onClick={() => openReaderAtPage(1)}
+                  className="group relative cursor-pointer transform hover:-translate-y-2 transition-all duration-300 max-w-[280px] sm:max-w-[320px] w-full"
+                >
+                  {/* Decorative book spine and shadow */}
+                  <div className="relative rounded-2xl overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8),0_0_40px_rgba(212,175,55,0.25)] border-2 border-jubilee-gold/60 bg-black">
+                    <img 
+                      src="/compendium_cover.jpg" 
+                      alt="ASF RSU 45th Jubilee Compendium Cover - Rooted to Rise" 
+                      className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    
+                    {/* Metallic sheen overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-white/20 opacity-60 group-hover:opacity-40 transition-opacity" />
+
+                    {/* Ribbon badges */}
+                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-emerald-950/90 backdrop-blur-md text-jubilee-lightgold text-[10px] font-bold uppercase tracking-wider border border-jubilee-gold/40 shadow-md">
+                      45th Jubilee Edition
+                    </div>
+
+                    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-jubilee-gold text-emerald-950 text-[10px] font-black uppercase tracking-wider shadow-md">
+                      94 Pages A4
+                    </div>
+
+                    {/* Bottom hover prompt */}
+                    <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-center space-x-2 text-xs font-bold text-jubilee-lightgold group-hover:text-white transition-colors">
+                      <Maximize2 className="w-3.5 h-3.5 text-jubilee-gold group-hover:scale-110 transition-transform" />
+                      <span>Click to Read Fullscreen</span>
+                    </div>
+                  </div>
+
+                  {/* Realistic Book Reflection Floor */}
+                  <div className="mt-3 text-center">
+                    <span className="text-[11px] font-mono text-stone-400">
+                      Standard ISO 216 A4 (210 × 297 mm) • Full Color
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Title, Metadata & Action Suite */}
+              <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+                
+                {/* Badge & Edition Info */}
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-jubilee-gold/15 text-jubilee-lightgold border border-jubilee-gold/40 text-[11px] font-bold uppercase tracking-wider">
+                    <BookOpen className="w-3.5 h-3.5 text-jubilee-gold" />
+                    <span>Official Commemorative Publication</span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-white/10 text-stone-300 text-[11px] font-mono">
+                    1981–2026 Consecration
+                  </span>
+                </div>
+
+                {/* Main Heading */}
+                <div>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-retro font-bold text-white tracking-tight leading-tight">
+                    The 45th Jubilee Grand Souvenir Compendium
+                  </h3>
+                  <p className="text-xs sm:text-sm text-jubilee-lightgold font-editorial italic mt-2">
+                    “Rooted and built up in Him, established in the faith, as ye have been taught, abounding therein with thanksgiving.” — Colossians 2:7
+                  </p>
+                </div>
+
+                {/* Narrative Summary */}
+                <p className="text-stone-300 text-xs sm:text-sm font-light leading-relaxed">
+                  The complete 94-page monumental archive celebrating 45 years of All-Saints' Fellowship at Rivers State University. 
+                  Featuring the complete 45-year fellowship chronicle, pioneer roll-call, anniversary planning directory, past presidential registers, 
+                  pastoral exhortations, alumni testimonies, and permanent membership directory.
+                </p>
+
+                {/* Key Technical & Print Specifications */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-left">
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                    <div className="text-[10px] text-stone-400 uppercase font-mono">Extent</div>
+                    <div className="text-sm font-bold text-white font-sans mt-0.5">94 Pages</div>
+                    <div className="text-[10px] text-emerald-400">Complete Edition</div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                    <div className="text-[10px] text-stone-400 uppercase font-mono">Format</div>
+                    <div className="text-sm font-bold text-white font-sans mt-0.5">ISO A4</div>
+                    <div className="text-[10px] text-emerald-400">Printable PDF</div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                    <div className="text-[10px] text-stone-400 uppercase font-mono">File Size</div>
+                    <div className="text-sm font-bold text-white font-sans mt-0.5">13.9 MB</div>
+                    <div className="text-[10px] text-emerald-400">Fast Mobile Load</div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                    <div className="text-[10px] text-stone-400 uppercase font-mono">Print Ready</div>
+                    <div className="text-sm font-bold text-white font-sans mt-0.5">Full Bleed</div>
+                    <div className="text-[10px] text-emerald-400">Press / Desktop</div>
+                  </div>
+                </div>
+
+                {/* Action Suite (Print, Download, Read Online, Share) */}
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+                  {/* 1. Print Compendium */}
+                  <button
+                    type="button"
+                    onClick={handlePrintCompendium}
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-full bg-gradient-to-r from-jubilee-gold via-amber-300 to-yellow-500 text-emerald-950 font-bold text-xs uppercase tracking-wider shadow-luxury hover:scale-105 active:scale-95 transition-all touch-manipulation"
+                    title="Send to physical printer or save as print PDF"
+                  >
+                    <Printer className="w-4 h-4 text-emerald-950" />
+                    <span>Print Compendium</span>
+                  </button>
+
+                  {/* 2. Download to Device */}
+                  <a
+                    href="/ASF_RSU_45th_Jubilee_Compendium.pdf"
+                    download="ASF_RSU_45th_Jubilee_Compendium.pdf"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider border border-white/20 shadow-md active:scale-95 transition-all touch-manipulation"
+                    title="Download the 94-page PDF to your phone, tablet or PC"
+                  >
+                    <ArrowDownToLine className="w-4 h-4 text-jubilee-gold" />
+                    <span>Download PDF (13.9 MB)</span>
+                  </a>
+
+                  {/* 3. Read Fullscreen */}
+                  <button
+                    type="button"
+                    onClick={() => openReaderAtPage(1)}
+                    className="inline-flex items-center justify-center space-x-2 px-5 py-3.5 rounded-full bg-emerald-900/60 hover:bg-emerald-800 text-jubilee-lightgold font-bold text-xs uppercase tracking-wider border border-jubilee-gold/30 active:scale-95 transition-all touch-manipulation"
+                    title="Open in interactive in-browser reader"
+                  >
+                    <Maximize2 className="w-4 h-4 text-jubilee-gold" />
+                    <span>Read Online</span>
+                  </button>
+
+                  {/* 4. Share Link */}
+                  <button
+                    type="button"
+                    onClick={handleShareCompendium}
+                    className="inline-flex items-center justify-center space-x-1.5 px-4 py-3.5 rounded-full bg-black/50 hover:bg-black/70 text-stone-300 hover:text-white font-medium text-xs border border-white/10 active:scale-95 transition-all"
+                    title="Share this publication link with fellowship alumni"
+                  >
+                    {copiedLink ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-400" />
+                        <span className="text-emerald-400 font-bold">Link Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Share2 className="w-4 h-4 text-jubilee-gold" />
+                        <span>Share</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          {/* Curated Chapter Directory & Quick Navigator */}
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-white/10 pb-4">
+              <div>
+                <span className="text-[10px] font-mono font-bold text-jubilee-gold uppercase tracking-wider block">
+                  Table of Contents &amp; Milestones
+                </span>
+                <h4 className="text-xl sm:text-2xl font-retro font-bold text-white">
+                  Curated Chapter Directory
+                </h4>
+              </div>
+              <p className="text-xs text-stone-400 font-light max-w-md">
+                Click any chapter to jump directly to its pages in the interactive reader or print that specific section.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {COMPENDIUM_SECTIONS.map((section) => (
+                <div
+                  key={section.id}
+                  onClick={() => openReaderAtPage(section.pageNumber)}
+                  className="bg-black/50 rounded-2xl overflow-hidden border border-white/10 hover:border-jubilee-gold/60 shadow-luxury transition-all duration-300 group cursor-pointer flex flex-col justify-between hover:scale-[1.02]"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-emerald-950">
+                    <img
+                      src={section.thumb}
+                      alt={section.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                    
+                    {/* Page badge */}
+                    <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-jubilee-lightgold text-[10px] font-mono font-bold border border-jubilee-gold/30">
+                      {section.pageLabel}
+                    </div>
+
+                    {/* Tag badge */}
+                    <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-emerald-900/90 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-wider border border-white/20">
+                      {section.tag}
+                    </div>
+
+                    <div className="absolute bottom-2.5 inset-x-3 flex items-center justify-between text-xs text-stone-300">
+                      <span className="text-[10px] font-mono text-jubilee-gold">Page {section.pageNumber}</span>
+                      <span className="flex items-center space-x-1 text-[11px] font-bold text-white group-hover:text-jubilee-lightgold transition-colors">
+                        <span>Read Chapter</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-jubilee-gold transform group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 space-y-2 bg-black/60 border-t border-white/10 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h5 className="text-sm font-bold text-white group-hover:text-jubilee-lightgold transition-colors">
+                        {section.title}
+                      </h5>
+                      <p className="text-xs text-stone-400 font-light mt-1 line-clamp-2">
+                        {section.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-white/5 flex items-center justify-between">
+                      <span className="text-[10px] text-stone-500 font-mono">
+                        A4 Full Resolution
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openReaderAtPage(section.pageNumber);
+                        }}
+                        className="text-[11px] text-jubilee-gold hover:text-amber-300 font-bold flex items-center space-x-1"
+                      >
+                        <BookOpen className="w-3 h-3" />
+                        <span>Jump</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* On-Site & Device Printing Guide Banner */}
+          <div className="rounded-3xl bg-emerald-950/40 border border-jubilee-gold/30 p-6 sm:p-8 space-y-4">
+            <div className="flex items-center space-x-2 text-jubilee-gold">
+              <Printer className="w-5 h-5 shrink-0" />
+              <h4 className="text-base sm:text-lg font-bold font-retro text-white">
+                How to Print or Keep Offline on Your Device
+              </h4>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-light text-stone-300">
+              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+                <div className="flex items-center space-x-2 text-jubilee-lightgold font-bold">
+                  <span className="w-5 h-5 rounded-full bg-jubilee-gold/20 flex items-center justify-center text-[10px] font-mono text-jubilee-gold">1</span>
+                  <span>On-Site RSU Homecoming Printing</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-stone-300">
+                  Attendees at the RSU Amphitheatre can have physical copies bound at the Media Registration Desk or send the PDF to any Wi-Fi/Bluetooth enabled printer.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+                <div className="flex items-center space-x-2 text-jubilee-lightgold font-bold">
+                  <span className="w-5 h-5 rounded-full bg-jubilee-gold/20 flex items-center justify-center text-[10px] font-mono text-jubilee-gold">2</span>
+                  <span>Home &amp; Office Booklet Settings</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-stone-300">
+                  Select <strong>A4 Paper</strong>, set <strong>"Fit to Printable Area"</strong>, and choose <strong>"Print on Both Sides (Flip on short edge)"</strong> to produce a neat 47-sheet keepsake booklet.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+                <div className="flex items-center space-x-2 text-jubilee-lightgold font-bold">
+                  <span className="w-5 h-5 rounded-full bg-jubilee-gold/20 flex items-center justify-center text-[10px] font-mono text-jubilee-gold">3</span>
+                  <span>Direct Mobile Offline Storage</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-stone-300">
+                  Tap <strong>Download PDF</strong> and save to <em>Apple Books</em> (iPhone/iPad) or <em>Files / Google Drive</em> (Android/PC) for lifetime offline reference without data usage.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick action button inside guide */}
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <span className="text-[11px] text-stone-400 font-mono">
+                Official Document ID: <strong className="text-jubilee-lightgold">ASF-RSU-45TH-COMPENDIUM-2026</strong>
+              </span>
+              <div className="flex items-center space-x-3">
+                <button
+                  type="button"
+                  onClick={handlePrintCompendium}
+                  className="text-xs font-bold text-jubilee-gold hover:text-amber-300 flex items-center space-x-1"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Launch Print Dialog</span>
+                </button>
+                <a
+                  href="/ASF_RSU_45th_Jubilee_Compendium.pdf"
+                  download="ASF_RSU_45th_Jubilee_Compendium.pdf"
+                  className="text-xs font-bold text-white hover:text-jubilee-lightgold flex items-center space-x-1"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Save Copy</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* Official Media & Broadcast Schedule Modal */}
@@ -529,6 +1015,121 @@ export default function MediaSection() {
             fetchApprovedPhotos();
           }}
         />
+      )}
+
+      {/* Official Fullscreen Interactive Compendium Reader Modal */}
+      {showReaderModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Official 45th Anniversary Compendium Reader"
+        >
+          {/* Reader Top Bar */}
+          <div className="bg-[#051A0F] border-b border-jubilee-gold/40 px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3 shrink-0 shadow-lg">
+            <div className="flex items-center space-x-3 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-jubilee-gold/20 border border-jubilee-gold/40 flex items-center justify-center shrink-0">
+                <BookOpen className="w-4 h-4 text-jubilee-gold" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs sm:text-sm font-retro font-bold text-white truncate">
+                  ASF RSU 45th Jubilee Compendium ("Rooted to Rise")
+                </h4>
+                <p className="text-[10px] text-stone-400 font-mono hidden xs:block">
+                  94 Pages • Complete A4 Souvenir Publication
+                </p>
+              </div>
+            </div>
+
+            {/* Middle Quick Jump dropdown */}
+            <div className="hidden md:flex items-center space-x-2">
+              <label htmlFor="compendium-chapter-jump" className="text-[11px] text-stone-300 uppercase font-mono">
+                Jump to:
+              </label>
+              <select
+                id="compendium-chapter-jump"
+                value={readerPage}
+                onChange={(e) => setReaderPage(Number(e.target.value))}
+                className="bg-black/80 border border-jubilee-gold/40 text-jubilee-lightgold text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-jubilee-gold"
+              >
+                <option value={1}>Page 1: Front Cover</option>
+                {COMPENDIUM_SECTIONS.map((sec) => (
+                  <option key={sec.id} value={sec.pageNumber}>
+                    {sec.pageLabel}: {sec.title}
+                  </option>
+                ))}
+                <option value={94}>Page 94: Back Cover</option>
+              </select>
+            </div>
+
+            {/* Right Action Suite */}
+            <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+              <button
+                type="button"
+                onClick={handlePrintCompendium}
+                className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-jubilee-gold text-emerald-950 font-bold text-xs uppercase tracking-wider hover:bg-amber-300 active:scale-95 transition-all"
+                title="Print Compendium"
+              >
+                <Printer className="w-3.5 h-3.5 text-emerald-950" />
+                <span className="hidden sm:inline">Print</span>
+              </button>
+
+              <a
+                href="/ASF_RSU_45th_Jubilee_Compendium.pdf"
+                download="ASF_RSU_45th_Jubilee_Compendium.pdf"
+                className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 active:scale-95 transition-all"
+                title="Download PDF"
+              >
+                <Download className="w-3.5 h-3.5 text-jubilee-gold" />
+                <span className="hidden sm:inline">Download</span>
+              </a>
+
+              <a
+                href={`/ASF_RSU_45th_Jubilee_Compendium.pdf#page=${readerPage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors"
+                title="Open in new browser tab"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setShowReaderModal(false)}
+                className="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-red-500/30 text-stone-300 hover:text-white transition-colors"
+                title="Close Reader"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Reader Frame Body */}
+          <div className="flex-1 relative bg-[#1E2522] overflow-hidden flex flex-col">
+            <iframe
+              key={`reader-iframe-${readerPage}`}
+              src={`/ASF_RSU_45th_Jubilee_Compendium.pdf#page=${readerPage}&view=FitH`}
+              title="Official 45th Anniversary Compendium Document Viewer"
+              className="w-full flex-1 border-0"
+            />
+
+            {/* Mobile Fallback Bar */}
+            <div className="sm:hidden bg-[#051A0F] border-t border-white/10 p-2.5 flex items-center justify-between text-xs text-stone-300">
+              <span className="text-[11px] text-stone-400">Viewing Page {readerPage} of 94</span>
+              <div className="flex items-center space-x-2">
+                <a
+                  href={`/ASF_RSU_45th_Jubilee_Compendium.pdf#page=${readerPage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded bg-jubilee-gold text-emerald-950 font-bold text-[11px]"
+                >
+                  Open Full PDF
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
     </section>

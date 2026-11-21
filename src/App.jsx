@@ -26,7 +26,7 @@ const isHashAds = (hash = '', path = '') => {
   
   const keywords = [
     'compendium-ads', 'compendium-ad', 'compendiumads', 'compendium_ads',
-    'compendium', 'ads', 'ad', 'ad-booking', 'ads-booking', 'compendium-booking',
+    'ads', 'ad', 'ad-booking', 'ads-booking', 'compendium-booking',
     'sponsors-ads', 'sponsor-ads', 'book-ad', 'book-ads'
   ];
   return keywords.includes(cleanHash) || keywords.includes(cleanPath);
@@ -47,7 +47,8 @@ const isHashMedia = (hash = '', path = '') => {
   const cleanPath = (path || '').toLowerCase().replace(/^\/+/, '').split('?')[0].replace(/\/+$/, '');
   
   const keywords = [
-    'media-hub', 'media', 'livestream', 'videos', 'living-archive', 'gallery-media'
+    'media-hub', 'media', 'livestream', 'videos', 'living-archive', 'gallery-media',
+    'compendium', 'compendium-book', 'compendium-pdf', 'brochure', 'souvenir', 'jubilee-compendium'
   ];
   return keywords.includes(cleanHash) || keywords.includes(cleanPath);
 };
